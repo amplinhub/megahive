@@ -129,12 +129,14 @@ input, select { font: inherit; color: inherit; }
 .chip .ui-ic { width: 16px; height: 16px; }
 .chip.warn { background: var(--primary-soft); }
 .chip.alert { background: #FDE8E4; color: var(--error); }
-.goal { margin-top: 8px; display: flex; align-items: center; gap: 10px; width: 100%; max-width: 420px; padding: 8px 12px; border-radius: var(--r-md);
+.goal { margin-top: 8px; display: inline-flex; align-items: center; gap: 8px; max-width: 100%; padding: 5px 12px 5px 6px; min-height: 36px; border-radius: var(--r-md);
   background: rgba(255,255,255,.95); box-shadow: var(--shadow); text-align: left; animation: dropIn .4s var(--spring); }
-.goal .g-ic { width: 32px; height: 32px; border-radius: var(--r-sm); background: var(--primary-soft); display: flex; align-items: center; justify-content: center; flex: none; }
-.goal .g-ic svg { width: 22px; height: 22px; }
+.goal .g-ic { width: 26px; height: 26px; border-radius: var(--r-sm); background: var(--primary-soft); display: flex; align-items: center; justify-content: center; flex: none; }
+.goal .g-ic svg { width: 18px; height: 18px; }
 .goal .g-t { font-size: 12px; font-weight: 600; color: var(--muted); line-height: 1.2; }
-.goal .g-d { font-size: 14px; font-weight: 500; line-height: 1.3; display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.goal .g-d { font-size: 13px; font-weight: 500; line-height: 1.3; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.goal .grow { min-width: 0; }
+.goal { border-radius: var(--r-full) !important; }
 .goal.ready { background: var(--primary); }
 .goal.ready .g-t { color: rgba(34,34,34,.7); }
 @keyframes dropIn { from { opacity: 0; transform: translateY(-8px); } }
@@ -168,7 +170,7 @@ input, select { font: inherit; color: inherit; }
 .bar.green i { background: #3FA34D; }
 .bar.lilac i { background: #A57FE0; }
 
-.dance-fab { width: 64px; height: 64px; flex: none; border-radius: var(--r-full); background: var(--canvas); box-shadow: var(--shadow); position: relative; display: flex; align-items: center; justify-content: center; }
+.dance-fab { margin-left: auto; width: 64px; height: 64px; flex: none; border-radius: var(--r-full); background: var(--canvas); box-shadow: var(--shadow); position: relative; display: flex; align-items: center; justify-content: center; }
 .dance-fab svg.ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .dance-fab .face { width: 40px; height: 40px; }
 .dance-fab .lbl { position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; background: var(--ink); color: #fff; border-radius: var(--r-full); padding: 1px 7px; }
@@ -345,17 +347,41 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 @keyframes floatUp { from { opacity: 0; transform: translate(-50%, 0) scale(.8); } 20% { opacity: 1; transform: translate(-50%, -10px) scale(1.1); } to { opacity: 0; transform: translate(-50%, -54px) scale(1); } }
 .confetti { position: absolute; width: 8px; height: 12px; border-radius: 2px; z-index: 9; pointer-events: none; }
 
+/* ---------- панель выбранной соты */
+.sel-bar { flex: 1; min-width: 0; background: var(--canvas); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 8px 8px 8px 10px; display: flex; align-items: center; gap: 10px; }
+.sel-bar.in { animation: selIn .32s var(--spring); }
+@keyframes selIn { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+.sel-bar .sb-ic .b-ic { width: 40px; height: 40px; display: block; }
+.sel-bar b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sel-bar .sb-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); line-height: 1.3; }
+.sel-bar .btn { height: 44px; padding: 0 16px; }
+.seg3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.seg3 button { border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 10px 6px; font-size: 13px; font-weight: 600; line-height: 1.25; }
+.seg3 button.on { border: 2px solid var(--ink); padding: 9px 5px; background: var(--surface-soft); }
+
 /* ---------- танец */
-.dance { position: fixed; inset: 0; z-index: 25; background: radial-gradient(circle at 50% 45%, #FFF4D6 0%, #FFE08A 45%, #F2A007 100%); display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; animation: fade .25s; user-select: none; }
+.dance { position: fixed; inset: 0; z-index: 25; background: radial-gradient(circle at 50% 42%, #FFF4D6 0%, #FFE08A 45%, #F2A007 100%); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; animation: fade .25s; user-select: none; touch-action: none; }
 .dance h3 { font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -.4px; }
-.dance .hint { max-width: 32ch; margin: 0; color: var(--body); }
-.dance .stage { width: 240px; height: 240px; position: relative; display: flex; align-items: center; justify-content: center; }
-.dance .ring { position: absolute; inset: 0; border-radius: var(--r-full); border: 6px solid rgba(255,255,255,.75); }
-.dance .pulse { position: absolute; inset: 20px; border-radius: var(--r-full); background: rgba(255,255,255,.5); }
-.dance .dbee { width: 140px; height: 140px; position: relative; transition: transform .1s; }
-.dance .score { font-size: 22px; font-weight: 700; min-height: 32px; }
-.dance .hitfx { position: absolute; font-weight: 800; font-size: 20px; animation: floatUp .7s var(--ease) forwards; left: 50%; top: 10%; }
+.dance .hint { max-width: 32ch; margin: 0; color: var(--body); font-size: 15px; }
+.dance .stage { width: 280px; height: 280px; position: relative; display: flex; align-items: center; justify-content: center; }
+.dance .stage.demo { width: 200px; height: 200px; }
+.dance .target { position: absolute; width: 46%; height: 46%; border-radius: 50%; border: 6px solid #222; background: rgba(255,255,255,.55); }
+.dance .target.hit { animation: dHit .35s var(--ease); }
+@keyframes dHit { 0% { box-shadow: 0 0 0 0 rgba(31,122,58,.7); background: #D9F5DF; } 100% { box-shadow: 0 0 0 34px rgba(31,122,58,0); } }
+.dance .approach { position: absolute; width: 46%; height: 46%; border-radius: 50%; border: 5px solid #fff; box-shadow: 0 0 0 2px rgba(0,0,0,.18), inset 0 0 0 2px rgba(0,0,0,.18); opacity: 0; will-change: transform, opacity; }
+.dance .stage.demo .approach { animation: dDemo 1.3s linear infinite; }
+.dance .stage.demo .target { animation: dDemoT 1.3s linear infinite; }
+@keyframes dDemo { 0% { transform: scale(2.1); opacity: .2; } 80% { transform: scale(1); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+@keyframes dDemoT { 0%, 76% { background: rgba(255,255,255,.55); } 82% { background: #D9F5DF; } 100% { background: rgba(255,255,255,.55); } }
+.dance .dbee { width: 34%; height: 34%; position: relative; transition: transform .12s; }
+.dance .score { font-size: 24px; font-weight: 700; min-height: 34px; margin: 0; }
+.dance .score.pop { animation: press .25s var(--spring); }
+.dance .beats { display: flex; gap: 8px; }
+.dance .beats i { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,.6); border: 2px solid rgba(0,0,0,.15); transition: background .15s, transform .2s var(--spring); }
+.dance .beats i.perfect { background: #1F7A3A; border-color: #1F7A3A; transform: scale(1.25); }
+.dance .beats i.good { background: #222; border-color: #222; }
+.dance .beats i.miss { background: #C13515; border-color: #C13515; }
 
 /* ---------- обучение (подсветка) */
 .coach { position: fixed; inset: 0; z-index: 35; pointer-events: none; }
@@ -788,7 +814,7 @@ function clientCfg() {
   var c = getCfg();
   return {
     version: c.version, stage: c.stage, buildings: c.buildings,
-    growthNew: c.growthNew, timeBaseNewSec: c.timeBaseNewSec, timeGrowth: c.timeGrowth,
+    growthNew: c.growthNew, timeBaseNewSec: c.timeBaseNewSec, newBuildSpeed: c.newBuildSpeed, timeGrowth: c.timeGrowth,
     upgCostMult: c.upgCostMult, upgTimeMult: c.upgTimeMult, minUpgSecPerTier: c.minUpgSecPerTier,
     maxBuildSec: c.maxBuildSec, gate: c.gate, tier2: c.tier2, beeCost: c.beeCost,
     retrainCost: c.retrainCost, retrainDay: true, danceCost: c.danceCost, danceDurationSec: c.danceDurationSec,
@@ -990,7 +1016,7 @@ function apiColors() {
  *   столбец B — значение в JSON (например `3.5` или `{"wax":8,"honey":4}`).
  */
 var CFG_BASE = {
-  version: '0.2.0',
+  version: '0.3.0',
   stage: 1,                       // этап разработки: 1 = MVP (армия/колонии закрыты)
   tz: 'Europe/Moscow',
   stepMinutes: 5,                 // шаг ленивого пересчёта
@@ -1010,6 +1036,7 @@ var CFG_BASE = {
   growthNew: { 1: 1.10, 2: 1.07, 3: 1.07 },
   timeBaseNewSec: { 1: 20, 2: 900, 3: 3600 },
   timeGrowth: { 1: 1.16, 2: 1.05, 3: 1.05 },
+  newBuildSpeed: { 1: 5, 2: 6, 3: 6 }, // во сколько раз новые соты строятся быстрее базового времени (улучшения — без ускорения)
   upgCostMult: { 2: 4, 3: 12 },
   upgTimeMult: { 2: 3, 3: 6 },
   minUpgSecPerTier: 300,
@@ -1444,9 +1471,16 @@ function costNew(hd, b, tier, t) {
   return scaleCost(cfg.buildings[b].cost, Math.pow(cfg.growthNew[tier], k) * seasonCostMult(t));
 }
 
-function timeNewSec(tier, k) {
+/** Базовое время (от него считаются долгие улучшения). */
+function timeBaseSec(tier, k) {
   var cfg = getCfg();
   return Math.min(cfg.maxBuildSec, Math.round(cfg.timeBaseNewSec[tier] * Math.pow(cfg.timeGrowth[tier], k)));
+}
+
+/** Новая сота строится быстро: базовое время, делённое на newBuildSpeed. */
+function timeNewSec(tier, k) {
+  var sp = (getCfg().newBuildSpeed || {})[tier] || 1;
+  return Math.max(4, Math.round(timeBaseSec(tier, k) / sp));
 }
 
 function costUpg(b, toLvl, t) {
@@ -1456,7 +1490,7 @@ function costUpg(b, toLvl, t) {
 
 function timeUpgSec(hd, tier, toLvl) {
   var cfg = getCfg();
-  var base = timeNewSec(tier, countCells(hd, tier)) * cfg.upgTimeMult[toLvl];
+  var base = timeBaseSec(tier, countCells(hd, tier)) * cfg.upgTimeMult[toLvl];
   return Math.round(clamp(base, cfg.minUpgSecPerTier * tier, cfg.maxBuildSec));
 }
 
@@ -2887,6 +2921,7 @@ return Replica;
   <div id="mapCtl" class="map-ctl hidden"></div>
   <div id="bottom">
     <div class="bottom-row">
+      <div id="selBar" class="sel-bar hidden"></div>
       <button id="buildCard" class="build-card"></button>
       <button id="danceBtn" class="dance-fab" aria-label="Танец пчёл"></button>
     </div>
@@ -3000,7 +3035,7 @@ const I18N = {
     tut_tier2: 'Откройте ярус 2',
     dq_honey: (n) => `Сварите ${n} мёда`, dq_build: (n) => `Постройте или улучшите ${n} соты`, dq_hatch: (n) => `Выведите ${n} пчёл`,
     dq_expedition: () => 'Отправьте экспедицию', dq_dance: () => 'Станцуйте танец пчёл',
-    more_title: 'Ещё', leaderboard: 'Слава роёв', season_forecast: 'Прогноз сезона', settings: 'Настройки', language: 'Язык', logout: 'Выйти',
+    more_title: 'Ещё', leaderboard: 'Сильнейший игрок', season_forecast: 'Прогноз сезона', settings: 'Настройки', language: 'Язык', logout: 'Выйти',
     glory: 'Слава', you: 'вы', next_season: (t) => `Следующий сезон через ${t}`, version: 'Версия',
     dance_title: 'Танец пчёл', dance_hint: 'Касайтесь экрана в такт пульсации. Чем точнее ритм, тем сильнее бонус к сбору на 30 минут.',
     dance_start: 'Начать танец', dance_cost: (c) => `Стоит ${c} энергии`, dance_result: (b) => `Сбор +${b}% на 30 минут`,
@@ -3102,7 +3137,7 @@ const I18N = {
     tut_cells18: 'Build 18 combs on tier 1', tut_tier2: 'Open tier 2',
     dq_honey: (n) => `Brew ${n} honey`, dq_build: (n) => `Build or upgrade ${n} combs`, dq_hatch: (n) => `Hatch ${n} bees`,
     dq_expedition: () => 'Send an expedition', dq_dance: () => 'Do the bee dance',
-    more_title: 'More', leaderboard: 'Swarm glory', season_forecast: 'Season forecast', settings: 'Settings', language: 'Language', logout: 'Sign out',
+    more_title: 'More', leaderboard: 'Strongest player', season_forecast: 'Season forecast', settings: 'Settings', language: 'Language', logout: 'Sign out',
     glory: 'Glory', you: 'you', next_season: (t) => `Next season in ${t}`, version: 'Version',
     dance_title: 'Bee dance', dance_hint: 'Tap in time with the pulse. The better the rhythm, the bigger the gathering bonus for 30 minutes.',
     dance_start: 'Start dancing', dance_cost: (c) => `Costs ${c} energy`, dance_result: (b) => `Gathering +${b}% for 30 minutes`,
@@ -3185,15 +3220,17 @@ Object.assign(I18N.ru, {
   current_goal: 'Задача', next: 'Дальше', skip: 'Пропустить', got_it: 'Понятно', lets_go: 'Начнём!',
   coach_welcome_t: 'Привет! Я Жужа', coach_welcome: 'Помогу вырастить твой улей. Здесь всё просто: строим соты, выводим пчёл и летаем за добычей.',
   coach_res: 'Это казна улья: нектар, мёд, воск и прополис. Цифры растут сами, пока пчёлы работают.',
-  coach_cell: 'Нажми на пустую соту — подсвеченную. Здесь мы построим новое здание.',
+  coach_cell: 'Нажми на подсвеченную пустую соту, чтобы выбрать её.',
+  coach_open: 'Сота выбрана. Теперь нажми «Построить».',
+  coach_open_b: 'Здание выбрано. Нажми «Открыть».',
   coach_pick: 'Выбери Воскотопку: она делает воск, а без воска не будет новых сот.',
-  coach_build: 'Стройка идёт! Бригады строят сами. Пока они заняты, можно добавлять стройки в план — до 6 штук.',
+  coach_build: 'Готово! Новые соты строятся быстро, а улучшения идут дольше. Пока бригады заняты, следующие стройки встают в план и начнутся сами.',
   coach_tap_b: 'Теперь нажми на любое здание, например на Медовый котёл. Покажу, что оно делает.',
   coach_binfo: 'Здесь видно, что делает здание, сколько оно даёт и сколько стоит улучшение. Улучшайте — уровень до 3.',
   coach_bees: 'Во вкладке «Пчёлы» выводят новых пчёл и распределяют их по работам.',
   coach_map: 'На карте — луга вокруг улья, дупла и сокровища. Туда летают дозорницы.',
   coach_quests: 'В заданиях лежат награды. Забирай их почаще — так улей растёт быстрее.',
-  coach_dance: 'А это танец пчёл: стучи в ритм и получи бонус к сбору на 30 минут.',
+  coach_dance: 'А это танец пчёл: нажимай, когда кольцо сжимается до круга, и получи бонус к сбору на 30 минут.',
   coach_done: 'Готово! Дальше — твой рой. Подсказка с текущей задачей будет вверху экрана.',
   tap_hint: 'Нажмите', hatch_n_for: (n) => `Вывести ${n}`, room_left: (n) => `Свободно мест: ${n}`,
   welcome_new: 'Добро пожаловать в рой!', loading_world: 'Летим к улью…', need_school_hint: 'Нужна Школа пчёл',
@@ -3235,15 +3272,17 @@ Object.assign(I18N.en, {
   current_goal: 'Goal', next: 'Next', skip: 'Skip', got_it: 'Got it', lets_go: "Let's go!",
   coach_welcome_t: "Hi! I'm Buzzy", coach_welcome: "I'll help you grow your hive. It's simple: build combs, hatch bees and fly out for loot.",
   coach_res: 'This is the hive treasury: nectar, honey, wax and propolis. Numbers grow on their own while bees work.',
-  coach_cell: "Tap the highlighted empty comb. We'll build something here.",
+  coach_cell: 'Tap the highlighted empty comb to select it.',
+  coach_open: 'Comb selected. Now tap “Build”.',
+  coach_open_b: 'Building selected. Tap “Open”.',
   coach_pick: 'Pick the Wax Melter: it makes wax, and no wax means no new combs.',
-  coach_build: 'Building! Crews work on their own. While they are busy, add builds to the plan — up to 6.',
+  coach_build: 'Done! New combs build fast, upgrades take longer. While crews are busy, new builds queue up in the plan and start on their own.',
   coach_tap_b: 'Now tap any building, like the Honey Cauldron, to see what it does.',
   coach_binfo: 'This shows what the building does, its output and the upgrade cost. Upgrade up to level 3.',
   coach_bees: 'The Bees tab hatches new bees and shows who does what.',
   coach_map: 'The map shows meadows, hollows and treasures. Lookouts fly there.',
   coach_quests: 'Quests hold rewards. Claim them often — the hive grows faster.',
-  coach_dance: 'And this is the bee dance: tap in rhythm for a 30-minute gathering bonus.',
+  coach_dance: 'And this is the bee dance: tap when the ring shrinks onto the circle for a 30-minute gathering bonus.',
   coach_done: "Done! The swarm is yours. Your current goal stays at the top of the screen.",
   tap_hint: 'Tap', hatch_n_for: (n) => `Hatch ${n}`, room_left: (n) => `Free slots: ${n}`,
   welcome_new: 'Welcome to the swarm!', loading_world: 'Flying to the hive…', need_school_hint: 'Needs a Bee School',
@@ -3385,7 +3424,7 @@ const Scene3D = (() => {
   let Q = QUAL.high, qName = 'high';
   let renderer, scene, camera, controls, composer = null, canvas, raycaster, pointer, sun, getNow = () => Date.now();
   let tierGroups = [], pickers = [], anims = [], halo, activeTier = 1, paused = false;
-  let grassMat = null, prevCellKeys = null, jobsNow = [], hiveData = null;
+  let grassMat = null, prevCellKeys = null, jobsNow = [], hiveData = null, haloFill = null;
   const api = { onCellTap: null };
   const clock = { t: 0, last: performance.now() };
 
@@ -3504,11 +3543,11 @@ const Scene3D = (() => {
     const HORIZON = new THREE.Color('#CFE6EE');
     scene.background = HORIZON;
     scene.fog = new THREE.Fog(HORIZON, 26, 78);
-    camera = new THREE.PerspectiveCamera(45, 1, 0.1, 400);
+    camera = new THREE.PerspectiveCamera(45, 1, 0.3, 400);
     camera.position.set(0, 7.2, 9.6);
     controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true; controls.dampingFactor = 0.08; controls.enablePan = false;
-    controls.minDistance = 5; controls.maxDistance = 22;
+    controls.minDistance = 5; controls.maxDistance = 16;
     controls.minPolarAngle = 0.35; controls.maxPolarAngle = 1.32;
     controls.rotateSpeed = 0.7; controls.zoomSpeed = 0.8;
     controls.target.set(0, 0.3, 0.9);
@@ -3535,6 +3574,8 @@ const Scene3D = (() => {
     for (let t = 1; t <= 3; t++) { const g = new THREE.Group(); g.position.y = tierY(t); scene.add(g); tierGroups[t] = g; }
     halo = new THREE.Mesh(new THREE.RingGeometry(CELL_R * 0.82, CELL_R * 1.0, 6, 1), M.select);
     halo.rotation.x = -Math.PI / 2; halo.rotation.z = Math.PI / 6; halo.visible = false; halo.renderOrder = 5;
+    haloFill = new THREE.Mesh(new THREE.CircleGeometry(CELL_R * 0.84, 6), new THREE.MeshBasicMaterial({ color: '#FFF6C9', transparent: true, opacity: 0.2, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
+    haloFill.position.z = -0.01; halo.add(haloFill);
     scene.add(halo);
     Particles.init(); Bees.init(Q.bees, Q.shells); Butterflies.init(5); Pollen.init(160);
     if (Q.bloom) {
@@ -3552,9 +3593,12 @@ const Scene3D = (() => {
     canvas.addEventListener('pointerup', e => {
       if (!down) return;
       const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
-      if (moved < 10 && performance.now() - down.t < 500) tap(e);
+      if (moved < 16 && performance.now() - down.t < 700) tap(e);
       down = null;
     });
+    // если телефон отобрал у страницы графику (свернули надолго) — перезапускаем сцену
+    canvas.addEventListener('webglcontextlost', e => e.preventDefault());
+    canvas.addEventListener('webglcontextrestored', () => location.reload());
     window.addEventListener('resize', resize);
     resize();
     renderer.setAnimationLoop(loop);
@@ -3587,7 +3631,7 @@ const Scene3D = (() => {
     const r = Math.hypot(x, z);
     const hills = (fbm(x * 0.05 + 3, z * 0.05 + 7, 3) - 0.5) * 2.2 * Math.min(1, Math.max(0, (r - 9) / 18));
     const far = Math.max(0, r - 34) * 0.06 * (0.6 + fbm(x * 0.02, z * 0.02, 2));
-    return hills + far * far * 0.6;
+    return hills + far * far * 0.6 - 1.25; // поляна ниже среза пня: улей стоит на пне
   }
   function buildGround() {
     const geo = new THREE.RingGeometry(0.01, 110, 140, 70);
@@ -3609,7 +3653,15 @@ const Scene3D = (() => {
     }
     geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
     geo.computeVertexNormals();
-    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95,
+    const grassTex = canvasTex(256, 256, (g, w, h) => {
+      g.fillStyle = '#E6E6E6'; g.fillRect(0, 0, w, h);
+      for (let i = 0; i < 1400; i++) {
+        const x = rnd(i + 2000) * w, y = rnd(i + 2001) * h, len = 5 + rnd(i + 2002) * 9, an = rnd(i + 2003) * 6.28, l = rnd(i + 2004);
+        g.strokeStyle = l > 0.5 ? `rgba(255,255,220,${0.25 + l * 0.3})` : `rgba(20,60,10,${0.2 + l * 0.5})`; g.lineWidth = 1 + rnd(i + 2005) * 1.6; g.lineCap = 'round';
+        g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + Math.cos(an) * len * 0.5 + 2, y + Math.sin(an) * len * 0.5 - 2, x + Math.cos(an) * len, y + Math.sin(an) * len); g.stroke();
+      }
+    }, { repeat: [46, 46] });
+    const mat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.95, map: grassTex,
       normalMap: normalTex(128, 128, (x, y) => fbm(x * 16, y * 16, 3), 2, [40, 40]), normalScale: new THREE.Vector2(0.6, 0.6) });
     const g = new THREE.Mesh(geo, mat); g.receiveShadow = true;
     scene.add(g);
@@ -3651,7 +3703,7 @@ const Scene3D = (() => {
     for (let i = 0; i < 7; i++) {
       const a = i / 7 * Math.PI * 2 + rnd(i + 80) * 0.4;
       const pts = [];
-      for (let k = 0; k <= 6; k++) { const t = k / 6, r = 3.6 + t * (2 + rnd(i + 81) * 1.6); pts.push(new THREE.Vector3(Math.cos(a + t * 0.25) * r, -2.4 - t * 1.1 + Math.sin(t * Math.PI) * 0.25, Math.sin(a + t * 0.25) * r)); }
+      for (let k = 0; k <= 6; k++) { const t = k / 6, r = 3.3 + t * (2 + rnd(i + 81) * 1.6); pts.push(new THREE.Vector3(Math.cos(a + t * 0.25) * r, -0.7 - t * 0.85 + Math.sin(t * Math.PI) * 0.22, Math.sin(a + t * 0.25) * r)); }
       const root = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 16, 0.38, 8, false), M.bark);
       root.castShadow = true; root.receiveShadow = true;
       // сужение к концу
@@ -3668,20 +3720,24 @@ const Scene3D = (() => {
   }
 
   function buildGrass() {
+    // Лист-дуга: широкий у основания, сильно выгнут наружу — хорошо читается и сбоку, и сверху.
     const N = Q.grass;
     const geo = new THREE.BufferGeometry();
-    const segs = 4, verts = [], cols = [], idx = [];
-    const base = new THREE.Color('#24561C'), tip = new THREE.Color('#9CCB55');
+    const segs = 5, verts = [], cols = [], norms = [], idx = [];
+    const base = new THREE.Color('#1F4F18'), mid = new THREE.Color('#5FA83A'), tip = new THREE.Color('#C4E67A');
     for (let i = 0; i <= segs; i++) {
-      const t = i / segs, w = 0.045 * (1 - t * 0.92), bend = t * t * 0.18;
-      verts.push(-w, t, bend, w, t, bend);
-      const c = base.clone().lerp(tip, Math.pow(t, 0.8));
+      const t = i / segs, w = 0.5 * Math.sin(Math.min(1, t * 1.6 + 0.25) * Math.PI * 0.5) * (1 - Math.pow(t, 2.2));
+      const y = Math.sin(t * Math.PI * 0.5), z = (1 - Math.cos(t * Math.PI * 0.5)) + t * t * 0.25; // дуга: вверх, потом наружу и вниз
+      verts.push(-w, y, z, w, y, z);
+      const c = t < 0.5 ? base.clone().lerp(mid, t * 2) : mid.clone().lerp(tip, (t - 0.5) * 2);
       cols.push(c.r, c.g, c.b, c.r, c.g, c.b);
+      norms.push(-0.25, 0.9, 0.3, 0.25, 0.9, 0.3); // нормали вверх: лист освещён ровно, без чёрных изнанок
       if (i < segs) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
     }
     geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
     geo.setAttribute('color', new THREE.Float32BufferAttribute(cols, 3));
-    geo.setIndex(idx); geo.computeVertexNormals();
+    geo.setAttribute('normal', new THREE.Float32BufferAttribute(norms, 3));
+    geo.setIndex(idx);
     grassMat = new THREE.MeshLambertMaterial({ vertexColors: true, side: THREE.DoubleSide });
     grassMat.onBeforeCompile = (sh) => {
       sh.uniforms.uTime = { value: 0 };
@@ -3692,27 +3748,36 @@ const Scene3D = (() => {
           mvPosition = instanceMatrix * mvPosition;
         #endif
         float hh = position.y * position.y;
-        float wv = sin(uTime * 1.7 + mvPosition.x * 0.35 + mvPosition.z * 0.22) * 0.6 + sin(uTime * 3.1 + mvPosition.x * 1.3 + mvPosition.z) * 0.25;
-        mvPosition.x += wv * 0.16 * hh; mvPosition.z += wv * 0.07 * hh;
+        // порывы ветра бегут по поляне волнами — их видно и с высоты
+        float gust = sin(uTime * 1.3 - mvPosition.x * 0.22 - mvPosition.z * 0.15);
+        float wv = gust * 0.75 + sin(uTime * 2.9 + mvPosition.x * 1.1 + mvPosition.z * 0.8) * 0.25;
+        mvPosition.x += (0.06 + wv * 0.11) * hh; mvPosition.z += (0.03 + wv * 0.06) * hh; mvPosition.y -= max(0.0, wv) * 0.03 * hh;
         mvPosition = modelViewMatrix * mvPosition;
         gl_Position = projectionMatrix * mvPosition;`);
-      // мягкое затенение у земли
-      sh.fragmentShader = sh.fragmentShader;
+      // лист виден с обеих сторон, а освещаться должен одинаково: не переворачиваем нормаль у изнанки
+      sh.fragmentShader = sh.fragmentShader.replace('#include <normal_fragment_begin>', '#include <normal_fragment_begin>\n  normal = normalize( vNormal );');
     };
     const mesh = new THREE.InstancedMesh(geo, grassMat, N);
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), s = new THREE.Vector3(), v = new THREE.Vector3(), e = new THREE.Euler(), c = new THREE.Color();
     let n = 0, guard = 0;
-    while (n < N && guard++ < N * 4) {
-      const u = Math.random(), r = 3.55 + Math.pow(u, 1.6) * 26, a = Math.random() * Math.PI * 2;
-      const x = Math.cos(a) * r, z = Math.sin(a) * r;
-      const dens = fbm(x * 0.25, z * 0.25, 2);
-      if (dens < 0.32 && Math.random() < 0.7) continue;
-      const h = (0.14 + Math.random() * 0.24) * (0.7 + dens * 0.7) * (r < 6 ? 0.75 : 1);
-      e.set((Math.random() - 0.5) * 0.3, Math.random() * Math.PI * 2, (Math.random() - 0.5) * 0.3);
-      q.setFromEuler(e); s.set(1 + Math.random() * 0.6, h, 1); v.set(x, groundHeight(x, z) - 0.03, z);
-      m.compose(v, q, s); mesh.setMatrixAt(n, m);
-      c.setHSL(0.24 + (Math.random() - 0.5) * 0.06, 0.55, 0.42 + Math.random() * 0.12 + dens * 0.08); mesh.setColorAt(n, c.multiplyScalar(1.45));
-      n++;
+    while (n < N && guard++ < N) {
+      // кочка: 5–8 листьев розеткой во все стороны
+      const u = Math.random(), r = 3.75 + Math.pow(u, 1.5) * 24, a = Math.random() * Math.PI * 2;
+      const cx = Math.cos(a) * r, cz = Math.sin(a) * r;
+      const dens = fbm(cx * 0.25, cz * 0.25, 2);
+      if (dens < 0.3 && Math.random() < 0.6) continue;
+      const blades = 5 + Math.floor(Math.random() * 4), yaw0 = Math.random() * 7, tuftH = (0.2 + Math.random() * 0.22) * (0.75 + dens * 0.6);
+      const hue = 0.23 + (Math.random() - 0.5) * 0.07, lum = 0.4 + Math.random() * 0.14 + dens * 0.08;
+      for (let k = 0; k < blades && n < N; k++) {
+        const yaw = yaw0 + k / blades * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
+        const h = tuftH * (0.7 + Math.random() * 0.6), reach = h * (0.9 + Math.random() * 1.1), wdt = 0.07 + Math.random() * 0.06;
+        const x = cx + Math.sin(yaw) * 0.03, z = cz + Math.cos(yaw) * 0.03;
+        e.set((Math.random() - 0.5) * 0.25, yaw, 0); q.setFromEuler(e);
+        s.set(wdt, h, reach); v.set(x, groundHeight(x, z) - 0.02, z);
+        m.compose(v, q, s); mesh.setMatrixAt(n, m);
+        c.setHSL(hue, 0.55, lum + (Math.random() - 0.5) * 0.06); mesh.setColorAt(n, c.multiplyScalar(1.5));
+        n++;
+      }
     }
     mesh.count = n; mesh.receiveShadow = true; mesh.frustumCulled = false;
     scene.add(mesh);
@@ -3785,8 +3850,7 @@ const Scene3D = (() => {
   function buildTrees() {
     const protos = [makeTree(1, 'oak'), makeTree(7, 'oak'), makeTree(13, 'oak'), makeTree(3, 'pine')];
     for (let i = 0; i < 22; i++) {
-      const a = i / 22 * Math.PI * 2 + rnd(i + 300) * 0.25, d = 15 + rnd(i + 400) * 13;
-      if (Math.abs(Math.sin(a - 1.2)) < 0.25 && d < 20) continue; // просвет на камеру
+      const a = i / 22 * Math.PI * 2 + rnd(i + 300) * 0.25, d = 25 + rnd(i + 400) * 12; // дальше, чем может отъехать камера
       const proto = protos[i % 4], tree = proto.clone();
       const s = 1.1 + rnd(i + 500) * 0.8; tree.scale.set(s, s * (0.9 + rnd(i + 501) * 0.3), s);
       const x = Math.cos(a) * d, z = Math.sin(a) * d; tree.position.set(x, groundHeight(x, z) - 0.1, z); tree.rotation.y = rnd(i + 502) * 7;
@@ -3796,7 +3860,7 @@ const Scene3D = (() => {
     const far = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 2), new THREE.MeshStandardMaterial({ color: '#4F8A45', roughness: 1 }), 140);
     const m = new THREE.Matrix4(), q = new THREE.Quaternion(), v = new THREE.Vector3(), s = new THREE.Vector3();
     for (let i = 0; i < 140; i++) {
-      const a = rnd(i + 700) * Math.PI * 2, d = 36 + rnd(i + 701) * 16, x = Math.cos(a) * d, z = Math.sin(a) * d;
+      const a = rnd(i + 700) * Math.PI * 2, d = 42 + rnd(i + 701) * 14, x = Math.cos(a) * d, z = Math.sin(a) * d;
       const sc = 2 + rnd(i + 702) * 2.4; v.set(x, groundHeight(x, z) + sc * 1.1, z); s.set(sc, sc * 1.25, sc); m.compose(v, q, s); far.setMatrixAt(i, m);
     }
     scene.add(far);
@@ -3860,6 +3924,12 @@ const Scene3D = (() => {
     g.add(plate);
     const walls = new THREE.Mesh(combGeo, M.wax); walls.castShadow = true; walls.receiveShadow = true;
     g.add(walls);
+    for (let i = 0; i < 9; i++) { // подтёки мёда по краю
+      const a = Math.PI / 6 + Math.floor(rnd(i + 30 * t) * 6) * Math.PI / 3, off = (rnd(i + 31 * t) - 0.5) * 2.4, len = 0.12 + rnd(i + 32 * t) * 0.3;
+      const ex = Math.cos(a) * 2.9 - Math.sin(a) * off, ez = Math.sin(a) * 2.9 + Math.cos(a) * off;
+      const d = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, len, 4, 8), M.honey); d.position.set(ex, -0.16 - len / 2, ez); g.add(d);
+      const dr = new THREE.Mesh(new THREE.SphereGeometry(0.065, 10, 8), M.honey); dr.position.set(ex, -0.2 - len, ez); g.add(dr);
+    }
     if (t > 1) {
       // восковые колонны с наплывами
       for (let i = 0; i < 6; i++) {
@@ -4167,16 +4237,18 @@ const Scene3D = (() => {
     for (let k = 1; k <= 3; k++) tierGroups[k].visible = k <= t;
     focusY = tierY(t) + 0.3;
     if (!animate) { controls.target.y = focusY; }
-    halo.visible = false;
+    haloOn = false;
   }
   let focusY = 0.3, focusXZ = null, idleAt = performance.now();
+  let haloOn = false, haloK = 0, haloPop = 1; const haloTarget = new THREE.Vector3();
 
   function select(t, idx) {
-    if (idx === null || idx === undefined) { halo.visible = false; focusXZ = null; return; }
+    if (idx === null || idx === undefined) { haloOn = false; focusXZ = null; return; }
     const [x, z] = pos(idx);
-    halo.position.set(x, tierY(t) + WALL_H + 0.04, z);
-    halo.visible = true;
-    focusXZ = { x: x * 0.6, z: z * 0.6 + 0.6 };
+    haloTarget.set(x, tierY(t) + WALL_H + 0.04, z);
+    if (!haloOn && haloK <= 0.01) halo.position.copy(haloTarget); // первое появление — сразу на месте, дальше плавно переезжает
+    haloOn = true; haloPop = 0;
+    focusXZ = { x: x * 0.35, z: z * 0.35 + 0.9 };
   }
   function cellScreenPos(t, idx) {
     const [x, z] = pos(idx);
@@ -4192,12 +4264,8 @@ const Scene3D = (() => {
     raycaster.setFromCamera(pointer, camera);
     if (Bees.tap(raycaster.ray)) return;
     const idx = cellAtRay(raycaster.ray, activeTier);
-    if (idx >= 0 && api.onCellTap) {
-      const tier = activeTier;
-      select(tier, idx);
-      Particles.burst(new THREE.Vector3(...[pos(idx)[0], tierY(tier) + 0.3, pos(idx)[1]]), { n: 8, color: '#FFFFFF', speed: 0.8, size: 0.06, life: 0.5 });
-      api.onCellTap(tier, idx);
-    }
+    if (idx >= 0) { if (api.onCellTap) api.onCellTap(activeTier, idx); }
+    else if (api.onEmptyTap) api.onEmptyTap();
   }
 
   /** Сота под лучом: пересечение с плоскостью верха стенок и округление гекс-координат. */
@@ -4304,7 +4372,7 @@ const Scene3D = (() => {
       list.forEach(b => {
         b.a += b.sp * 0.016;
         const x = Math.cos(b.a) * b.rr + Math.sin(t * 0.7 + b.ph) * 1.2, z = Math.sin(b.a) * b.rr + Math.cos(t * 0.5 + b.ph) * 1.2;
-        const y = b.h + Math.abs(Math.sin(t * 2 + b.ph)) * 0.4;
+        const y = b.h - 1.0 + Math.abs(Math.sin(t * 2 + b.ph)) * 0.4;
         b.g.position.set(x, y, z); b.g.rotation.y = -b.a + Math.PI;
         const f = Math.sin(t * 14 + b.ph) * 1.1; b.l.rotation.x = 0; b.l.rotation.y = f; b.r.rotation.y = -f;
       });
@@ -4416,7 +4484,7 @@ const Scene3D = (() => {
     function think(b) {
       const r = Math.random();
       if (sites.cells.length && r < 0.45) { b.state = 'visit'; b.target.copy(pick(sites.cells)).add(new THREE.Vector3((Math.random() - .5) * 0.3, WALL_H + 0.42, (Math.random() - .5) * 0.3)); b.timer = 8; }
-      else if (r < 0.7) { b.state = 'forage'; const a = Math.random() * 7, d = 9 + Math.random() * 8; b.target.set(Math.cos(a) * d, 0.7 + Math.random() * 0.5, Math.sin(a) * d); b.timer = 20; }
+      else if (r < 0.7) { b.state = 'forage'; const a = Math.random() * 7, d = 9 + Math.random() * 8; b.target.set(Math.cos(a) * d, -0.6 + Math.random() * 0.5, Math.sin(a) * d); b.timer = 20; }
       else { b.state = 'orbit'; b.timer = 4 + Math.random() * 6; b.rad = 2 + Math.random() * 3.2; b.h = tierY(activeTier) + 0.8 + Math.random() * 1.8; }
     }
     function steer(b, tp, maxSp, dt, k = 3) {
@@ -4463,7 +4531,7 @@ const Scene3D = (() => {
         // покачивание в полёте
         if (flying) { b.v.x += Math.sin(t * 3.1 + b.seed) * 0.4 * dt; b.v.y += Math.sin(t * 4.3 + b.seed * 2) * 0.5 * dt; }
         b.p.addScaledVector(b.v, dt);
-        if (landedY === null && b.p.y < 0.35) b.p.y = 0.35;
+        { const minY = Math.hypot(b.p.x, b.p.z) > 3.7 ? -0.85 : 0.35; if (landedY === null && b.p.y < minY) b.p.y = minY; }
         // ориентация по скорости + крен
         const sp = b.v.length();
         if (sp > 0.05) {
@@ -4510,7 +4578,7 @@ const Scene3D = (() => {
       }
     }
     function tap(ray) {
-      let best = null, bd = 0.35;
+      let best = null, bd = 0.16;
       for (let n = 0; n < count; n++) { const d = ray.distanceToPoint(bees[n].p); if (d < bd) { bd = d; best = bees[n]; } }
       if (!best) return false;
       best.loop = 1.1; best.ang = Math.atan2(best.p.z, best.p.x); best.look = 1;
@@ -4618,23 +4686,52 @@ const Scene3D = (() => {
       }
     }
     if (anims.some(a => a.done)) anims = anims.filter(a => !a.done);
-    if (halo.visible) { halo.material.opacity = 0.55 + Math.sin(t * 5) * 0.35; halo.scale.setScalar(1 + Math.sin(t * 5) * 0.03); }
+    // выделение соты: плавное появление, «пружинка» и мягкое дыхание
+    haloK += ((haloOn ? 1 : 0) - haloK) * (1 - Math.exp(-dt * 10));
+    haloPop = Math.min(1, haloPop + dt * 3.2);
+    halo.visible = haloK > 0.02;
+    if (halo.visible) {
+      halo.position.lerp(haloTarget, 1 - Math.exp(-dt * 16));
+      const pk = 1 - haloPop, spring = 1 + Math.sin(haloPop * Math.PI * 2.2) * 0.12 * pk + pk * 0.35;
+      halo.scale.setScalar(spring * (1 + Math.sin(t * 2.4) * 0.015));
+      halo.material.opacity = haloK * (0.8 + Math.sin(t * 2.4) * 0.15);
+      haloFill.material.opacity = haloK * (0.16 + Math.sin(t * 2.4) * 0.05 + pk * 0.3);
+    }
     Bees.update(dt, t);
     Particles.update(dt);
     Pollen.update(t);
     Butterflies.update(t);
     if (composer) composer.render(); else renderer.render(scene, camera);
+    adapt(dt);
+  }
+  // Следим за частотой кадров и сами снижаем нагрузку: чёткость → свечение → тени через кадр.
+  let fAcc = 0, fN = 0, curDpr = 0, slowTicks = 0, shadowSkip = 1, frameNo = 0;
+  function adapt(dt) {
+    frameNo++;
+    if (shadowSkip > 1) { renderer.shadowMap.needsUpdate = frameNo % shadowSkip === 0; }
+    fAcc += dt; fN++;
+    if (fAcc < 2) return;
+    const fps = fN / fAcc; fAcc = 0; fN = 0;
+    if (clock.t < 4) return; // первые секунды идёт прогрев
+    if (!curDpr) curDpr = renderer.getPixelRatio();
+    if (fps < 40) slowTicks++; else { slowTicks = 0; return; }
+    if (slowTicks < 2) return;
+    slowTicks = 0;
+    if (curDpr > 1) { curDpr = Math.max(1, curDpr - 0.25); renderer.setPixelRatio(curDpr); if (composer) composer.setPixelRatio(curDpr); }
+    else if (composer) { composer = null; }
+    else if (shadowSkip === 1) { shadowSkip = 3; renderer.shadowMap.autoUpdate = false; }
   }
 
   function pause(p) { paused = p; renderer && renderer.setAnimationLoop(p ? null : loop); if (!p) clock.last = performance.now(); }
   function setQuality(q) { localStorage.setItem('mh_quality', q); location.reload(); }
 
-  return Object.assign(api, { init, render, setTier, select, resize, pause, celebrate, cellScreenPos, setQuality, HEXQ });
+  const camInfo = () => ({ dist: +camera.position.distanceTo(controls.target).toFixed(2), pos: camera.position.toArray().map(v => +v.toFixed(2)) });
+  return Object.assign(api, { init, render, setTier, select, resize, pause, celebrate, cellScreenPos, setQuality, camInfo, HEXQ });
 })();
 
 // ---------------------------------------------------------------- карта мира: рисованная, 50×50
 const MapView = (() => {
-  const T = 40; // пикселей на клетку в заранее нарисованном слое
+  const T = 48; // пикселей на клетку в заранее нарисованном слое
   const BASE = { M: '#93C25B', B: '#A9CF62', E: '#79AE4C', F: '#4F8B3E', S: '#7FC6DD', R: '#A59C8C', W: '#5DA9D6', '?': '#93C25B' };
   let cv, ctx, data = null, st = null, sel = null, scale = 22, ox = 0, oy = 0, dpr = 1, visible = false, getNow = () => Date.now();
   let terrainLayer = null, fogLayer = null, fogKey = '', gridKey = '', raf = null, vel = { x: 0, y: 0 };
@@ -4748,6 +4845,13 @@ const MapView = (() => {
       g.fillStyle = R(i, 3) > 0.5 ? 'rgba(255,255,220,0.07)' : 'rgba(30,60,20,0.07)';
       g.beginPath(); g.ellipse(x, y, 6 + R(i, 4) * 14, 3 + R(i, 5) * 6, R(i, 6) * 3, 0, 7); g.fill();
     }
+    // 2б) тёмный подлесок под лесом и светлые поляны на лугах — карта читается пятнами
+    for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+      const t = d.grid[y * n + x], cx = (x + 0.5) * T, cy = (y + 0.5) * T;
+      if (t === 'F') { const gr = g.createRadialGradient(cx, cy, 2, cx, cy, T * 0.95); gr.addColorStop(0, 'rgba(24,62,28,0.55)'); gr.addColorStop(1, 'rgba(24,62,28,0)'); g.fillStyle = gr; g.fillRect(cx - T, cy - T, T * 2, T * 2); }
+      else if (t === 'B') { const gr = g.createRadialGradient(cx, cy, 2, cx, cy, T * 0.9); gr.addColorStop(0, 'rgba(255,244,170,0.4)'); gr.addColorStop(1, 'rgba(255,244,170,0)'); g.fillStyle = gr; g.fillRect(cx - T, cy - T, T * 2, T * 2); }
+      else if (t === 'R') { const gr = g.createRadialGradient(cx, cy, 2, cx, cy, T * 0.9); gr.addColorStop(0, 'rgba(150,140,125,0.6)'); gr.addColorStop(1, 'rgba(150,140,125,0)'); g.fillStyle = gr; g.fillRect(cx - T, cy - T, T * 2, T * 2); }
+    }
     // 3) вода и родники с берегом
     const isW = (x, y) => x >= 0 && y >= 0 && x < n && y < n && d.grid[y * n + x] === 'W';
     for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
@@ -4801,10 +4905,12 @@ const MapView = (() => {
         if (R(x, y, 43) > 0.4) tree(x0 + T * 0.45, y0 + T * 0.75, T * 0.38, true);
       } else if (t === 'R') {
         for (let k = 0; k < 2; k++) {
-          const px = x0 + T * (0.3 + R(x, y, 50 + k) * 0.4), py = y0 + T * (0.35 + k * 0.3), r = T * (0.2 + R(x, y, 52 + k) * 0.1);
-          g.fillStyle = 'rgba(0,0,0,0.2)'; g.beginPath(); g.ellipse(px + 3, py + r * 0.6, r, r * 0.4, 0, 0, 7); g.fill();
-          const gr = g.createLinearGradient(px, py - r, px, py + r); gr.addColorStop(0, '#D6CFC2'); gr.addColorStop(1, '#8C8273');
-          g.fillStyle = gr; g.beginPath(); g.moveTo(px - r, py + r * 0.5); g.lineTo(px - r * 0.7, py - r * 0.4); g.lineTo(px + r * 0.1, py - r * 0.8); g.lineTo(px + r * 0.9, py - r * 0.2); g.lineTo(px + r, py + r * 0.5); g.closePath(); g.fill();
+          const px = x0 + T * (0.3 + R(x, y, 50 + k) * 0.4), py = y0 + T * (0.5 + k * 0.28), r = T * (0.3 + R(x, y, 52 + k) * 0.14);
+          g.fillStyle = 'rgba(0,0,0,0.2)'; g.beginPath(); g.ellipse(px + r * 0.3, py + r * 0.45, r * 1.1, r * 0.3, 0, 0, 7); g.fill();
+          // освещённый и теневой склоны
+          g.fillStyle = '#B9B1A3'; g.beginPath(); g.moveTo(px - r, py + r * 0.5); g.lineTo(px - r * 0.1, py - r); g.lineTo(px + r * 0.1, py + r * 0.5); g.closePath(); g.fill();
+          g.fillStyle = '#857C6E'; g.beginPath(); g.moveTo(px - r * 0.1, py - r); g.lineTo(px + r, py + r * 0.5); g.lineTo(px + r * 0.1, py + r * 0.5); g.closePath(); g.fill();
+          g.fillStyle = '#FFFFFF'; g.beginPath(); g.moveTo(px - r * 0.1, py - r); g.lineTo(px - r * 0.42, py - r * 0.42); g.lineTo(px - r * 0.18, py - r * 0.5); g.lineTo(px - r * 0.02, py - r * 0.36); g.lineTo(px + r * 0.14, py - r * 0.52); g.lineTo(px + r * 0.26, py - r * 0.44); g.closePath(); g.fill();
         }
       } else if (t === 'S') {
         const cx = x0 + T / 2, cy = y0 + T / 2;
@@ -4923,7 +5029,21 @@ const MapView = (() => {
       for (let y = y0; y <= y1; y++) { ctx.moveTo(ox + x0 * s, oy + y * s); ctx.lineTo(ox + x1 * s, oy + y * s); }
       ctx.stroke();
     }
-    if (fogLayer) ctx.drawImage(fogLayer, ox, oy, n * s, n * s);
+    // блики на воде (только видимые клетки)
+    if (s >= 16) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = Math.max(1, s * 0.05); ctx.lineCap = 'round';
+      const vx0 = Math.max(0, Math.floor(-ox / s)), vx1 = Math.min(n, Math.ceil((w - ox) / s)), vy0 = Math.max(0, Math.floor(-oy / s)), vy1 = Math.min(n, Math.ceil((h - oy) / s));
+      for (let y = vy0; y < vy1; y++) for (let x = vx0; x < vx1; x++) {
+        if (data.grid[y * n + x] !== 'W') continue;
+        const ph = (t * 0.5 + R(x, y, 7)) % 1, cx = ox + (x + 0.25 + R(x, y, 8) * 0.5) * s + ph * s * 0.25, cy = oy + (y + 0.3 + R(x, y, 9) * 0.4) * s;
+        ctx.globalAlpha = Math.sin(ph * Math.PI) * 0.9; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + s * 0.18, cy); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    if (fogLayer) { // облака тумана медленно дышат
+      ctx.drawImage(fogLayer, ox, oy, n * s, n * s);
+      ctx.globalAlpha = 0.5; ctx.drawImage(fogLayer, ox + Math.sin(t * 0.25) * s * 0.3, oy + Math.cos(t * 0.2) * s * 0.2, n * s, n * s); ctx.globalAlpha = 1;
+    }
     (data.objects || []).forEach(o => objIcon(o, ox + (o.x + 0.5) * s, oy + (o.y + 0.5) * s, Math.max(14, s), t));
     (data.hives || []).slice().sort((a, b) => a.y - b.y).forEach(hv => {
       const cx = ox + (hv.x + 0.5) * s, cy = oy + (hv.y + 0.5) * s, sz = Math.max(16, s * (hv.own ? 1.15 : 0.95));
@@ -4953,6 +5073,7 @@ const MapView = (() => {
       ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(-r * 0.86, -r * 0.16, r * 0.08, 0, 7); ctx.arc(-r * 0.6, -r * 0.18, r * 0.08, 0, 7); ctx.fill();
       ctx.restore();
     });
+    { const vg = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.45, w / 2, h / 2, Math.max(w, h) * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(30,40,20,0.22)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, w, h); }
     if (sel) {
       const k = Math.min(1, (performance.now() - sel.t0) / 220), x = ox + sel.x * s, y = oy + sel.y * s, gr = (1 - k) * 6;
       ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 3; ctx.shadowColor = 'rgba(0,0,0,0.35)'; ctx.shadowBlur = 6;
@@ -4993,10 +5114,12 @@ const Coach = (() => {
   const INTRO = () => [
     { title: T('coach_welcome_t'), text: T('coach_welcome'), btn: T('lets_go') },
     { text: T('coach_res'), target: () => rectOf($('resbar'), 4), btn: T('next') },
-    { text: T('coach_cell'), target: () => cellRect(1, coachCell), wait: 'sheet:build', pass: true, enter: () => { coachCell = emptyCell(); } },
+    { text: T('coach_cell'), target: () => cellRect(1, coachCell), wait: 'select', pass: true, enter: () => { coachCell = emptyCell(); } },
+    { text: T('coach_open'), target: () => rectOf($('selOpen'), 6), wait: 'sheet:build', pass: true, top: true },
     { text: T('coach_pick'), target: () => rectOf($('bc_wax_shop'), 4), wait: 'planNew', pass: true, top: true, enter: () => { const c = $('bc_wax_shop'); if (c) { c.scrollIntoView({ block: 'center' }); c.classList.add('coach-target'); } } },
-    { text: T('coach_build'), target: () => rectOf($('buildCard'), 4), btn: T('next') },
-    { text: T('coach_tap_b'), target: () => cellRect(1, builtCell('meadery')), wait: 'sheet:building', pass: true },
+    { text: T('coach_build'), btn: T('next') },
+    { text: T('coach_tap_b'), target: () => cellRect(1, builtCell('meadery')), wait: 'select', pass: true },
+    { text: T('coach_open_b'), target: () => rectOf($('selOpen'), 6), wait: 'sheet:building', pass: true, top: true },
     { text: T('coach_binfo'), target: () => rectOf(document.getElementById('sheetBody'), 0), btn: T('next'), top: true },
     { text: T('coach_bees'), target: () => rectOf(navBtn('bees'), 2), btn: T('next'), enter: () => closeSheet(), top: true },
     { text: T('coach_map'), target: () => rectOf(navBtn('map'), 2), btn: T('next'), top: true },
@@ -5079,7 +5202,7 @@ const Coach = (() => {
     const s = steps[i]; if (!s) return;
     const key = payload !== undefined && payload !== '' ? `${name}:${payload}` : name;
     if (s.wait && (s.wait === key || s.wait === name)) setTimeout(next, s.wait === 'planNew' ? 400 : 250);
-    else if (single && (name === 'sheet' || name === 'nav' || name === 'dance' || name === 'view')) finish();
+    else if (single && (name === 'sheet' || name === 'nav' || name === 'dance' || name === 'view' || name === 'select')) finish();
   }
   function onState() { if (steps[i]) draw(false); }
   return { start, hintFor, onEvent, onState, active: () => i >= 0 && !!steps[i] };
@@ -5259,9 +5382,10 @@ function toast(msg, kind = '') {
 // ================================================================ формулы для подсказок (как на сервере)
 function costNew(b, tier) { const c = cfg(); return scaleCost(c.buildings[b].cost, Math.pow(c.growthNew[tier], hive().k[tier]) * S.seasonCostMult); }
 function scaleCost(c, m) { const o = {}; for (const k in c) o[k] = Math.ceil(c[k] * m); return o; }
-function timeNew(tier, k) { const c = cfg(); return Math.min(c.maxBuildSec, Math.round(c.timeBaseNewSec[tier] * Math.pow(c.timeGrowth[tier], k))); }
+function timeBase(tier, k) { const c = cfg(); return Math.min(c.maxBuildSec, Math.round(c.timeBaseNewSec[tier] * Math.pow(c.timeGrowth[tier], k))); }
+function timeNew(tier, k) { const sp = (cfg().newBuildSpeed || {})[tier] || 1; return sp === 1 ? timeBase(tier, k) : Math.max(4, Math.round(timeBase(tier, k) / sp)); }
 function costUpg(b, to) { const c = cfg(); return scaleCost(c.buildings[b].cost, c.upgCostMult[to] * S.seasonCostMult); }
-function timeUpg(tier, to) { const c = cfg(); return Math.round(Math.min(c.maxBuildSec, Math.max(c.minUpgSecPerTier * tier, timeNew(tier, hive().count[tier] || 0) * c.upgTimeMult[to]))); }
+function timeUpg(tier, to) { const c = cfg(); return Math.round(Math.min(c.maxBuildSec, Math.max(c.minUpgSecPerTier * tier, timeBase(tier, hive().count[tier] || 0) * c.upgTimeMult[to]))); }
 const AX = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
 function neighbors(tier, idx) {
   const h = Scene3D.HEXQ[idx], out = [];
@@ -5310,7 +5434,7 @@ function refreshView(light) {
   const h = hive();
   const sig = JSON.stringify([h.cells, h.jobs.map(j => [j.id, j.end]), h.plan.map(p => p.id), h.tiers, h.gate, Math.round(Object.values(h.bees).reduce((a, b) => a + b, 0) / 10)]);
   if (sig !== sceneSig) { sceneSig = sig; Scene3D.render(h, S.cfg, activeTier); }
-  renderHUD(); renderTiers(); renderBuildCard(); renderDance(); renderNavDots(); renderGoal();
+  renderHUD(); renderTiers(); renderBuildCard(); renderDance(); renderNavDots(); renderGoal(); renderSelBar();
   if (view === 'map') MapView.setState(S);
   if (sheet && !light) refreshSheet();
   (S.notices || []).forEach(n => toast(T('notice_' + n.code)));
@@ -5358,10 +5482,10 @@ const capOf = (k) => k === 'nectar' ? S.caps.nectar : k === 'honey' ? S.caps.hon
 
 function renderGoal() {
   const g = $('goal'), tut = S.tutorial;
-  if (!tut || tut.done || view !== 'hive' || Coach.active()) { g.classList.add('hidden'); return; }
+  if (!tut || tut.done || view !== 'hive' || Coach.active() || !localStorage.getItem('mh_coach') || selCell) { g.classList.add('hidden'); return; }
   g.classList.remove('hidden');
   g.classList.toggle('ready', !!tut.met);
-  const html = `<span class="g-ic">${tut.met ? ui('gift') : useIcon('m-bee', '')}</span><span class="grow"><span class="g-t">${tut.met ? L('Готово! Заберите награду', 'Done! Claim the reward') : `${T('current_goal')} ${tut.step + 1}/${tut.total}`}</span><span class="g-d" style="display:block">${T('tut_' + tut.id)}</span></span>${tut.met ? costHtml(tut.rew, null) : ui('chev')}`;
+  const html = `<span class="g-ic">${tut.met ? ui('gift') : useIcon('m-bee', '')}</span><span class="grow"><span class="g-d">${tut.met ? L('Задание выполнено — заберите награду', 'Task done — claim your reward') : T('tut_' + tut.id)}</span></span>${tut.met ? costHtml(tut.rew, null) : ui('chev')}`;
   if (g.dataset.h !== html) { g.dataset.h = html; g.innerHTML = html; }
 }
 
@@ -5382,7 +5506,9 @@ function jobLabel(j) {
 }
 function renderBuildCard() {
   const h = hive(), el = $('buildCard');
-  el.classList.toggle('hidden', view !== 'hive');
+  const busy = h.jobs.length > 0 || h.plan.length > 0;
+  el.classList.toggle('hidden', view !== 'hive' || !busy || !!selCell);
+  if (!busy) return;
   let html;
   if (h.jobs.length) {
     html = h.jobs.slice(0, 2).map(j => {
@@ -5391,8 +5517,8 @@ function renderBuildCard() {
         <div class="bar" style="margin-top:6px"><i data-start="${j.start}" data-end="${j.end}" style="width:${p * 100}%"></i></div></div>`;
     }).join('') + (h.jobs.length > 2 || h.plan.length ? `<div class="bc-row"><span class="bc-name tiny muted" style="font-weight:500">${h.jobs.length > 2 ? L(`И ещё ${h.jobs.length - 2}`, `And ${h.jobs.length - 2} more`) : ''}</span><span class="bc-plan">${T('plan_short')} ${h.plan.length}/${h.planCap}</span></div>` : '');
   } else {
-    const waiting = h.plan.length ? (Object.keys(h.plan[0].missing || {}).length ? T('waits_res') : T('waits_busy')) : T('build_status_hint');
-    html = `<div class="bc-idle">${useIcon('b-empty', 'b-ic')}<span class="grow"><b>${T('build_status_idle')}</b><span class="hint">${waiting}</span></span>${h.plan.length ? `<span class="bc-plan">${T('plan_short')} ${h.plan.length}/${h.planCap}</span>` : ''}</div>`;
+    const p0 = h.plan[0], waiting = Object.keys(p0.missing || {}).length ? T('waits_res') : T('waits_busy');
+    html = `<div class="bc-row">${buildingIcon(p0.kind === 'gate' ? 'gate' : p0.b)}<span class="bc-name">${waiting}</span><span class="bc-plan">${T('plan_short')} ${h.plan.length}/${h.planCap}</span></div>`;
   }
   const key = html.replace(/data-end="\d+"|style="width:[^"]*"|>[^<]*<\/span><\/div>/g, '');
   if (el.dataset.k !== key) { el.dataset.k = key; el.innerHTML = html; }
@@ -5433,13 +5559,15 @@ function renderNavDots() {
 }
 
 // ================================================================ панели
-let sheet = null, sheetTimer = null;
+let sheet = null, sheetTimer = null, sheetOpenedAt = 0;
 function openSheet(opts) {
   const prev = sheet;
   sheet = Object.assign({ nav: null, back: null }, opts);
   const wrap = $('sheetWrap');
+  sheetOpenedAt = Date.now();
   wrap.classList.remove('hidden');
   $('sheet').classList.toggle('peek', !!opts.peek);
+  $('selBar').classList.add('hidden');
   requestAnimationFrame(() => wrap.classList.add('open'));
   $('sheetBack').classList.toggle('hidden', !sheet.back);
   refreshSheet(true);
@@ -5464,10 +5592,49 @@ function closeSheet() {
   const wrap = $('sheetWrap');
   wrap.classList.remove('open');
   setTimeout(() => { if (!sheet) wrap.classList.add('hidden'); }, 300);
-  Scene3D.select(null);
+  selCell = null; Scene3D.select(null);
   if (view === 'map') MapView.clearSel();
-  renderNavDots();
+  renderNavDots(); renderBuildCard(); renderGoal(); renderSelBar();
   Coach.onEvent('sheetClosed');
+}
+
+// ---------- выбор соты: первое нажатие выделяет, кнопка или второе нажатие открывает
+let selCell = null;
+function selectCell(t, i) {
+  haptic();
+  if (selCell && selCell.t === t && selCell.i === i) { openSelected(); return; }
+  selCell = { t, i };
+  Scene3D.select(t, i);
+  renderSelBar(); renderBuildCard(); renderGoal();
+  Coach.onEvent('select');
+}
+function clearSel() {
+  if (!selCell) return;
+  selCell = null; Scene3D.select(null);
+  renderSelBar(); renderBuildCard(); renderGoal();
+}
+function openSelected() { if (selCell) cellSheet(selCell.t, selCell.i); }
+function renderSelBar() {
+  const el = $('selBar');
+  const show = !!selCell && view === 'hive' && !sheet;
+  el.classList.toggle('hidden', !show);
+  if (!show) { el.dataset.k = ''; return; }
+  const { t, i } = selCell, h = hive(), kind = cellKind(t, i);
+  const c = h.cells.find(x => x.tier === t && x.idx === i);
+  const pend = h.jobs.find(x => x.tier === t && x.idx === i) || h.plan.find(x => x.tier === t && x.idx === i);
+  let icon, title, subt, btn;
+  if (i === 0) { icon = buildingIcon(t === 1 ? 'gate' : 'hub'); title = cellTitle(t, i); subt = t === 1 ? L(`Уровень ${h.gate} из 3`, `Level ${h.gate} of 3`) : ''; btn = L('Открыть', 'Open'); }
+  else if (c) { icon = buildingIcon(c.b); title = bName(c.b); subt = `${dotsHtml(c.l)} ${T('level_of', c.l)}`; btn = L('Открыть', 'Open'); }
+  else if (pend) { icon = buildingIcon(pend.b); title = bName(pend.b); subt = h.jobs.includes(pend) ? T('building_now') : T('in_plan'); btn = L('Открыть', 'Open'); }
+  else { icon = useIcon('b-empty', 'b-ic'); title = L('Пустая сота', 'Empty comb'); subt = L('Здесь можно построить здание', 'You can build here'); btn = T('build_btn'); }
+  const html = `<span class="sb-ic">${icon}</span><span class="grow"><b>${esc(title)}</b><span class="sb-sub">${subt}</span></span>
+    <button class="btn primary" id="selOpen">${btn}</button><button class="icon-btn" id="selClose" aria-label="${T('close')}">${ui('close')}</button>`;
+  const key = kind + '|' + html;
+  if (el.dataset.k !== key) {
+    const fresh = !el.dataset.k;
+    el.dataset.k = key; el.innerHTML = html;
+    if (fresh) { el.classList.remove('in'); void el.offsetWidth; el.classList.add('in'); }
+  }
 }
 
 // ---------- сота улья: здание, стройка или каталог
@@ -5665,11 +5832,13 @@ function beesSheet() {
         ${h.hatchQ.map(x => `<div class="row small" style="margin-top:8px">${roleIcon(x.role, 'ic')}<span class="grow">${T('role_' + x.role)}</span><b class="num">${x.n}</b></div>`).join('')}
         <button class="btn small" style="margin-top:12px" data-act="hatchCancel">${T('cancel_queue')}</button></div>`;
     }
-    html += `<div class="sec">${T('land')}</div><div class="card"><div class="small muted">${T('land_cells', h.land.cells, h.land.shared)}</div>
-      <div class="row" style="margin-top:8px;gap:16px"><span class="cost"><span>${resIcon('nectar')}${Math.round(h.land.nectar)}${T('per_h_short')}</span><span>${resIcon('propolis')}${Math.round(h.land.propolis)}${T('per_h_short')}</span></span></div>
-      ${h.land.spring ? `<div class="small good" style="margin-top:6px">${T('spring_near')}</div>` : ''}
-      <label class="small" style="display:block;margin-top:14px">${T('propolis_share')}: <b>${Math.round(h.pShare * 100)}%</b>
-      <input type="range" min="0" max="${Math.round(c.maxPropolisShare * 100)}" step="5" value="${Math.round(h.pShare * 100)}" data-act="pshare"></label></div>
+    const presets = [[0, L('Только нектар', 'Nectar only')], [0.2, L('Немного прополиса', 'Some propolis')], [0.5, L('Много прополиса', 'Lots of propolis')]];
+    const curP = presets.reduce((best, x) => Math.abs(x[0] - h.pShare) < Math.abs(best[0] - h.pShare) ? x : best, presets[0])[0];
+    const rate = (k) => `${S.rates[k] >= 0 ? '+' : ''}${Math.round(S.rates[k])}${T('per_h_short')}`;
+    html += `<div class="sec">${L('Что собирают летуньи', 'What foragers gather')}</div><div class="card">
+      <div class="seg3">${presets.map(([v, name]) => `<button class="${v === curP ? 'on' : ''}" data-act="pshare" data-v="${v}">${name}</button>`).join('')}</div>
+      <div class="row" style="margin-top:12px"><span class="cost"><span>${resIcon('nectar')}${rate('nectar')}</span><span>${resIcon('propolis')}${rate('propolis')}</span></span></div>
+      <div class="tiny muted" style="margin-top:8px">${L('Нектар превращается в мёд. Прополис нужен, чтобы открыть ярус 2 и улучшать врата.', 'Nectar becomes honey. Propolis unlocks tier 2 and upgrades the gate.')}</div></div>
       <p class="tiny muted">${T('retrain_moved')}</p>`;
     return html;
   } });
@@ -5860,6 +6029,7 @@ async function act(el) {
     }
     case 'hatch': if (doAction('hatch', { role: hatchRole, n: hatchN })) { toast(L(`В колыбели: ${hatchN}`, `Hatching: ${hatchN}`), 'good'); Scene3D.celebrate(1, 0, 'hatch'); } break;
     case 'hatchCancel': doAction('hatchCancel'); break;
+    case 'pshare': doAction('propolisShare', { share: +d.v }); break;
     case 'sFrom': school.from = d.role; refreshSheet(); break;
     case 'sTo': school.to = d.role; refreshSheet(); break;
     case 'sN': school.n = Math.max(1, school.n + (+d.d)); refreshSheet(); break;
@@ -5951,8 +6121,9 @@ function openDance() {
   const el = $('dance'); el.classList.remove('hidden');
   const e = energyNow(), c = cfg(), buff = activeBuff();
   const canStart = !buff && e >= c.danceCost;
-  el.innerHTML = `<div class="stage"><div class="ring"></div><svg class="dbee" viewBox="0 0 64 64"><use href="#m-bee"/></svg></div>
-    <h3>${T('dance_title')}</h3><p class="hint">${T('dance_hint')}</p>
+  el.innerHTML = `<h3>${T('dance_title')}</h3>
+    <div class="stage demo"><div class="target"></div><div class="approach"></div><svg class="dbee" viewBox="0 0 64 64"><use href="#m-bee"/></svg></div>
+    <p class="hint"><b>${L('Нажимайте, когда кольцо сожмётся до круга.', 'Tap when the ring shrinks onto the circle.')}</b><br>${L('10 нажатий. Чем точнее, тем больше бонус к сбору на 30 минут: от +20% до +40%.', '10 taps. The more precise, the bigger the 30-minute gathering bonus: +20% to +40%.')}</p>
     <div class="row" style="justify-content:center">${resIcon('energy')}<b class="num">${e} / ${c.energyMax}</b></div>
     <div class="small muted">${buff ? T('dance_active', Math.ceil((buff.until - now()) / 60000)) : e < c.danceCost ? T('dance_no_energy') : T('dance_cost', c.danceCost)}</div>
     <button class="btn primary big" id="danceGo" style="min-width:220px" ${canStart ? '' : 'disabled'}>${T('dance_start')}</button><button class="btn ghost" id="danceClose">${T('close')}</button>`;
@@ -5962,28 +6133,39 @@ function openDance() {
 }
 function runDance() {
   const el = $('dance');
-  const BEAT = 750, N = 13, LEAD = 1400;
-  el.innerHTML = `<div class="stage" id="dStage"><div class="ring"></div><div class="pulse" id="dPulse"></div><svg class="dbee" id="dBee" viewBox="0 0 64 64"><use href="#m-bee"/></svg></div>
-    <div class="score" id="dScore">${T('tap')}</div><div class="small muted num" id="dLeft"></div>`;
-  const t0 = performance.now() + LEAD, taps = [];
+  const BEAT = 950, N = 10, LEAD = 2200;
+  el.innerHTML = `<div class="score" id="dScore">${L('Приготовьтесь…', 'Get ready…')}</div>
+    <div class="stage" id="dStage"><div class="target" id="dTarget"></div><div class="approach" id="dRing"></div><svg class="dbee" id="dBee" viewBox="0 0 64 64"><use href="#m-bee"/></svg></div>
+    <div class="beats" id="dBeats">${'<i></i>'.repeat(N)}</div>
+    <p class="hint">${L('Нажимайте в любом месте экрана, когда кольцо совпадёт с кругом', 'Tap anywhere when the ring meets the circle')}</p>`;
+  const t0 = performance.now() + LEAD, taps = [], judged = new Array(N).fill(null), dots = [...$('dBeats').children];
+  const mark = (i, cls) => { judged[i] = cls; dots[i].className = cls; };
+  const say = (text, color) => { const sc = $('dScore'); sc.textContent = text; sc.style.color = color; sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop'); };
   const onTap = (ev) => {
     ev.preventDefault();
     const tp = performance.now(); taps.push(tp);
     const k = Math.round((tp - t0) / BEAT), dd = Math.abs(tp - (t0 + k * BEAT));
-    const lbl = dd < 90 ? L('Идеально!', 'Perfect!') : dd < 180 ? L('Хорошо', 'Good') : L('Мимо', 'Miss');
-    const fx = document.createElement('div'); fx.className = 'hitfx'; fx.textContent = lbl; fx.style.color = dd < 90 ? '#1F7A3A' : dd < 180 ? '#222' : '#C13515';
-    $('dStage').appendChild(fx); setTimeout(() => fx.remove(), 700);
-    const b = $('dBee'); b.style.transform = `scale(1.12) rotate(${(Math.random() - .5) * 20}deg)`; setTimeout(() => { b.style.transform = ''; }, 100);
+    const b = $('dBee'); b.style.transform = `scale(1.15) rotate(${(Math.random() - .5) * 24}deg)`; setTimeout(() => { b.style.transform = ''; }, 120);
     haptic();
+    if (k < 0 || k >= N || judged[k]) { if (tp > t0 - BEAT / 2) say(L('Рано', 'Too early'), '#C13515'); return; }
+    if (dd < 110) { mark(k, 'perfect'); say(L('Идеально!', 'Perfect!'), '#1F7A3A'); $('dTarget').classList.remove('hit'); void $('dTarget').offsetWidth; $('dTarget').classList.add('hit'); }
+    else if (dd < 240) { mark(k, 'good'); say(L('Хорошо', 'Good'), '#222'); }
+    else { mark(k, 'miss'); say(tp < t0 + k * BEAT ? L('Рано', 'Too early') : L('Поздно', 'Too late'), '#C13515'); }
   };
   el.addEventListener('pointerdown', onTap);
   const frame = () => {
     const t = performance.now() - t0;
-    const ph = ((t % BEAT) + BEAT) % BEAT / BEAT;
-    const p = $('dPulse'); if (p) { p.style.transform = `scale(${t < 0 ? .6 : 1.25 - ph * .6})`; p.style.opacity = t < 0 ? .3 : 1 - ph * .7; }
-    const left = Math.max(0, N - Math.floor(t / BEAT));
-    const l = $('dLeft'); if (l) l.textContent = t < 0 ? '3… 2… 1…' : left;
-    if (t < BEAT * N + 300) requestAnimationFrame(frame); else finish();
+    const next = Math.max(0, Math.ceil(t / BEAT));           // ближайший будущий удар
+    const ring = $('dRing');
+    if (ring) {
+      if (next < N) {
+        const ph = 1 - (next * BEAT - t) / BEAT;             // 0 → 1 к моменту удара
+        const vis = Math.max(0, Math.min(1, ph));
+        ring.style.transform = `scale(${2.3 - 1.3 * vis})`; ring.style.opacity = t < -BEAT ? 0 : 0.25 + vis * 0.75;
+      } else ring.style.opacity = 0;
+    }
+    for (let i = 0; i < N; i++) if (!judged[i] && t > i * BEAT + 300) { mark(i, 'miss'); say(L('Пропуск', 'Missed'), '#C13515'); }
+    if (t < BEAT * (N - 1) + 500) requestAnimationFrame(frame); else finish();
   };
   requestAnimationFrame(frame);
   function finish() {
@@ -5996,8 +6178,9 @@ function runDance() {
     }
     const extra = Math.max(0, taps.length - used.size) * 0.03;
     const acc = Math.max(0, Math.min(1, sum / N - extra));
-    $('dScore').textContent = `${T('accuracy')}: ${Math.round(acc * 100)}%`;
     const r = doAction('dance', { accuracy: acc });
+    const sc = $('dScore'); sc.style.color = '#222'; sc.textContent = `${T('accuracy')}: ${Math.round(acc * 100)}%`;
+    el.querySelector('.hint').remove();
     el.insertAdjacentHTML('beforeend', r ? `<p class="score" style="color:#1F7A3A">${T('dance_result', Math.round(r.bonus * 100))}</p><button class="btn primary big" id="danceDone">${T('close')}</button>`
       : `<button class="btn big" id="danceDone">${T('close')}</button>`);
     if (r) { confetti(window.innerWidth / 2, window.innerHeight * .35); Scene3D.celebrate(1, 0, 'dance'); }
@@ -6006,9 +6189,9 @@ function runDance() {
 }
 
 // ================================================================ навигация
-function setActiveTier(t) { activeTier = t; Scene3D.setTier(t); renderTiers(); }
+function setActiveTier(t) { clearSel(); activeTier = t; Scene3D.setTier(t); renderTiers(); }
 async function setView(v) {
-  closeSheet();
+  closeSheet(); clearSel();
   view = v === 'map' ? 'map' : 'hive';
   if (view === 'map') {
     Scene3D.pause(true);
@@ -6037,7 +6220,8 @@ function onNav(k) {
 }
 function openNavSheet(k) { if (k === 'bees') beesSheet(); if (k === 'quests') questsSheet(); Coach.onEvent('nav', k); }
 
-let QUALITY = localStorage.getItem('mh_quality') || 'high';
+const weakDevice = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+let QUALITY = localStorage.getItem('mh_quality') || (weakDevice ? 'mid' : 'high');
 function setQuality(q) { QUALITY = q; localStorage.setItem('mh_quality', q); Scene3D.setQuality(q); }
 
 // ================================================================ вход
@@ -6089,7 +6273,8 @@ async function startGame() {
   if (!cached) { $('loading').classList.remove('hidden'); $('loadingText').textContent = T('loading_world'); }
   if (!sceneReady) {
     await Scene3D.init($('scene'), now, QUALITY);
-    Scene3D.onCellTap = (t, i) => { haptic(); cellSheet(t, i); };
+    Scene3D.onCellTap = selectCell;
+    Scene3D.onEmptyTap = clearSel;
     MapView.init($('mapCanvas'), now);
     MapView.onCellTap = (x, y) => { haptic(); mapCellSheet(x, y); };
     sceneReady = true;
@@ -6135,6 +6320,7 @@ function bindGlobal() {
     else openSheet({ kind: 'tier2', title: T('tier2_title'), render: tier2Card, nav: 'hive' });
   });
   $('buildCard').addEventListener('click', () => { haptic(); plansSheet(); });
+  $('selBar').addEventListener('click', e => { if (e.target.closest('#selClose')) clearSel(); else { haptic(); openSelected(); } });
   $('danceBtn').addEventListener('click', () => { haptic(); openDance(); });
   $('avatar').addEventListener('click', () => { haptic(); profileSheet(); });
   $('goal').addEventListener('click', e => {
@@ -6146,7 +6332,8 @@ function bindGlobal() {
   $('infobar').addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) act(b); });
   $('sheetClose').innerHTML = ui('close'); $('sheetBack').innerHTML = ui('back');
   $('sheetClose').addEventListener('click', closeSheet);
-  $('sheetWrap').addEventListener('click', e => { if (e.target === $('sheetWrap')) closeSheet(); });
+  // телефон присылает «клик» вслед за касанием, открывшим панель, — такой клик панель не закрывает
+  $('sheetWrap').addEventListener('click', e => { if (e.target === $('sheetWrap') && Date.now() - sheetOpenedAt > 450) closeSheet(); });
   $('sheetBody').addEventListener('click', e => { const b = e.target.closest('button[data-act]'); if (b && !b.disabled) act(b); });
   $('sheetBody').addEventListener('change', e => {
     const el = e.target;
@@ -6183,6 +6370,7 @@ async function boot() {
   if (TOKEN) { startGame(); return; }
   showAuth();
 }
+window.__dbg = { Scene3D };
 boot();
 
 </script>
