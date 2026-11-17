@@ -2978,9 +2978,14 @@ function feedSheet() {}
 
 var __ctx = null;
 var Replica = {
+  defaults: { version: CFG_BASE.version },
   load: function (snap) {
     __R.snap = JSON.parse(JSON.stringify(snap));
     var s = __R.snap;
+    // сервер старее страницы: недостающие настройки берём из встроенной копии
+    s.serverVersion = s.cfg.version;
+    for (var k in CFG_BASE) if (!(k in s.cfg)) s.cfg[k] = JSON.parse(JSON.stringify(CFG_BASE[k]));
+    for (var b in CFG_BASE.buildings) if (!s.cfg.buildings[b]) s.cfg.buildings[b] = JSON.parse(JSON.stringify(CFG_BASE.buildings[b]));
     __ctx = {
       player: s.player, pd: s.pd,
       hives: s.hives.map(function (h) { return { row: h.row, hd: h.hd, land: h.land, landSeason: h.landSeason }; })
@@ -5643,6 +5648,7 @@ const API_QP = new URLSearchParams(location.search).get('api');
 if (API_QP) localStorage.setItem('mh_api', API_QP);
 const API_URL = window.MEGAHIVE_API || localStorage.getItem('mh_api') || 'api';
 const MAIN_RES = ['nectar', 'honey', 'wax', 'propolis'];
+const CLIENT_VERSION = (Replica.defaults && Replica.defaults.version) || '';
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const L = (ru, en) => (LANG === 'en' ? en : ru);
@@ -5732,8 +5738,13 @@ function retryLater() {
   retryDelay = Math.min(60000, retryDelay * 2);
 }
 /** Ответ сервера: новое состояние + повтор ещё не отправленных действий поверх него. */
+let versionWarned = false;
 function loadSnap(snap) {
   clockOffset = snap.now - Date.now();
+  if (!versionWarned && snap.cfg && snap.cfg.version !== CLIENT_VERSION) {
+    versionWarned = true;
+    toast(L(`Сервер версии ${snap.cfg.version}, страница — ${CLIENT_VERSION}. Обновите Code.gs в Apps Script.`, `Server ${snap.cfg.version}, page ${CLIENT_VERSION}. Update Code.gs in Apps Script.`), 'err');
+  }
   Replica.load(snap);
   const keep = [];
   for (const op of queue) {
@@ -5858,6 +5869,9 @@ const activeBuff = () => (S.buffs || []).find(b => b.type === 'gather' && b.unti
 let prevRes = null;
 function refreshView(light) {
   if (!Replica.ready()) return;
+  try { refreshViewInner(light); } catch (e) { console.error(e); if (!refreshView.failed) { refreshView.failed = true; toast(L('Ошибка отображения: ', 'Display error: ') + (e && e.message), 'err'); } }
+}
+function refreshViewInner(light) {
   S = Replica.view();
   if (S.player.lang !== LANG) { LANG = S.player.lang; localStorage.setItem('mh_lang', LANG); applyStaticTexts(); buildNav(); }
   const h = hive();
