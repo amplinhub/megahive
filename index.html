@@ -125,7 +125,7 @@ input, select { font: inherit; color: inherit; }
 .res.spend .v { animation: spend .45s var(--ease); }
 @keyframes spend { 40% { transform: scale(.85); color: var(--error); } }
 .chip { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: var(--r-full); background: rgba(255,255,255,.92);
-  box-shadow: var(--shadow); font-size: 13px; font-weight: 500; color: var(--ink); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); white-space: nowrap; }
+  box-shadow: var(--shadow); font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; }
 .chip .ui-ic { width: 16px; height: 16px; }
 .chip.warn { background: var(--primary-soft); }
 .chip.alert { background: #FDE8E4; color: var(--error); }
@@ -362,7 +362,7 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .seg3 button.on { border: 2px solid var(--ink); padding: 9px 5px; background: var(--surface-soft); }
 
 /* ---------- танец */
-.dance { position: fixed; inset: 0; z-index: 25; isolation: isolate; transform: translateZ(0); background: radial-gradient(circle at 50% 42%, #FFF4D6 0%, #FFE08A 45%, #F2A007 100%); display: flex; flex-direction: column;
+.dance { position: fixed; inset: 0; z-index: 25; background: radial-gradient(circle at 50% 42%, #FFF4D6 0%, #FFE08A 45%, #F2A007 100%); display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; animation: fade .25s; user-select: none; touch-action: none; }
 .dance h3 { font-size: 28px; font-weight: 700; margin: 0; letter-spacing: -.4px; }
 .dance .hint { max-width: 32ch; margin: 0; color: var(--body); font-size: 15px; }
@@ -416,6 +416,17 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .feed-row .fi { width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--surface-soft); display: flex; align-items: center; justify-content: center; flex: none; }
 .feed-row .fi svg { width: 18px; height: 18px; }
 .feed-row.to-me { background: var(--primary-soft); margin: 0 -16px; padding: 10px 16px; }
+
+/* загрузка вкладки «Рои» */
+.sk-load { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-md); background: var(--primary-soft); font-size: 14px; font-weight: 500; }
+.sk-bee { width: 34px; height: 34px; animation: hover 1s ease-in-out infinite; flex: none; }
+.sk-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--hairline-soft); }
+.sk { display: block; height: 14px; border-radius: var(--r-full); background: linear-gradient(90deg, #EFEFEF 0%, #F8F8F8 40%, #EFEFEF 80%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+.sk-c { width: 28px; height: 28px; flex: none; }
+.sk-s { width: 48px; margin-left: auto; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.sec-load { display: flex; align-items: center; gap: 10px; }
+.spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--hairline); border-top-color: #E88A00; animation: spin .8s linear infinite; }
 
 </style>
 <script type="importmap">
@@ -3107,21 +3118,21 @@ return Replica;
 <symbol id="ro-nurse" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F1E9FF"/><ellipse cx="9.3" cy="13" rx="2.3" ry="3" fill="#fff" stroke="#C9B5EE" stroke-width=".9"/><ellipse cx="14.7" cy="13" rx="2.3" ry="3" fill="#fff" stroke="#C9B5EE" stroke-width=".9"/><path d="M12 6.2c1-1.4 3-1 3 .4 0 1.3-3 3-3 3s-3-1.7-3-3c0-1.4 2-1.8 3-.4z" fill="#F28AB2"/></symbol>
 <symbol id="ro-lookout" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#DDF0F7"/><path d="M6 15.5 15 9l2.2 3-9 6.5z" fill="#6B8FA3"/><circle cx="16.6" cy="10.4" r="2.2" fill="#BDE6F5" stroke="#3E6378" stroke-width="1"/><path d="M8.5 17.3 7 20.5M10.8 15.6l.8 4.8" stroke="#3E6378" stroke-width="1.3" stroke-linecap="round"/></symbol>
 
-<symbol id="b-nectar_store" viewBox="0 0 48 48"><ellipse cx="24" cy="41" rx="13" ry="3" fill="#000" opacity=".12"/><path d="M12 13c0-2 5.4-3.6 12-3.6S36 11 36 13l1.2 13.6L36 38c0 2-5.4 3.4-12 3.4S12 40 12 38l-1.2-11.4z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M11.4 20.5C14 22 34 22 36.6 20.5M11.4 31.5C14 33 34 33 36.6 31.5" stroke="#4A4A4A" stroke-width="2.2" fill="none"/><ellipse cx="24" cy="12.6" rx="11.2" ry="2.8" fill="#FFE27A" stroke="#5E3714" stroke-width="1.2"/><path d="M18 26v8M24 26.5v9M30 26v8" stroke="#6B3E18" stroke-width="1" opacity=".5"/></symbol>
-<symbol id="b-honey_store" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.8" fill="#000" opacity=".12"/><path d="M14 17c-4 3-5 8-4 13 1.4 7 6.6 10.6 14 10.6S36.6 37 38 30c1-5 0-10-4-13z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.4"/><rect x="13.5" y="12" width="21" height="6" rx="2.6" fill="#8A5428" stroke="#5E3714" stroke-width="1.2"/><path d="M17 18v3.5a1.8 1.8 0 0 0 3.6 0V18v5.2a2 2 0 0 0 4 0V18" fill="#FFB01F"/><path d="M15.5 26c.4 4 2.4 7.4 5 8.6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
-<symbol id="b-pantry" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><rect x="8" y="22" width="20" height="18" rx="2" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M8 28h20M8 34h20M12 22v18M24 22v18" stroke="#6B3E18" stroke-width="1" opacity=".6"/><path d="M27 40c-1-6 0-12 4-16 2-2 4-2 6 0 4 4 4 10 3 16z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1.3"/><path d="M31.5 24c1-2 3-2 4 0" stroke="#8A6A3A" stroke-width="1.3" fill="none"/><path d="M12 22c2-5 10-5 12 0" fill="#FFE9A8" stroke="#C9A24C" stroke-width="1.2"/></symbol>
-<symbol id="b-meadery" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.8" fill="#000" opacity=".12"/><path d="M10 22h28l-2.4 13a6 6 0 0 1-5.9 4.9H18.3a6 6 0 0 1-5.9-4.9z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><ellipse cx="24" cy="22" rx="14" ry="3.6" fill="#FFC23A" stroke="#6E2F12" stroke-width="1.3"/><circle cx="19" cy="21.4" r="1.6" fill="#FFE59A"/><circle cx="27" cy="22.4" r="1.2" fill="#FFE59A"/><path d="M18 14c-1.4-2 1-3 0-5M24 13c-1.4-2 1-3 0-5M30 14c-1.4-2 1-3 0-5" stroke="#B9AEA6" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M15 29c.6 3 2 5 4 6" stroke="#FFD2A8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
-<symbol id="b-wax_shop" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="13" ry="2.6" fill="#000" opacity=".12"/><rect x="11" y="20" width="9" height="20" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><rect x="22" y="15" width="9" height="25" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><rect x="33" y="24" width="7" height="16" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><path d="M15.5 20v-2.4M26.5 15v-2.4M36.5 24v-2.4" stroke="#333" stroke-width="1"/><path d="M15.5 17.6c-2.2-2.4-.4-4.6 0-6.6 1.2 2 2.4 4 0 6.6zM26.5 12.6c-2.2-2.4-.4-4.6 0-6.6 1.2 2 2.4 4 0 6.6zM36.5 21.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6z" fill="#FF9A1F" stroke="#E0560E" stroke-width=".8"/><path d="M24 20c.2 2.6-.4 4 .6 5.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8" fill="none"/></symbol>
-<symbol id="b-incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><path d="M8 27c0 8 7 13 16 13s16-5 16-13z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M6.5 27h35" stroke="#5E3714" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="17" cy="22" rx="4.4" ry="5.6" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><ellipse cx="24.5" cy="20.5" rx="4.6" ry="6" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><ellipse cx="31.6" cy="22.4" rx="4.2" ry="5.4" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><path d="M23 17c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><path d="M24 8.5c1.6-2.2 4.6-1.6 4.6.6 0 2-4.6 4.6-4.6 4.6s-4.6-2.6-4.6-4.6c0-2.2 3-2.8 4.6-.6z" fill="#F28AB2"/></symbol>
-<symbol id="b-housing" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><path d="M7 40c0-14 7.6-24 17-24s17 10 17 24z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.4"/><path d="M10 31h28M8.6 36h30.8M13 25h22" stroke="#C97A00" stroke-width="1.2" opacity=".6"/><path d="M19 40v-6a5 5 0 0 1 10 0v6z" fill="#5E3714" stroke="#3A2010" stroke-width="1.2"/><circle cx="27" cy="36.6" r=".9" fill="#FFC23A"/><circle cx="15" cy="29" r="2.4" fill="#FFF0B8" stroke="#9A5500" stroke-width="1"/><circle cx="33" cy="29" r="2.4" fill="#FFF0B8" stroke="#9A5500" stroke-width="1"/><path d="M33 9.5h3l-3 3h3M38 6h2l-2 2h2" stroke="#7A6AA8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-<symbol id="b-scout_nest" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="11" ry="2.4" fill="#000" opacity=".12"/><path d="M16 42 19 16h10l3 26z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M17.4 30h13.2M18.4 22h11.2M17 36l14-6M18 28l12-6" stroke="#5E3714" stroke-width="1.1" opacity=".55"/><path d="M14 16h20l-3-4H17z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.2"/><path d="M24 12V3" stroke="#5E3714" stroke-width="1.4"/><path d="M24 3.4h9l-2.4 2.4 2.4 2.4H24z" fill="#F6B21A" stroke="#9A5500" stroke-width="1"/><circle cx="31" cy="20" r="2.4" fill="#BDE6F5" stroke="#3E6378" stroke-width="1.1"/></symbol>
-<symbol id="b-bee_school" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><rect x="9" y="12" width="30" height="20" rx="2.2" fill="#2F5A4A" stroke="#6B4A22" stroke-width="2.4"/><path d="M14 18h7M14 22.5h12M14 27h5" stroke="#E8F2EC" stroke-width="1.5" stroke-linecap="round"/><path d="M30 18l3 2-3 2M33 24l-3 2 3 2" stroke="#FFE27A" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M14 32v9M34 32v9" stroke="#6B4A22" stroke-width="2.2"/><path d="M18 40h12l-1.6-5h-8.8z" fill="#F1E4C6" stroke="#8A6A3A" stroke-width="1.1"/><path d="M24 4.5 33 8l-9 3.5L15 8z" fill="#3A2416"/><path d="M29.5 9.6v3.4" stroke="#F6B21A" stroke-width="1.3"/></symbol>
-<symbol id="b-distillery" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.6" fill="#000" opacity=".12"/><circle cx="18" cy="29" r="11" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><path d="M15 18.4V13h6v5.4" fill="#C9763E" stroke="#6E2F12" stroke-width="1.3"/><path d="M21 14c6 0 12 1 16 6v10" fill="none" stroke="#A4542A" stroke-width="2.4" stroke-linecap="round"/><path d="M33 30h8v10h-8z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><circle cx="14" cy="26" r="2.4" fill="#FFD2A8" opacity=".55"/></symbol>
-<symbol id="b-wax_press" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.6" fill="#000" opacity=".12"/><rect x="10" y="32" width="28" height="8" rx="2" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.3"/><path d="M14 32V12M34 32V12M12 12h24" stroke="#6B4A22" stroke-width="3" stroke-linecap="round"/><rect x="18" y="16" width="12" height="7" rx="1.6" fill="#8D8D8D" stroke="#4A4A4A" stroke-width="1.2"/><path d="M24 12v4" stroke="#4A4A4A" stroke-width="2"/><path d="M17 32l3-6h8l3 6z" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.2"/></symbol>
-<symbol id="b-royal_cell" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.6" fill="#000" opacity=".12"/><path d="M16 40c-2-8 0-17 8-24 8 7 10 16 8 24z" fill="url(#gLilac)" stroke="#6A44A8" stroke-width="1.4"/><path d="M18.5 30c0-3 1.2-6 3-8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".8" fill="none"/><path d="M16 12.5l2.6 3L24 9l5.4 6.5L32 12.5l-1 5H17z" fill="#FFC83D" stroke="#B57A00" stroke-width="1.1" stroke-linejoin="round"/></symbol>
-<symbol id="b-brood_hall" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="17" ry="2.6" fill="#000" opacity=".12"/><path d="M4 40c0-10 5-17 12-17s12 7 12 17z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><path d="M20 40c0-13 6-22 14-22s12 9 12 22z" fill="#F0A93A" stroke="#9A5500" stroke-width="1.3"/><path d="M12 40v-4a4 4 0 0 1 8 0v4zM29.5 40v-5a4.5 4.5 0 0 1 9 0v5z" fill="#5E3714"/><circle cx="34" cy="27" r="2.2" fill="#FFF0B8" stroke="#9A5500"/></symbol>
-<symbol id="b-big_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".12"/><path d="M6 42V22c0-8 8-14 18-14s18 6 18 14v20z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.4"/><path d="M14 42V27a10 10 0 0 1 20 0v15z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M24 17v25M14 32h20" stroke="#5E3714" stroke-width="1.2" opacity=".6"/><circle cx="28" cy="35" r="1.3" fill="#FFC23A"/><path d="M10 16l3 2M38 16l-3 2M24 10v3" stroke="#5A5248" stroke-width="1.2"/></symbol>
-<symbol id="b-big_incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="17" ry="2.6" fill="#000" opacity=".12"/><path d="M5 28c0 9 8.5 13 19 13s19-4 19-13z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M3.6 28h40.8" stroke="#5E3714" stroke-width="2.4" stroke-linecap="round"/><g fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.1"><ellipse cx="12" cy="23" rx="4" ry="5.2"/><ellipse cx="19" cy="21" rx="4.2" ry="5.6"/><ellipse cx="26.4" cy="20.4" rx="4.4" ry="5.8"/><ellipse cx="33.6" cy="22" rx="4.2" ry="5.4"/></g><path d="M24 6.5c1.6-2.2 4.6-1.6 4.6.6 0 2-4.6 4.6-4.6 4.6s-4.6-2.6-4.6-4.6c0-2.2 3-2.8 4.6-.6z" fill="#F28AB2"/></symbol>
+<symbol id="b-nectar_store" viewBox="0 0 48 48"><ellipse cx="22" cy="43" rx="15" ry="2.6" fill="#000" opacity=".14"/><path d="M10 13.5c0-1.8 5.4-3.2 12-3.2s12 1.4 12 3.2l1.4 13.5L34 39c0 1.8-5.4 3.2-12 3.2S10 40.8 10 39L8.6 27z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M14 13v27M19 12.4v29M25 12.4v29M30 13v27" stroke="#6B3E18" stroke-width=".9" opacity=".45"/><path d="M9.6 18.5c2.6 1.4 22.2 1.4 24.8 0M8.8 27c2.8 1.6 23.6 1.6 26.4 0M9.6 35.6c2.6 1.4 22.2 1.4 24.8 0" stroke="#3E3A36" stroke-width="2" fill="none"/><ellipse cx="22" cy="13" rx="11" ry="2.7" fill="#8A5428" stroke="#5E3714" stroke-width="1"/><g transform="translate(21 10)"><g fill="#fff" stroke="#D9D2C0" stroke-width=".5"><ellipse cx="0" cy="-4" rx="1.8" ry="3.4"/><ellipse cx="0" cy="4" rx="1.8" ry="3.4"/><ellipse cx="-4" cy="0" rx="3.4" ry="1.8"/><ellipse cx="4" cy="0" rx="3.4" ry="1.8"/><ellipse cx="-2.9" cy="-2.9" rx="1.7" ry="3.2" transform="rotate(-45 -2.9 -2.9)"/><ellipse cx="2.9" cy="2.9" rx="1.7" ry="3.2" transform="rotate(-45 2.9 2.9)"/><ellipse cx="2.9" cy="-2.9" rx="1.7" ry="3.2" transform="rotate(45 2.9 -2.9)"/><ellipse cx="-2.9" cy="2.9" rx="1.7" ry="3.2" transform="rotate(45 -2.9 2.9)"/></g><circle r="2.4" fill="#F6B21A" stroke="#B57A00" stroke-width=".6"/></g><path d="M35 28h5v3h-2v3" fill="none" stroke="#A4542A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 35.5c-1.3 1.6-1.3 3 0 3.6 1.3-.6 1.3-2 0-3.6z" fill="#FFE27A" stroke="#C99A1E" stroke-width=".7"/><path d="M12.5 22c.4 5 .4 10 0 14" stroke="#FFD2A8" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></symbol>
+<symbol id="b-honey_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="13" ry="2.6" fill="#000" opacity=".14"/><path d="M15 16c-5 3-6.5 9-5 15 1.6 6.6 7 10.6 14 10.6S36.4 37.6 38 31c1.5-6 0-12-5-15z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><path d="M10.4 27.5c3.6 1.6 23.6 1.6 27.2 0" stroke="#FFF1CF" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M14.5 11.5h19v5h-19z" fill="#C97A1A" stroke="#7A4200" stroke-width="1.1"/><ellipse cx="24" cy="11.5" rx="9.5" ry="2.4" fill="#FFB01F" stroke="#9A5500" stroke-width="1"/><path d="M16 16.5v5.2a1.9 1.9 0 0 0 3.8 0V16.5v3a1.7 1.7 0 0 0 3.4 0v-3 7.6a2 2 0 0 0 4 0v-7.6 2.4a1.6 1.6 0 0 0 3.2 0v-2.4" fill="#FFB01F"/><path d="M27 12 36 2.5" stroke="#8A5428" stroke-width="2" stroke-linecap="round"/><g fill="#C98B4E" stroke="#5E3714" stroke-width=".8"><ellipse cx="29.4" cy="10" rx="2.6" ry="1.5" transform="rotate(-45 29.4 10)"/><ellipse cx="31" cy="8.4" rx="2.4" ry="1.4" transform="rotate(-45 31 8.4)"/><ellipse cx="32.5" cy="6.8" rx="2" ry="1.2" transform="rotate(-45 32.5 6.8)"/></g><path d="M14.5 30c.4 3.6 2 6.4 4.6 7.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".65"/></symbol>
+<symbol id="b-pantry" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><rect x="8" y="8" width="26" height="34" rx="1.5" fill="#6B4426" stroke="#3A2010" stroke-width="1.2"/><rect x="10.5" y="10" width="21" height="30" fill="#4E2F16"/><path d="M9 19h24M9 29.5h24M9 40h24" stroke="#C98B4E" stroke-width="2.6"/><g stroke="#B88E2E" stroke-width=".8"><rect x="12" y="13.5" width="5.5" height="5" rx="1" fill="#FFF1CF"/><rect x="18.5" y="12.5" width="5.5" height="6" rx="1" fill="#FFF1CF"/><rect x="25" y="13.5" width="5.5" height="5" rx="1" fill="#F5DE9C"/></g><g stroke="#3A1E08" stroke-width=".7"><rect x="12.3" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/><rect x="18.7" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/><rect x="25.1" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/></g><path d="M12 22.8c.6-1.8 4.4-1.8 5.2 0M18.4 22.8c.6-1.8 4.4-1.8 5.2 0M24.8 22.8c.6-1.8 4.4-1.8 5.2 0" fill="#D8C49A" stroke="#8A6A3A" stroke-width=".7"/><path d="M19 22.8c.6-1.8 3.8-1.8 4.6 0" fill="#C9483E"/><rect x="13" y="32" width="16" height="7" rx="1.4" fill="#F5DE9C" stroke="#B88E2E" stroke-width=".8"/><path d="M33 42c-1.6-5-.6-9.6 3.4-12.2 1.2-2.8 4.4-2.8 5.6 0 3.6 2.6 4.4 7.4 2.6 12.2z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1.2"/><path d="M36.4 30.4c1.6 1 4 1 5.6 0" stroke="#C9483E" stroke-width="1.6" fill="none"/></symbol>
+<symbol id="b-meadery" viewBox="0 0 48 48"><ellipse cx="24" cy="43.5" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M12 42 36 36M12 36l24 6" stroke="#6B4426" stroke-width="3.4" stroke-linecap="round"/><path d="M24 40c-4-2-4.4-6-1.4-9 0 2.2 1.4 2.8 2.2 2 .6-2.4 2.6-3.4 3.4-5.6 2.6 3.2 3.4 9.6-4.2 12.6z" fill="#FF8A1F"/><path d="M24.4 39c-2-1.2-2-3.4-.4-5 .4 1.4 1.4 1.6 2 .8.8 1.6.8 3.2-1.6 4.2z" fill="#FFE59A"/><path d="M13 31 10.5 40M35 31l2.5 9" stroke="#4A4A4A" stroke-width="1.6" stroke-linecap="round"/><path d="M9 18h30l-1.8 10a6.6 6.6 0 0 1-6.5 5.4H17.3a6.6 6.6 0 0 1-6.5-5.4z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.3"/><ellipse cx="24" cy="18" rx="15" ry="3.6" fill="#FFB01F" stroke="#6E2F12" stroke-width="1.3"/><circle cx="19" cy="17.6" r="1.6" fill="#FFE59A"/><circle cx="27.5" cy="18.4" r="1.1" fill="#FFE59A"/><path d="M28 17 37 6" stroke="#8A5428" stroke-width="1.8" stroke-linecap="round"/><path d="M17 11c-1.4-2 1-3 0-5M24 10c-1.4-2 1-3 0-5" stroke="#B9AEA6" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13.5 23c.6 3 2 5 4 6" stroke="#FFD2A8" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
+<symbol id="b-wax_shop" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><rect x="5" y="25" width="23" height="17" rx="1.5" fill="#B4533A" stroke="#6E2A1A" stroke-width="1.2"/><path d="M5 30.5h23M5 36h23M11 25v5.5M19 25v5.5M15 30.5V36M23 30.5V36M11 36v6M19 36v6" stroke="#7A3A26" stroke-width=".9"/><path d="M12 42v-4a4.5 4.5 0 0 1 9 0v4z" fill="#2A1A10"/><path d="M16.5 41.5c-2-1-2.2-3-.6-4.4.2 1.2 1 1.4 1.4.8.8 1.2.8 2.6-.8 3.6z" fill="#FF8A1F"/><path d="M7 17h19l-1.6 8H8.6z" fill="#5A5550" stroke="#2E2A26" stroke-width="1.2"/><ellipse cx="16.5" cy="17" rx="9.5" ry="2.2" fill="#FFF1CF" stroke="#B88E2E" stroke-width=".9"/><g stroke="#B88E2E" stroke-width="1"><rect x="31" y="22" width="5" height="20" rx="1.4" fill="url(#gWax)"/><rect x="37.5" y="27" width="5" height="15" rx="1.4" fill="url(#gWax)"/></g><path d="M33.5 22v-2.4M40 27v-2.4" stroke="#333" stroke-width=".9"/><path d="M33.5 19.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6zM40 24.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6z" fill="#FF9A1F" stroke="#E0560E" stroke-width=".7"/><path d="M31.5 24.5c1 .6 1 2 .2 3" stroke="#fff" stroke-width="1" fill="none"/></symbol>
+<symbol id="b-incubator" viewBox="0 0 48 48"><ellipse cx="26" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M7 7c0-2 2-3 4-3h7c3 0 5 2 5 4v3" fill="none" stroke="#5A5550" stroke-width="2"/><path d="M17 11h12l-2.6 5H19.6z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1"/><circle cx="23" cy="17.4" r="2.4" fill="#FFE7A0"/><path d="M19 20.5 17 24M23 21v4M27 20.5l2 3.5" stroke="#FFD15C" stroke-width="1.4" stroke-linecap="round"/><path d="M7 7v35" stroke="#5A5550" stroke-width="2"/><path d="M10 31c0 7 6.6 11 15 11s15-4 15-11z" fill="#B07A28" stroke="#6B4426" stroke-width="1.2"/><path d="M9 31c4-1 28-1 32 0M11 35.5c4-1 24-1 28 0M14 39.5c3-.8 19-.8 22 0" stroke="#D9A441" stroke-width="2" fill="none"/><ellipse cx="18.5" cy="26.5" rx="4.2" ry="5.4" fill="#FFFDF5" stroke="#D9C9A8"/><ellipse cx="26" cy="25" rx="4.4" ry="5.8" fill="#FFFDF5" stroke="#D9C9A8"/><ellipse cx="33" cy="27" rx="4" ry="5.2" fill="#FFFDF5" stroke="#D9C9A8"/><path d="M24.6 21.6c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></symbol>
+<symbol id="b-housing" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M7 41c0-15 7.6-26 17-26s17 11 17 26z" fill="#D9A441" stroke="#7A5418" stroke-width="1.3"/><path d="M8.4 35h31.2M10 29h28M13 23h22M17 18h14" stroke="#B07A28" stroke-width="2.4" stroke-linecap="round"/><path d="M8 38h32M9 32h30M11.5 26h25M15 20.5h18" stroke="#ECC56A" stroke-width="1" opacity=".8"/><ellipse cx="24" cy="15" rx="3.2" ry="1.8" fill="#B07A28"/><path d="M19.5 41v-6a4.5 4.5 0 0 1 9 0v6z" fill="#3A2010"/><path d="M19 41.2h10" stroke="#8A5428" stroke-width="2"/><circle cx="14" cy="30" r="2.6" fill="#FFE7A0" stroke="#5E3714" stroke-width="1"/><circle cx="34" cy="30" r="2.6" fill="#FFE7A0" stroke="#5E3714" stroke-width="1"/><rect x="10.5" y="33" width="7" height="2.4" rx=".8" fill="#8A5428"/><rect x="30.5" y="33" width="7" height="2.4" rx=".8" fill="#8A5428"/><circle cx="12" cy="32.6" r="1.2" fill="#E0505E"/><circle cx="14.5" cy="32.3" r="1.2" fill="#F28AB2"/><circle cx="16.6" cy="32.6" r="1.2" fill="#E0505E"/><circle cx="32" cy="32.6" r="1.2" fill="#F28AB2"/><circle cx="34.5" cy="32.3" r="1.2" fill="#E0505E"/><circle cx="36.6" cy="32.6" r="1.2" fill="#F28AB2"/><path d="M36 9.5h3l-3 3h3M40.5 5.5h2l-2 2h2" stroke="#7A6AA8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="b-scout_nest" viewBox="0 0 48 48"><ellipse cx="24" cy="44" rx="12" ry="2.2" fill="#000" opacity=".14"/><path d="M16 43 19 19h10l3 24" fill="none" stroke="#8A5428" stroke-width="2.4"/><path d="M17.2 33h13.6M18.2 26h11.6M17 40l14-8M18 31l12-6" stroke="#8A5428" stroke-width="1.3" opacity=".75"/><path d="M33 44 36 22M37.5 44l2-22" stroke="#5E3714" stroke-width="1.4"/><path d="M33.5 40h4.4M34 35h4.6M34.6 30h4.4M35.2 25h4.2" stroke="#5E3714" stroke-width="1.2"/><rect x="14" y="17" width="20" height="3" rx="1" fill="#5E3714"/><path d="M13 17h22l-4-6H17z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.1"/><path d="M24 11V3" stroke="#5E3714" stroke-width="1.3"/><path d="M24 3.4h8.6l-2.2 2.2 2.2 2.2H24z" fill="#F6B21A" stroke="#9A5500" stroke-width=".9"/><path d="M27.5 21.5 34 18" stroke="#A4542A" stroke-width="2.6" stroke-linecap="round"/><circle cx="34.4" cy="17.8" r="1.6" fill="#BDE6F5" stroke="#3E6378" stroke-width=".8"/><rect x="13" y="21" width="3.4" height="4" rx=".8" fill="#5A5550"/><circle cx="14.7" cy="23" r="1.3" fill="#FFE7A0"/></symbol>
+<symbol id="b-bee_school" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><path d="M11 42 15 12M31 42l-4-30M21 42V14" stroke="#6B4426" stroke-width="2" stroke-linecap="round"/><rect x="8" y="8" width="28" height="19" rx="1.5" fill="#2F5A4A" stroke="#6B4426" stroke-width="2.4"/><path d="M12 13h8M12 17.5h11M12 22h6" stroke="#E8F2EC" stroke-width="1.4" stroke-linecap="round"/><circle cx="29" cy="17" r="3.4" fill="none" stroke="#FFE27A" stroke-width="1.2"/><path d="M27.6 17h2.8M29 15.6v2.8" stroke="#FFE27A" stroke-width="1"/><rect x="24" y="31" width="18" height="2.6" rx=".8" fill="#C98B4E" stroke="#5E3714" stroke-width=".8"/><path d="M26 33.6V42M40 33.6V42" stroke="#5E3714" stroke-width="1.6"/><rect x="26" y="27.6" width="9" height="2" rx=".5" fill="#C9483E"/><rect x="27" y="25.6" width="8" height="2" rx=".5" fill="#5B8FD9"/><rect x="26.4" y="23.6" width="8" height="2" rx=".5" fill="#4E9A5A"/><path d="M44 42V20" stroke="#5E3714" stroke-width="1.2"/><path d="M41 22a3 3 0 0 1 6 0l.6 2.6h-7.2z" fill="#F2B233" stroke="#9A6A00" stroke-width=".8"/></symbol>
+<symbol id="b-distillery" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><rect x="7" y="35" width="22" height="7" rx="1.4" fill="#B4533A" stroke="#6E2A1A" stroke-width="1"/><path d="M15 41c-1.6-1-1.6-3 0-4 .2 1 1 1.2 1.4.6.6 1 .4 2.4-1.4 3.4z" fill="#FF8A1F"/><circle cx="18" cy="25" r="11" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><path d="M7.2 25h21.6" stroke="#5A5550" stroke-width="1.4"/><path d="M15 14.4V9h6v5.4" fill="#C9763E" stroke="#6E2F12" stroke-width="1.2"/><path d="M21 10c6 0 11 .6 14 4.6" fill="none" stroke="#A4542A" stroke-width="2.2" stroke-linecap="round"/><path d="M35 14.6c-3 1-3 2.6 0 3.4s3 2.4 0 3.4-3 2.6 0 3.4 3 2.4 0 3.4" fill="none" stroke="#C8733A" stroke-width="2"/><path d="M35 28.2V33" stroke="#A4542A" stroke-width="2"/><path d="M31 33h8v9h-8z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.2"/><circle cx="14" cy="22" r="2.6" fill="#FFD2A8" opacity=".55"/></symbol>
+<symbol id="b-wax_press" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><rect x="8" y="34" width="32" height="8" rx="2" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.2"/><path d="M12 34V9M36 34V9" stroke="#5E3714" stroke-width="3.4" stroke-linecap="round"/><path d="M10 9h28" stroke="#5E3714" stroke-width="3.6" stroke-linecap="round"/><path d="M24 9v9" stroke="#4A4A4A" stroke-width="2.2"/><ellipse cx="24" cy="5.5" rx="6" ry="1.8" fill="none" stroke="#4A4A4A" stroke-width="1.4"/><path d="M18 5.5h12M24 5.5V9" stroke="#4A4A4A" stroke-width="1.2"/><rect x="16" y="18" width="16" height="6" rx="1.4" fill="#8D8D8D" stroke="#4A4A4A" stroke-width="1.1"/><path d="M17 34l2-7h10l2 7z" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.1"/><rect x="5" y="38" width="6" height="3.4" rx="1" fill="url(#gWax)" stroke="#B88E2E" stroke-width=".8"/><rect x="38" y="37" width="6" height="3.4" rx="1" fill="url(#gWax)" stroke="#B88E2E" stroke-width=".8"/></symbol>
+<symbol id="b-royal_cell" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="13" ry="2.4" fill="#000" opacity=".14"/><path d="M13 42l2-4h18l2 4z" fill="#F2B233" stroke="#9A6A00" stroke-width="1"/><ellipse cx="24" cy="38" rx="9" ry="1.8" fill="#7A2E5E"/><path d="M16.5 37.5c-1.6-7 0-14.6 7.5-21 7.5 6.4 9.1 14 7.5 21z" fill="url(#gLilac)" stroke="#6A44A8" stroke-width="1.3"/><path d="M17.4 31.5c3.4 1 9.8 1 13.2 0M17.8 25.6c3 .8 9.4.8 12.4 0" stroke="#F2B233" stroke-width="1.4" fill="none"/><path d="M19.4 33c0-3 .8-6 2.4-8" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8" fill="none"/><path d="M16 13l2.6 3.2L24 9.5l5.4 6.7L32 13l-1 5H17z" fill="#FFC83D" stroke="#B57A00" stroke-width="1" stroke-linejoin="round"/><circle cx="16" cy="12.6" r="1.2" fill="#E0505E"/><circle cx="24" cy="9" r="1.3" fill="#E0505E"/><circle cx="32" cy="12.6" r="1.2" fill="#E0505E"/></symbol>
+<symbol id="b-brood_hall" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="19" ry="2.4" fill="#000" opacity=".14"/><path d="M22 41c0-13 5.4-21 12-21s12 8 12 21z" fill="#D9A441" stroke="#7A5418" stroke-width="1.2"/><path d="M23.4 36h21.2M24.6 31h18.8M27 26h14" stroke="#B07A28" stroke-width="2.2" stroke-linecap="round"/><path d="M2 41c0-10 4.6-16 10.5-16S23 31 23 41z" fill="#ECC56A" stroke="#7A5418" stroke-width="1.2"/><path d="M3.2 37h18.6M4.6 32.4h15.8M7.4 28.4h10.2" stroke="#B07A28" stroke-width="2" stroke-linecap="round"/><path d="M13 30c3-4 9-6 13-4" fill="none" stroke="#B07A28" stroke-width="3" stroke-linecap="round"/><path d="M9 41v-3.4a3.4 3.4 0 0 1 6.8 0V41zM30.5 41v-5a3.5 3.5 0 0 1 7 0v5z" fill="#3A2010"/><g fill="#fff"><circle cx="20" cy="43" r="1.4"/><circle cx="44" cy="42.6" r="1.4"/></g><circle cx="20" cy="43" r=".7" fill="#F6B21A"/><circle cx="44" cy="42.6" r=".7" fill="#F6B21A"/></symbol>
+<symbol id="b-big_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43.5" rx="19" ry="2.2" fill="#000" opacity=".14"/><path d="M6 42V24c0-9 8-15.6 18-15.6S42 15 42 24v18z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.3"/><path d="M8 20.5c6-4 26-4 32 0M6.6 28c7-3 27.8-3 34.8 0M6 35.5c7-2 29-2 36 0" stroke="#857B6E" stroke-width="1.3" fill="none"/><path d="M17 42V30a7 7 0 0 1 14 0v12z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.2"/><path d="M24 23v19M17 33h14" stroke="#5E3714" stroke-width="1" opacity=".6"/><circle cx="28" cy="36" r="1.2" fill="#F2B233"/><path d="M2 42c0-4 1.6-6.6 4.6-7.4 1-1.4 3-1.4 3.8 0 3 .8 4.6 3.4 4.6 7.4z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1"/><path d="M34 42v-8.6c0-1 1.6-1.6 3.6-1.6s3.6.6 3.6 1.6V42" fill="url(#gWood)" stroke="#5E3714" stroke-width="1"/><path d="M34 37h7.2" stroke="#3E3A36" stroke-width="1.2"/></symbol>
+<symbol id="b-big_incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="19" ry="2.4" fill="#000" opacity=".14"/><path d="M5 6v22M43 6v22" stroke="#5A5550" stroke-width="1.8"/><path d="M5 6c0-2 2-2.6 4-2.6h4M43 6c0-2-2-2.6-4-2.6h-4" fill="none" stroke="#5A5550" stroke-width="1.8"/><path d="M10 3.4h7l-1.6 4h-3.8zM31 3.4h7l-1.6 4h-3.8z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width=".8"/><circle cx="13.5" cy="8.4" r="1.8" fill="#FFE7A0"/><circle cx="34.5" cy="8.4" r="1.8" fill="#FFE7A0"/><path d="M4 30c0 8 9 12 20 12s20-4 20-12z" fill="#B07A28" stroke="#6B4426" stroke-width="1.2"/><path d="M3 30c6-1.4 36-1.4 42 0M6 35c5-1 31-1 36 0M10 39.4c4-.8 24-.8 28 0" stroke="#D9A441" stroke-width="2" fill="none"/><g fill="#FFFDF5" stroke="#D9C9A8"><ellipse cx="11" cy="25" rx="3.8" ry="5"/><ellipse cx="18" cy="23.4" rx="4" ry="5.4"/><ellipse cx="25.4" cy="22.8" rx="4.2" ry="5.6"/><ellipse cx="32.6" cy="23.6" rx="4" ry="5.2"/><ellipse cx="39" cy="25.6" rx="3.6" ry="4.8"/></g><path d="M24.2 19.6c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></symbol>
 <symbol id="b-lab" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.6" fill="#000" opacity=".12"/><path d="M20 8h8v11l9 17a3 3 0 0 1-2.6 4.4H13.6A3 3 0 0 1 11 36l9-17z" fill="#E6F6F0" stroke="#3E7A66" stroke-width="1.4"/><path d="M14.4 30h19.2l3.4 6.2a2.6 2.6 0 0 1-2.3 3.8H13.3A2.6 2.6 0 0 1 11 36.2z" fill="#7FCBB0"/><circle cx="21" cy="34" r="1.6" fill="#E6F6F0"/><circle cx="27" cy="32" r="1.1" fill="#E6F6F0"/></symbol>
 <symbol id="b-trade_post" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="16" ry="2.6" fill="#000" opacity=".12"/><path d="M8 24h32v16H8z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M6 24l4-12h28l4 12z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.3"/><path d="M14 12l-2 12M22 12l-1 12M26 12l1 12M34 12l2 12" stroke="#FFF" stroke-width="2.4" opacity=".8"/><circle cx="18" cy="31" r="3" fill="url(#gHoney)"/><circle cx="28" cy="31" r="3" fill="url(#gWax)"/></symbol>
 <symbol id="b-army" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="12" ry="2.4" fill="#000" opacity=".12"/><path d="M24 6 37 11v10c0 9-5.6 15.6-13 19.4C16.6 36.6 11 30 11 21V11z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.4"/><path d="M24 12v22M17 21h14" stroke="#F6B21A" stroke-width="3" stroke-linecap="round"/></symbol>
@@ -3661,21 +3672,21 @@ const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" style="position:abs
 <symbol id="ro-nurse" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#F1E9FF"/><ellipse cx="9.3" cy="13" rx="2.3" ry="3" fill="#fff" stroke="#C9B5EE" stroke-width=".9"/><ellipse cx="14.7" cy="13" rx="2.3" ry="3" fill="#fff" stroke="#C9B5EE" stroke-width=".9"/><path d="M12 6.2c1-1.4 3-1 3 .4 0 1.3-3 3-3 3s-3-1.7-3-3c0-1.4 2-1.8 3-.4z" fill="#F28AB2"/></symbol>
 <symbol id="ro-lookout" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#DDF0F7"/><path d="M6 15.5 15 9l2.2 3-9 6.5z" fill="#6B8FA3"/><circle cx="16.6" cy="10.4" r="2.2" fill="#BDE6F5" stroke="#3E6378" stroke-width="1"/><path d="M8.5 17.3 7 20.5M10.8 15.6l.8 4.8" stroke="#3E6378" stroke-width="1.3" stroke-linecap="round"/></symbol>
 
-<symbol id="b-nectar_store" viewBox="0 0 48 48"><ellipse cx="24" cy="41" rx="13" ry="3" fill="#000" opacity=".12"/><path d="M12 13c0-2 5.4-3.6 12-3.6S36 11 36 13l1.2 13.6L36 38c0 2-5.4 3.4-12 3.4S12 40 12 38l-1.2-11.4z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M11.4 20.5C14 22 34 22 36.6 20.5M11.4 31.5C14 33 34 33 36.6 31.5" stroke="#4A4A4A" stroke-width="2.2" fill="none"/><ellipse cx="24" cy="12.6" rx="11.2" ry="2.8" fill="#FFE27A" stroke="#5E3714" stroke-width="1.2"/><path d="M18 26v8M24 26.5v9M30 26v8" stroke="#6B3E18" stroke-width="1" opacity=".5"/></symbol>
-<symbol id="b-honey_store" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.8" fill="#000" opacity=".12"/><path d="M14 17c-4 3-5 8-4 13 1.4 7 6.6 10.6 14 10.6S36.6 37 38 30c1-5 0-10-4-13z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.4"/><rect x="13.5" y="12" width="21" height="6" rx="2.6" fill="#8A5428" stroke="#5E3714" stroke-width="1.2"/><path d="M17 18v3.5a1.8 1.8 0 0 0 3.6 0V18v5.2a2 2 0 0 0 4 0V18" fill="#FFB01F"/><path d="M15.5 26c.4 4 2.4 7.4 5 8.6" stroke="#fff" stroke-width="2" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
-<symbol id="b-pantry" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><rect x="8" y="22" width="20" height="18" rx="2" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M8 28h20M8 34h20M12 22v18M24 22v18" stroke="#6B3E18" stroke-width="1" opacity=".6"/><path d="M27 40c-1-6 0-12 4-16 2-2 4-2 6 0 4 4 4 10 3 16z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1.3"/><path d="M31.5 24c1-2 3-2 4 0" stroke="#8A6A3A" stroke-width="1.3" fill="none"/><path d="M12 22c2-5 10-5 12 0" fill="#FFE9A8" stroke="#C9A24C" stroke-width="1.2"/></symbol>
-<symbol id="b-meadery" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.8" fill="#000" opacity=".12"/><path d="M10 22h28l-2.4 13a6 6 0 0 1-5.9 4.9H18.3a6 6 0 0 1-5.9-4.9z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><ellipse cx="24" cy="22" rx="14" ry="3.6" fill="#FFC23A" stroke="#6E2F12" stroke-width="1.3"/><circle cx="19" cy="21.4" r="1.6" fill="#FFE59A"/><circle cx="27" cy="22.4" r="1.2" fill="#FFE59A"/><path d="M18 14c-1.4-2 1-3 0-5M24 13c-1.4-2 1-3 0-5M30 14c-1.4-2 1-3 0-5" stroke="#B9AEA6" stroke-width="1.6" stroke-linecap="round" fill="none"/><path d="M15 29c.6 3 2 5 4 6" stroke="#FFD2A8" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
-<symbol id="b-wax_shop" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="13" ry="2.6" fill="#000" opacity=".12"/><rect x="11" y="20" width="9" height="20" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><rect x="22" y="15" width="9" height="25" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><rect x="33" y="24" width="7" height="16" rx="2" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.3"/><path d="M15.5 20v-2.4M26.5 15v-2.4M36.5 24v-2.4" stroke="#333" stroke-width="1"/><path d="M15.5 17.6c-2.2-2.4-.4-4.6 0-6.6 1.2 2 2.4 4 0 6.6zM26.5 12.6c-2.2-2.4-.4-4.6 0-6.6 1.2 2 2.4 4 0 6.6zM36.5 21.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6z" fill="#FF9A1F" stroke="#E0560E" stroke-width=".8"/><path d="M24 20c.2 2.6-.4 4 .6 5.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".8" fill="none"/></symbol>
-<symbol id="b-incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><path d="M8 27c0 8 7 13 16 13s16-5 16-13z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M6.5 27h35" stroke="#5E3714" stroke-width="2.4" stroke-linecap="round"/><ellipse cx="17" cy="22" rx="4.4" ry="5.6" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><ellipse cx="24.5" cy="20.5" rx="4.6" ry="6" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><ellipse cx="31.6" cy="22.4" rx="4.2" ry="5.4" fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.2"/><path d="M23 17c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/><path d="M24 8.5c1.6-2.2 4.6-1.6 4.6.6 0 2-4.6 4.6-4.6 4.6s-4.6-2.6-4.6-4.6c0-2.2 3-2.8 4.6-.6z" fill="#F28AB2"/></symbol>
-<symbol id="b-housing" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><path d="M7 40c0-14 7.6-24 17-24s17 10 17 24z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.4"/><path d="M10 31h28M8.6 36h30.8M13 25h22" stroke="#C97A00" stroke-width="1.2" opacity=".6"/><path d="M19 40v-6a5 5 0 0 1 10 0v6z" fill="#5E3714" stroke="#3A2010" stroke-width="1.2"/><circle cx="27" cy="36.6" r=".9" fill="#FFC23A"/><circle cx="15" cy="29" r="2.4" fill="#FFF0B8" stroke="#9A5500" stroke-width="1"/><circle cx="33" cy="29" r="2.4" fill="#FFF0B8" stroke="#9A5500" stroke-width="1"/><path d="M33 9.5h3l-3 3h3M38 6h2l-2 2h2" stroke="#7A6AA8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-<symbol id="b-scout_nest" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="11" ry="2.4" fill="#000" opacity=".12"/><path d="M16 42 19 16h10l3 26z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M17.4 30h13.2M18.4 22h11.2M17 36l14-6M18 28l12-6" stroke="#5E3714" stroke-width="1.1" opacity=".55"/><path d="M14 16h20l-3-4H17z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.2"/><path d="M24 12V3" stroke="#5E3714" stroke-width="1.4"/><path d="M24 3.4h9l-2.4 2.4 2.4 2.4H24z" fill="#F6B21A" stroke="#9A5500" stroke-width="1"/><circle cx="31" cy="20" r="2.4" fill="#BDE6F5" stroke="#3E6378" stroke-width="1.1"/></symbol>
-<symbol id="b-bee_school" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="15" ry="2.6" fill="#000" opacity=".12"/><rect x="9" y="12" width="30" height="20" rx="2.2" fill="#2F5A4A" stroke="#6B4A22" stroke-width="2.4"/><path d="M14 18h7M14 22.5h12M14 27h5" stroke="#E8F2EC" stroke-width="1.5" stroke-linecap="round"/><path d="M30 18l3 2-3 2M33 24l-3 2 3 2" stroke="#FFE27A" stroke-width="1.4" fill="none" stroke-linecap="round"/><path d="M14 32v9M34 32v9" stroke="#6B4A22" stroke-width="2.2"/><path d="M18 40h12l-1.6-5h-8.8z" fill="#F1E4C6" stroke="#8A6A3A" stroke-width="1.1"/><path d="M24 4.5 33 8l-9 3.5L15 8z" fill="#3A2416"/><path d="M29.5 9.6v3.4" stroke="#F6B21A" stroke-width="1.3"/></symbol>
-<symbol id="b-distillery" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.6" fill="#000" opacity=".12"/><circle cx="18" cy="29" r="11" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><path d="M15 18.4V13h6v5.4" fill="#C9763E" stroke="#6E2F12" stroke-width="1.3"/><path d="M21 14c6 0 12 1 16 6v10" fill="none" stroke="#A4542A" stroke-width="2.4" stroke-linecap="round"/><path d="M33 30h8v10h-8z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><circle cx="14" cy="26" r="2.4" fill="#FFD2A8" opacity=".55"/></symbol>
-<symbol id="b-wax_press" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="14" ry="2.6" fill="#000" opacity=".12"/><rect x="10" y="32" width="28" height="8" rx="2" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.3"/><path d="M14 32V12M34 32V12M12 12h24" stroke="#6B4A22" stroke-width="3" stroke-linecap="round"/><rect x="18" y="16" width="12" height="7" rx="1.6" fill="#8D8D8D" stroke="#4A4A4A" stroke-width="1.2"/><path d="M24 12v4" stroke="#4A4A4A" stroke-width="2"/><path d="M17 32l3-6h8l3 6z" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.2"/></symbol>
-<symbol id="b-royal_cell" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.6" fill="#000" opacity=".12"/><path d="M16 40c-2-8 0-17 8-24 8 7 10 16 8 24z" fill="url(#gLilac)" stroke="#6A44A8" stroke-width="1.4"/><path d="M18.5 30c0-3 1.2-6 3-8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".8" fill="none"/><path d="M16 12.5l2.6 3L24 9l5.4 6.5L32 12.5l-1 5H17z" fill="#FFC83D" stroke="#B57A00" stroke-width="1.1" stroke-linejoin="round"/></symbol>
-<symbol id="b-brood_hall" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="17" ry="2.6" fill="#000" opacity=".12"/><path d="M4 40c0-10 5-17 12-17s12 7 12 17z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><path d="M20 40c0-13 6-22 14-22s12 9 12 22z" fill="#F0A93A" stroke="#9A5500" stroke-width="1.3"/><path d="M12 40v-4a4 4 0 0 1 8 0v4zM29.5 40v-5a4.5 4.5 0 0 1 9 0v5z" fill="#5E3714"/><circle cx="34" cy="27" r="2.2" fill="#FFF0B8" stroke="#9A5500"/></symbol>
-<symbol id="b-big_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".12"/><path d="M6 42V22c0-8 8-14 18-14s18 6 18 14v20z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.4"/><path d="M14 42V27a10 10 0 0 1 20 0v15z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M24 17v25M14 32h20" stroke="#5E3714" stroke-width="1.2" opacity=".6"/><circle cx="28" cy="35" r="1.3" fill="#FFC23A"/><path d="M10 16l3 2M38 16l-3 2M24 10v3" stroke="#5A5248" stroke-width="1.2"/></symbol>
-<symbol id="b-big_incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="17" ry="2.6" fill="#000" opacity=".12"/><path d="M5 28c0 9 8.5 13 19 13s19-4 19-13z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.4"/><path d="M3.6 28h40.8" stroke="#5E3714" stroke-width="2.4" stroke-linecap="round"/><g fill="#FFFDF5" stroke="#D9C9A8" stroke-width="1.1"><ellipse cx="12" cy="23" rx="4" ry="5.2"/><ellipse cx="19" cy="21" rx="4.2" ry="5.6"/><ellipse cx="26.4" cy="20.4" rx="4.4" ry="5.8"/><ellipse cx="33.6" cy="22" rx="4.2" ry="5.4"/></g><path d="M24 6.5c1.6-2.2 4.6-1.6 4.6.6 0 2-4.6 4.6-4.6 4.6s-4.6-2.6-4.6-4.6c0-2.2 3-2.8 4.6-.6z" fill="#F28AB2"/></symbol>
+<symbol id="b-nectar_store" viewBox="0 0 48 48"><ellipse cx="22" cy="43" rx="15" ry="2.6" fill="#000" opacity=".14"/><path d="M10 13.5c0-1.8 5.4-3.2 12-3.2s12 1.4 12 3.2l1.4 13.5L34 39c0 1.8-5.4 3.2-12 3.2S10 40.8 10 39L8.6 27z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M14 13v27M19 12.4v29M25 12.4v29M30 13v27" stroke="#6B3E18" stroke-width=".9" opacity=".45"/><path d="M9.6 18.5c2.6 1.4 22.2 1.4 24.8 0M8.8 27c2.8 1.6 23.6 1.6 26.4 0M9.6 35.6c2.6 1.4 22.2 1.4 24.8 0" stroke="#3E3A36" stroke-width="2" fill="none"/><ellipse cx="22" cy="13" rx="11" ry="2.7" fill="#8A5428" stroke="#5E3714" stroke-width="1"/><g transform="translate(21 10)"><g fill="#fff" stroke="#D9D2C0" stroke-width=".5"><ellipse cx="0" cy="-4" rx="1.8" ry="3.4"/><ellipse cx="0" cy="4" rx="1.8" ry="3.4"/><ellipse cx="-4" cy="0" rx="3.4" ry="1.8"/><ellipse cx="4" cy="0" rx="3.4" ry="1.8"/><ellipse cx="-2.9" cy="-2.9" rx="1.7" ry="3.2" transform="rotate(-45 -2.9 -2.9)"/><ellipse cx="2.9" cy="2.9" rx="1.7" ry="3.2" transform="rotate(-45 2.9 2.9)"/><ellipse cx="2.9" cy="-2.9" rx="1.7" ry="3.2" transform="rotate(45 2.9 -2.9)"/><ellipse cx="-2.9" cy="2.9" rx="1.7" ry="3.2" transform="rotate(45 -2.9 2.9)"/></g><circle r="2.4" fill="#F6B21A" stroke="#B57A00" stroke-width=".6"/></g><path d="M35 28h5v3h-2v3" fill="none" stroke="#A4542A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M38 35.5c-1.3 1.6-1.3 3 0 3.6 1.3-.6 1.3-2 0-3.6z" fill="#FFE27A" stroke="#C99A1E" stroke-width=".7"/><path d="M12.5 22c.4 5 .4 10 0 14" stroke="#FFD2A8" stroke-width="1.6" stroke-linecap="round" opacity=".55"/></symbol>
+<symbol id="b-honey_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="13" ry="2.6" fill="#000" opacity=".14"/><path d="M15 16c-5 3-6.5 9-5 15 1.6 6.6 7 10.6 14 10.6S36.4 37.6 38 31c1.5-6 0-12-5-15z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.3"/><path d="M10.4 27.5c3.6 1.6 23.6 1.6 27.2 0" stroke="#FFF1CF" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M14.5 11.5h19v5h-19z" fill="#C97A1A" stroke="#7A4200" stroke-width="1.1"/><ellipse cx="24" cy="11.5" rx="9.5" ry="2.4" fill="#FFB01F" stroke="#9A5500" stroke-width="1"/><path d="M16 16.5v5.2a1.9 1.9 0 0 0 3.8 0V16.5v3a1.7 1.7 0 0 0 3.4 0v-3 7.6a2 2 0 0 0 4 0v-7.6 2.4a1.6 1.6 0 0 0 3.2 0v-2.4" fill="#FFB01F"/><path d="M27 12 36 2.5" stroke="#8A5428" stroke-width="2" stroke-linecap="round"/><g fill="#C98B4E" stroke="#5E3714" stroke-width=".8"><ellipse cx="29.4" cy="10" rx="2.6" ry="1.5" transform="rotate(-45 29.4 10)"/><ellipse cx="31" cy="8.4" rx="2.4" ry="1.4" transform="rotate(-45 31 8.4)"/><ellipse cx="32.5" cy="6.8" rx="2" ry="1.2" transform="rotate(-45 32.5 6.8)"/></g><path d="M14.5 30c.4 3.6 2 6.4 4.6 7.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round" fill="none" opacity=".65"/></symbol>
+<symbol id="b-pantry" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><rect x="8" y="8" width="26" height="34" rx="1.5" fill="#6B4426" stroke="#3A2010" stroke-width="1.2"/><rect x="10.5" y="10" width="21" height="30" fill="#4E2F16"/><path d="M9 19h24M9 29.5h24M9 40h24" stroke="#C98B4E" stroke-width="2.6"/><g stroke="#B88E2E" stroke-width=".8"><rect x="12" y="13.5" width="5.5" height="5" rx="1" fill="#FFF1CF"/><rect x="18.5" y="12.5" width="5.5" height="6" rx="1" fill="#FFF1CF"/><rect x="25" y="13.5" width="5.5" height="5" rx="1" fill="#F5DE9C"/></g><g stroke="#3A1E08" stroke-width=".7"><rect x="12.3" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/><rect x="18.7" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/><rect x="25.1" y="22.5" width="4.6" height="6.4" rx="1.2" fill="url(#gProp)"/></g><path d="M12 22.8c.6-1.8 4.4-1.8 5.2 0M18.4 22.8c.6-1.8 4.4-1.8 5.2 0M24.8 22.8c.6-1.8 4.4-1.8 5.2 0" fill="#D8C49A" stroke="#8A6A3A" stroke-width=".7"/><path d="M19 22.8c.6-1.8 3.8-1.8 4.6 0" fill="#C9483E"/><rect x="13" y="32" width="16" height="7" rx="1.4" fill="#F5DE9C" stroke="#B88E2E" stroke-width=".8"/><path d="M33 42c-1.6-5-.6-9.6 3.4-12.2 1.2-2.8 4.4-2.8 5.6 0 3.6 2.6 4.4 7.4 2.6 12.2z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1.2"/><path d="M36.4 30.4c1.6 1 4 1 5.6 0" stroke="#C9483E" stroke-width="1.6" fill="none"/></symbol>
+<symbol id="b-meadery" viewBox="0 0 48 48"><ellipse cx="24" cy="43.5" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M12 42 36 36M12 36l24 6" stroke="#6B4426" stroke-width="3.4" stroke-linecap="round"/><path d="M24 40c-4-2-4.4-6-1.4-9 0 2.2 1.4 2.8 2.2 2 .6-2.4 2.6-3.4 3.4-5.6 2.6 3.2 3.4 9.6-4.2 12.6z" fill="#FF8A1F"/><path d="M24.4 39c-2-1.2-2-3.4-.4-5 .4 1.4 1.4 1.6 2 .8.8 1.6.8 3.2-1.6 4.2z" fill="#FFE59A"/><path d="M13 31 10.5 40M35 31l2.5 9" stroke="#4A4A4A" stroke-width="1.6" stroke-linecap="round"/><path d="M9 18h30l-1.8 10a6.6 6.6 0 0 1-6.5 5.4H17.3a6.6 6.6 0 0 1-6.5-5.4z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.3"/><ellipse cx="24" cy="18" rx="15" ry="3.6" fill="#FFB01F" stroke="#6E2F12" stroke-width="1.3"/><circle cx="19" cy="17.6" r="1.6" fill="#FFE59A"/><circle cx="27.5" cy="18.4" r="1.1" fill="#FFE59A"/><path d="M28 17 37 6" stroke="#8A5428" stroke-width="1.8" stroke-linecap="round"/><path d="M17 11c-1.4-2 1-3 0-5M24 10c-1.4-2 1-3 0-5" stroke="#B9AEA6" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M13.5 23c.6 3 2 5 4 6" stroke="#FFD2A8" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".7"/></symbol>
+<symbol id="b-wax_shop" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><rect x="5" y="25" width="23" height="17" rx="1.5" fill="#B4533A" stroke="#6E2A1A" stroke-width="1.2"/><path d="M5 30.5h23M5 36h23M11 25v5.5M19 25v5.5M15 30.5V36M23 30.5V36M11 36v6M19 36v6" stroke="#7A3A26" stroke-width=".9"/><path d="M12 42v-4a4.5 4.5 0 0 1 9 0v4z" fill="#2A1A10"/><path d="M16.5 41.5c-2-1-2.2-3-.6-4.4.2 1.2 1 1.4 1.4.8.8 1.2.8 2.6-.8 3.6z" fill="#FF8A1F"/><path d="M7 17h19l-1.6 8H8.6z" fill="#5A5550" stroke="#2E2A26" stroke-width="1.2"/><ellipse cx="16.5" cy="17" rx="9.5" ry="2.2" fill="#FFF1CF" stroke="#B88E2E" stroke-width=".9"/><g stroke="#B88E2E" stroke-width="1"><rect x="31" y="22" width="5" height="20" rx="1.4" fill="url(#gWax)"/><rect x="37.5" y="27" width="5" height="15" rx="1.4" fill="url(#gWax)"/></g><path d="M33.5 22v-2.4M40 27v-2.4" stroke="#333" stroke-width=".9"/><path d="M33.5 19.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6zM40 24.6c-2-2.2-.4-4.2 0-6 1 1.8 2.2 3.6 0 6z" fill="#FF9A1F" stroke="#E0560E" stroke-width=".7"/><path d="M31.5 24.5c1 .6 1 2 .2 3" stroke="#fff" stroke-width="1" fill="none"/></symbol>
+<symbol id="b-incubator" viewBox="0 0 48 48"><ellipse cx="26" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M7 7c0-2 2-3 4-3h7c3 0 5 2 5 4v3" fill="none" stroke="#5A5550" stroke-width="2"/><path d="M17 11h12l-2.6 5H19.6z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1"/><circle cx="23" cy="17.4" r="2.4" fill="#FFE7A0"/><path d="M19 20.5 17 24M23 21v4M27 20.5l2 3.5" stroke="#FFD15C" stroke-width="1.4" stroke-linecap="round"/><path d="M7 7v35" stroke="#5A5550" stroke-width="2"/><path d="M10 31c0 7 6.6 11 15 11s15-4 15-11z" fill="#B07A28" stroke="#6B4426" stroke-width="1.2"/><path d="M9 31c4-1 28-1 32 0M11 35.5c4-1 24-1 28 0M14 39.5c3-.8 19-.8 22 0" stroke="#D9A441" stroke-width="2" fill="none"/><ellipse cx="18.5" cy="26.5" rx="4.2" ry="5.4" fill="#FFFDF5" stroke="#D9C9A8"/><ellipse cx="26" cy="25" rx="4.4" ry="5.8" fill="#FFFDF5" stroke="#D9C9A8"/><ellipse cx="33" cy="27" rx="4" ry="5.2" fill="#FFFDF5" stroke="#D9C9A8"/><path d="M24.6 21.6c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></symbol>
+<symbol id="b-housing" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><path d="M7 41c0-15 7.6-26 17-26s17 11 17 26z" fill="#D9A441" stroke="#7A5418" stroke-width="1.3"/><path d="M8.4 35h31.2M10 29h28M13 23h22M17 18h14" stroke="#B07A28" stroke-width="2.4" stroke-linecap="round"/><path d="M8 38h32M9 32h30M11.5 26h25M15 20.5h18" stroke="#ECC56A" stroke-width="1" opacity=".8"/><ellipse cx="24" cy="15" rx="3.2" ry="1.8" fill="#B07A28"/><path d="M19.5 41v-6a4.5 4.5 0 0 1 9 0v6z" fill="#3A2010"/><path d="M19 41.2h10" stroke="#8A5428" stroke-width="2"/><circle cx="14" cy="30" r="2.6" fill="#FFE7A0" stroke="#5E3714" stroke-width="1"/><circle cx="34" cy="30" r="2.6" fill="#FFE7A0" stroke="#5E3714" stroke-width="1"/><rect x="10.5" y="33" width="7" height="2.4" rx=".8" fill="#8A5428"/><rect x="30.5" y="33" width="7" height="2.4" rx=".8" fill="#8A5428"/><circle cx="12" cy="32.6" r="1.2" fill="#E0505E"/><circle cx="14.5" cy="32.3" r="1.2" fill="#F28AB2"/><circle cx="16.6" cy="32.6" r="1.2" fill="#E0505E"/><circle cx="32" cy="32.6" r="1.2" fill="#F28AB2"/><circle cx="34.5" cy="32.3" r="1.2" fill="#E0505E"/><circle cx="36.6" cy="32.6" r="1.2" fill="#F28AB2"/><path d="M36 9.5h3l-3 3h3M40.5 5.5h2l-2 2h2" stroke="#7A6AA8" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="b-scout_nest" viewBox="0 0 48 48"><ellipse cx="24" cy="44" rx="12" ry="2.2" fill="#000" opacity=".14"/><path d="M16 43 19 19h10l3 24" fill="none" stroke="#8A5428" stroke-width="2.4"/><path d="M17.2 33h13.6M18.2 26h11.6M17 40l14-8M18 31l12-6" stroke="#8A5428" stroke-width="1.3" opacity=".75"/><path d="M33 44 36 22M37.5 44l2-22" stroke="#5E3714" stroke-width="1.4"/><path d="M33.5 40h4.4M34 35h4.6M34.6 30h4.4M35.2 25h4.2" stroke="#5E3714" stroke-width="1.2"/><rect x="14" y="17" width="20" height="3" rx="1" fill="#5E3714"/><path d="M13 17h22l-4-6H17z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.1"/><path d="M24 11V3" stroke="#5E3714" stroke-width="1.3"/><path d="M24 3.4h8.6l-2.2 2.2 2.2 2.2H24z" fill="#F6B21A" stroke="#9A5500" stroke-width=".9"/><path d="M27.5 21.5 34 18" stroke="#A4542A" stroke-width="2.6" stroke-linecap="round"/><circle cx="34.4" cy="17.8" r="1.6" fill="#BDE6F5" stroke="#3E6378" stroke-width=".8"/><rect x="13" y="21" width="3.4" height="4" rx=".8" fill="#5A5550"/><circle cx="14.7" cy="23" r="1.3" fill="#FFE7A0"/></symbol>
+<symbol id="b-bee_school" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="17" ry="2.4" fill="#000" opacity=".14"/><path d="M11 42 15 12M31 42l-4-30M21 42V14" stroke="#6B4426" stroke-width="2" stroke-linecap="round"/><rect x="8" y="8" width="28" height="19" rx="1.5" fill="#2F5A4A" stroke="#6B4426" stroke-width="2.4"/><path d="M12 13h8M12 17.5h11M12 22h6" stroke="#E8F2EC" stroke-width="1.4" stroke-linecap="round"/><circle cx="29" cy="17" r="3.4" fill="none" stroke="#FFE27A" stroke-width="1.2"/><path d="M27.6 17h2.8M29 15.6v2.8" stroke="#FFE27A" stroke-width="1"/><rect x="24" y="31" width="18" height="2.6" rx=".8" fill="#C98B4E" stroke="#5E3714" stroke-width=".8"/><path d="M26 33.6V42M40 33.6V42" stroke="#5E3714" stroke-width="1.6"/><rect x="26" y="27.6" width="9" height="2" rx=".5" fill="#C9483E"/><rect x="27" y="25.6" width="8" height="2" rx=".5" fill="#5B8FD9"/><rect x="26.4" y="23.6" width="8" height="2" rx=".5" fill="#4E9A5A"/><path d="M44 42V20" stroke="#5E3714" stroke-width="1.2"/><path d="M41 22a3 3 0 0 1 6 0l.6 2.6h-7.2z" fill="#F2B233" stroke="#9A6A00" stroke-width=".8"/></symbol>
+<symbol id="b-distillery" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><rect x="7" y="35" width="22" height="7" rx="1.4" fill="#B4533A" stroke="#6E2A1A" stroke-width="1"/><path d="M15 41c-1.6-1-1.6-3 0-4 .2 1 1 1.2 1.4.6.6 1 .4 2.4-1.4 3.4z" fill="#FF8A1F"/><circle cx="18" cy="25" r="11" fill="url(#gCopper)" stroke="#6E2F12" stroke-width="1.4"/><path d="M7.2 25h21.6" stroke="#5A5550" stroke-width="1.4"/><path d="M15 14.4V9h6v5.4" fill="#C9763E" stroke="#6E2F12" stroke-width="1.2"/><path d="M21 10c6 0 11 .6 14 4.6" fill="none" stroke="#A4542A" stroke-width="2.2" stroke-linecap="round"/><path d="M35 14.6c-3 1-3 2.6 0 3.4s3 2.4 0 3.4-3 2.6 0 3.4 3 2.4 0 3.4" fill="none" stroke="#C8733A" stroke-width="2"/><path d="M35 28.2V33" stroke="#A4542A" stroke-width="2"/><path d="M31 33h8v9h-8z" fill="url(#gHoney)" stroke="#9A5500" stroke-width="1.2"/><circle cx="14" cy="22" r="2.6" fill="#FFD2A8" opacity=".55"/></symbol>
+<symbol id="b-wax_press" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="16" ry="2.4" fill="#000" opacity=".14"/><rect x="8" y="34" width="32" height="8" rx="2" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.2"/><path d="M12 34V9M36 34V9" stroke="#5E3714" stroke-width="3.4" stroke-linecap="round"/><path d="M10 9h28" stroke="#5E3714" stroke-width="3.6" stroke-linecap="round"/><path d="M24 9v9" stroke="#4A4A4A" stroke-width="2.2"/><ellipse cx="24" cy="5.5" rx="6" ry="1.8" fill="none" stroke="#4A4A4A" stroke-width="1.4"/><path d="M18 5.5h12M24 5.5V9" stroke="#4A4A4A" stroke-width="1.2"/><rect x="16" y="18" width="16" height="6" rx="1.4" fill="#8D8D8D" stroke="#4A4A4A" stroke-width="1.1"/><path d="M17 34l2-7h10l2 7z" fill="url(#gWax)" stroke="#B88E2E" stroke-width="1.1"/><rect x="5" y="38" width="6" height="3.4" rx="1" fill="url(#gWax)" stroke="#B88E2E" stroke-width=".8"/><rect x="38" y="37" width="6" height="3.4" rx="1" fill="url(#gWax)" stroke="#B88E2E" stroke-width=".8"/></symbol>
+<symbol id="b-royal_cell" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="13" ry="2.4" fill="#000" opacity=".14"/><path d="M13 42l2-4h18l2 4z" fill="#F2B233" stroke="#9A6A00" stroke-width="1"/><ellipse cx="24" cy="38" rx="9" ry="1.8" fill="#7A2E5E"/><path d="M16.5 37.5c-1.6-7 0-14.6 7.5-21 7.5 6.4 9.1 14 7.5 21z" fill="url(#gLilac)" stroke="#6A44A8" stroke-width="1.3"/><path d="M17.4 31.5c3.4 1 9.8 1 13.2 0M17.8 25.6c3 .8 9.4.8 12.4 0" stroke="#F2B233" stroke-width="1.4" fill="none"/><path d="M19.4 33c0-3 .8-6 2.4-8" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8" fill="none"/><path d="M16 13l2.6 3.2L24 9.5l5.4 6.7L32 13l-1 5H17z" fill="#FFC83D" stroke="#B57A00" stroke-width="1" stroke-linejoin="round"/><circle cx="16" cy="12.6" r="1.2" fill="#E0505E"/><circle cx="24" cy="9" r="1.3" fill="#E0505E"/><circle cx="32" cy="12.6" r="1.2" fill="#E0505E"/></symbol>
+<symbol id="b-brood_hall" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="19" ry="2.4" fill="#000" opacity=".14"/><path d="M22 41c0-13 5.4-21 12-21s12 8 12 21z" fill="#D9A441" stroke="#7A5418" stroke-width="1.2"/><path d="M23.4 36h21.2M24.6 31h18.8M27 26h14" stroke="#B07A28" stroke-width="2.2" stroke-linecap="round"/><path d="M2 41c0-10 4.6-16 10.5-16S23 31 23 41z" fill="#ECC56A" stroke="#7A5418" stroke-width="1.2"/><path d="M3.2 37h18.6M4.6 32.4h15.8M7.4 28.4h10.2" stroke="#B07A28" stroke-width="2" stroke-linecap="round"/><path d="M13 30c3-4 9-6 13-4" fill="none" stroke="#B07A28" stroke-width="3" stroke-linecap="round"/><path d="M9 41v-3.4a3.4 3.4 0 0 1 6.8 0V41zM30.5 41v-5a3.5 3.5 0 0 1 7 0v5z" fill="#3A2010"/><g fill="#fff"><circle cx="20" cy="43" r="1.4"/><circle cx="44" cy="42.6" r="1.4"/></g><circle cx="20" cy="43" r=".7" fill="#F6B21A"/><circle cx="44" cy="42.6" r=".7" fill="#F6B21A"/></symbol>
+<symbol id="b-big_store" viewBox="0 0 48 48"><ellipse cx="24" cy="43.5" rx="19" ry="2.2" fill="#000" opacity=".14"/><path d="M6 42V24c0-9 8-15.6 18-15.6S42 15 42 24v18z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.3"/><path d="M8 20.5c6-4 26-4 32 0M6.6 28c7-3 27.8-3 34.8 0M6 35.5c7-2 29-2 36 0" stroke="#857B6E" stroke-width="1.3" fill="none"/><path d="M17 42V30a7 7 0 0 1 14 0v12z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.2"/><path d="M24 23v19M17 33h14" stroke="#5E3714" stroke-width="1" opacity=".6"/><circle cx="28" cy="36" r="1.2" fill="#F2B233"/><path d="M2 42c0-4 1.6-6.6 4.6-7.4 1-1.4 3-1.4 3.8 0 3 .8 4.6 3.4 4.6 7.4z" fill="#E9D3A4" stroke="#8A6A3A" stroke-width="1"/><path d="M34 42v-8.6c0-1 1.6-1.6 3.6-1.6s3.6.6 3.6 1.6V42" fill="url(#gWood)" stroke="#5E3714" stroke-width="1"/><path d="M34 37h7.2" stroke="#3E3A36" stroke-width="1.2"/></symbol>
+<symbol id="b-big_incubator" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="19" ry="2.4" fill="#000" opacity=".14"/><path d="M5 6v22M43 6v22" stroke="#5A5550" stroke-width="1.8"/><path d="M5 6c0-2 2-2.6 4-2.6h4M43 6c0-2-2-2.6-4-2.6h-4" fill="none" stroke="#5A5550" stroke-width="1.8"/><path d="M10 3.4h7l-1.6 4h-3.8zM31 3.4h7l-1.6 4h-3.8z" fill="url(#gCopper)" stroke="#6E2F12" stroke-width=".8"/><circle cx="13.5" cy="8.4" r="1.8" fill="#FFE7A0"/><circle cx="34.5" cy="8.4" r="1.8" fill="#FFE7A0"/><path d="M4 30c0 8 9 12 20 12s20-4 20-12z" fill="#B07A28" stroke="#6B4426" stroke-width="1.2"/><path d="M3 30c6-1.4 36-1.4 42 0M6 35c5-1 31-1 36 0M10 39.4c4-.8 24-.8 28 0" stroke="#D9A441" stroke-width="2" fill="none"/><g fill="#FFFDF5" stroke="#D9C9A8"><ellipse cx="11" cy="25" rx="3.8" ry="5"/><ellipse cx="18" cy="23.4" rx="4" ry="5.4"/><ellipse cx="25.4" cy="22.8" rx="4.2" ry="5.6"/><ellipse cx="32.6" cy="23.6" rx="4" ry="5.2"/><ellipse cx="39" cy="25.6" rx="3.6" ry="4.8"/></g><path d="M24.2 19.6c-.6 1-.8 2.6-.4 3.6" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></symbol>
 <symbol id="b-lab" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="12" ry="2.6" fill="#000" opacity=".12"/><path d="M20 8h8v11l9 17a3 3 0 0 1-2.6 4.4H13.6A3 3 0 0 1 11 36l9-17z" fill="#E6F6F0" stroke="#3E7A66" stroke-width="1.4"/><path d="M14.4 30h19.2l3.4 6.2a2.6 2.6 0 0 1-2.3 3.8H13.3A2.6 2.6 0 0 1 11 36.2z" fill="#7FCBB0"/><circle cx="21" cy="34" r="1.6" fill="#E6F6F0"/><circle cx="27" cy="32" r="1.1" fill="#E6F6F0"/></symbol>
 <symbol id="b-trade_post" viewBox="0 0 48 48"><ellipse cx="24" cy="42" rx="16" ry="2.6" fill="#000" opacity=".12"/><path d="M8 24h32v16H8z" fill="url(#gWood)" stroke="#5E3714" stroke-width="1.3"/><path d="M6 24l4-12h28l4 12z" fill="#E0505E" stroke="#8A1E2A" stroke-width="1.3"/><path d="M14 12l-2 12M22 12l-1 12M26 12l1 12M34 12l2 12" stroke="#FFF" stroke-width="2.4" opacity=".8"/><circle cx="18" cy="31" r="3" fill="url(#gHoney)"/><circle cx="28" cy="31" r="3" fill="url(#gWax)"/></symbol>
 <symbol id="b-army" viewBox="0 0 48 48"><ellipse cx="24" cy="43" rx="12" ry="2.4" fill="#000" opacity=".12"/><path d="M24 6 37 11v10c0 9-5.6 15.6-13 19.4C16.6 36.6 11 30 11 21V11z" fill="url(#gStone)" stroke="#5A5248" stroke-width="1.4"/><path d="M24 12v22M17 21h14" stroke="#F6B21A" stroke-width="3" stroke-linecap="round"/></symbol>
@@ -3845,7 +3856,7 @@ const Scene3D = (() => {
     renderer = new THREE.WebGLRenderer({ canvas, antialias: qName !== 'low', alpha: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(Q.dpr, window.devicePixelRatio || 1));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = qName === 'low' ? THREE.PCFShadowMap : THREE.VSMShadowMap;
+    renderer.shadowMap.type = qName === 'low' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap; // VSM занимал много видеопамяти
     renderer.shadowMap.autoUpdate = false; // тени статичны: перерисовываем карту теней только когда меняется улей
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -3877,7 +3888,7 @@ const Scene3D = (() => {
     Object.assign(sun.shadow.camera, { left: -9, right: 9, top: 9, bottom: -9, near: 1, far: 40 });
     sun.shadow.bias = -0.0005;
     sun.shadow.normalBias = 0.02;
-    sun.shadow.radius = 6; sun.shadow.blurSamples = 16;
+    
     scene.add(sun); scene.add(sun.target);
     const fill = new THREE.DirectionalLight('#BFD8FF', 0.5); fill.position.set(-8, 6, -5); scene.add(fill);
 
@@ -4258,153 +4269,250 @@ const Scene3D = (() => {
   };
   const lathe = (pts, seg = 24) => new THREE.LatheGeometry(pts.map(([x, y]) => new THREE.Vector2(x, y)), seg);
   const rbox = (w, h, d, r = 0.02) => new RoundedBoxGeometry(w, h, d, 2, r);
+  // Каждая постройка — узнаваемый силуэт: бочка с ромашкой, горшок с подтёками, стеллаж, котёл на костре и т.д.
+  const mat = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.7 }, o));
+  const MX = {};
+  function extraMats() {
+    if (MX.ok) return; MX.ok = true;
+    MX.petal = mat('#FFFFFF', { roughness: 0.6 }); MX.yolk = mat('#F6B21A', { roughness: 0.5 });
+    MX.nectar = new THREE.MeshPhysicalMaterial({ color: '#FFE27A', roughness: 0.05, clearcoat: 1, emissive: '#6A5200', emissiveIntensity: 0.25 });
+    MX.band = mat('#FFF1CF', { roughness: 0.5 }); MX.brick = mat('#B4533A', { roughness: 0.9 }); MX.mortar = mat('#7A6A5A', { roughness: 1 });
+    MX.log = mat('#6B4426', { roughness: 0.9 }); MX.ember = new THREE.MeshBasicMaterial({ color: '#FF6A1F', toneMapped: false });
+    MX.jar = mat('#7A4A1E', { roughness: 0.35 }); MX.cloth = mat('#D8C49A', { roughness: 1 }); MX.redcloth = mat('#C9483E', { roughness: 0.9 });
+    MX.pink = mat('#F28AB2', { roughness: 0.6 }); MX.leaf = mat('#5FA845', { roughness: 0.8 }); MX.blue = mat('#5B8FD9', { roughness: 0.7 });
+    MX.green = mat('#4E9A5A', { roughness: 0.7 }); MX.velvet = mat('#7A2E5E', { roughness: 1 }); MX.bulb = new THREE.MeshBasicMaterial({ color: '#FFE7A0', toneMapped: false });
+    MX.straw = mat('#D9A441', { roughness: 0.95 }); MX.strawDark = mat('#B07A28', { roughness: 0.95 });
+  }
+  const daisy = (g, x, y, z, s = 1) => {
+    for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; add(g, new THREE.SphereGeometry(0.03 * s, 8, 6), MX.petal, x + Math.cos(a) * 0.045 * s, y, z + Math.sin(a) * 0.045 * s, { s: [1.6, 0.35, 0.8], r: [0, -a, 0], shadow: false }); }
+    add(g, new THREE.SphereGeometry(0.028 * s, 10, 8), MX.yolk, x, y + 0.008, z, { s: [1, 0.5, 1] });
+  };
+  const skep = (g, r, h, x = 0, z = 0) => { // плетёный улей-купол из жгутов соломы
+    const rings = 6;
+    for (let i = 0; i < rings; i++) {
+      const t0 = i / rings, rr = r * Math.cos(t0 * Math.PI / 2 * 0.92), y = h * Math.sin(t0 * Math.PI / 2) + 0.03;
+      add(g, new THREE.TorusGeometry(rr, h / rings * 0.62, 8, 28), i % 2 ? MX.straw : MX.strawDark, x, y, z, { r: [Math.PI / 2, 0, 0] });
+    }
+    add(g, new THREE.SphereGeometry(r * 0.2, 12, 8), MX.straw, x, h + 0.02, z, { s: [1, 0.6, 1] });
+    add(g, new THREE.SphereGeometry(r * 0.96, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), MX.strawDark, x, 0.02, z, { s: [1, h / r * 1.02, 1] });
+  };
   const MODELS = {
-    nectar_store() {
-      const g = new THREE.Group();
-      add(g, lathe([[0, 0], [0.19, 0], [0.22, 0.08], [0.235, 0.2], [0.22, 0.32], [0.19, 0.4], [0, 0.4]]), M.wood);
-      [0.07, 0.33].forEach(y => add(g, new THREE.TorusGeometry(0.212 + (y > 0.2 ? -0.01 : 0), 0.014, 6, 28), M.iron, 0, y, 0, { r: [Math.PI / 2, 0, 0] }));
-      add(g, new THREE.CircleGeometry(0.18, 24), M.honey, 0, 0.402, 0, { r: [-Math.PI / 2, 0, 0], shadow: false }).material = new THREE.MeshPhysicalMaterial({ color: '#FFE27A', roughness: 0.05, clearcoat: 1, emissive: '#6A5200', emissiveIntensity: 0.25 });
-      add(g, rbox(0.06, 0.04, 0.06), M.woodDark, 0.12, 0.42, 0.05);
+    nectar_store() { // бочка нектара с ромашкой и краником
+      extraMats(); const g = new THREE.Group();
+      add(g, lathe([[0, 0], [0.17, 0], [0.205, 0.07], [0.22, 0.19], [0.205, 0.31], [0.17, 0.38], [0, 0.38]], 22), M.wood);
+      [0.05, 0.19, 0.33].forEach(y => add(g, new THREE.TorusGeometry(y === 0.19 ? 0.222 : 0.2, 0.012, 6, 26), M.iron, 0, y, 0, { r: [Math.PI / 2, 0, 0] }));
+      add(g, new THREE.CylinderGeometry(0.17, 0.17, 0.02, 22), M.woodDark, 0, 0.39, 0);
+      daisy(g, 0.03, 0.41, -0.02, 1.4);
+      add(g, new THREE.CylinderGeometry(0.018, 0.018, 0.09, 8), M.copper, 0.24, 0.1, 0, { r: [0, 0, Math.PI / 2] });
+      add(g, new THREE.CylinderGeometry(0.012, 0.012, 0.05, 6), M.copper, 0.27, 0.13, 0);
+      add(g, new THREE.SphereGeometry(0.016, 8, 6), MX.nectar, 0.285, 0.07, 0, { name: 'drip' });
+      add(g, lathe([[0, 0], [0.06, 0], [0.07, 0.07], [0.065, 0.075], [0.055, 0.008], [0, 0.008]], 14), M.wood, 0.27, 0, 0.12);
+      add(g, new THREE.CircleGeometry(0.055, 14), MX.nectar, 0.27, 0.05, 0.12, { r: [-Math.PI / 2, 0, 0], shadow: false });
       return g;
     },
-    honey_store() {
-      const g = new THREE.Group();
-      add(g, lathe([[0, 0], [0.13, 0], [0.21, 0.08], [0.24, 0.2], [0.2, 0.32], [0.12, 0.36], [0.12, 0.4], [0, 0.4]], 28), M.ceramic);
-      add(g, new THREE.CylinderGeometry(0.15, 0.15, 0.05, 24), M.woodDark, 0, 0.42);
-      add(g, new THREE.SphereGeometry(0.035, 10, 8), M.woodDark, 0, 0.47);
-      const drip = add(g, new THREE.CapsuleGeometry(0.025, 0.08, 4, 8), M.honey, 0.16, 0.33, 0.06, { name: 'drip' });
-      add(g, new THREE.CylinderGeometry(0.012, 0.012, 0.35, 6), M.wood, -0.1, 0.5, 0, { r: [0, 0, 0.4] });
+    honey_store() { // пузатый горшок, мёд стекает через край, черпалка
+      extraMats(); const g = new THREE.Group();
+      add(g, lathe([[0, 0], [0.12, 0], [0.2, 0.07], [0.235, 0.18], [0.21, 0.29], [0.14, 0.34], [0.13, 0.37], [0.15, 0.39], [0, 0.39]], 26), M.ceramic);
+      add(g, new THREE.TorusGeometry(0.228, 0.022, 8, 28), MX.band, 0, 0.2, 0, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.CylinderGeometry(0.135, 0.135, 0.02, 22), M.honey, 0, 0.39, 0);
+      [[0.4, 0.09], [1.6, 0.13], [2.7, 0.07], [4.2, 0.11], [5.3, 0.08]].forEach(([a, l]) => {
+        const r = 0.15;
+        add(g, new THREE.CapsuleGeometry(0.022, l, 4, 8), M.honey, Math.cos(a) * r, 0.37 - l / 2, Math.sin(a) * r, { r: [Math.sin(a) * 0.35, 0, -Math.cos(a) * 0.35] });
+      });
+      add(g, new THREE.CylinderGeometry(0.01, 0.01, 0.34, 6), M.wood, -0.05, 0.5, 0.02, { r: [0, 0, 0.45] });
+      for (let i = 0; i < 4; i++) add(g, new THREE.TorusGeometry(0.03 - i * 0.004, 0.009, 6, 14), M.wood, 0.02 + i * 0.012, 0.37 - i * 0.022, 0.02, { r: [Math.PI / 2, 0.45, 0] });
+      add(g, new THREE.CapsuleGeometry(0.02, 0.06, 4, 8), M.honey, 0.17, 0.3, 0.12, { name: 'drip' });
       return g;
     },
-    pantry() {
-      const g = new THREE.Group();
-      add(g, rbox(0.24, 0.18, 0.24, 0.02), M.wood, -0.08, 0.09, 0.04);
-      add(g, rbox(0.2, 0.15, 0.2, 0.02), M.woodDark, -0.04, 0.255, 0.02, { r: [0, 0.4, 0] });
-      add(g, new THREE.SphereGeometry(0.13, 14, 10), M.cloth, 0.15, 0.11, -0.1, { s: [1, 0.9, 1] });
-      add(g, new THREE.ConeGeometry(0.05, 0.08, 10), M.cloth, 0.15, 0.24, -0.1);
-      add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.1, 6), M.wax, 0.12, 0.05, 0.15);
+    pantry() { // стеллаж: воск брусками, банки прополиса, мешок
+      extraMats(); const g = new THREE.Group();
+      [-0.17, 0.17].forEach(x => add(g, rbox(0.03, 0.5, 0.16, 0.008), M.woodDark, x, 0.25, -0.06));
+      [0.05, 0.22, 0.39].forEach(y => add(g, rbox(0.37, 0.025, 0.17, 0.006), M.wood, 0, y, -0.06));
+      add(g, rbox(0.37, 0.5, 0.015, 0.004), M.woodDark, 0, 0.25, -0.14);
+      [-0.1, 0, 0.1].forEach((x, i) => add(g, rbox(0.085, 0.05, 0.1, 0.012), M.cream, x, 0.09 + (i === 1 ? 0.05 : 0), -0.05));
+      add(g, rbox(0.085, 0.05, 0.1, 0.012), M.cream, -0.05, 0.14, -0.05, { r: [0, 0.3, 0] });
+      [-0.1, 0.01, 0.11].forEach((x, i) => {
+        add(g, new THREE.CylinderGeometry(0.035, 0.035, 0.09, 12), MX.jar, x, 0.28, -0.05);
+        add(g, new THREE.SphereGeometry(0.04, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2), i === 1 ? MX.redcloth : MX.cloth, x, 0.32, -0.05, { s: [1, 0.5, 1] });
+      });
+      add(g, rbox(0.12, 0.08, 0.1, 0.03), M.cream, 0.0, 0.45, -0.05, { r: [0, 0.2, 0] });
+      add(g, new THREE.SphereGeometry(0.1, 14, 10), M.cloth, 0.2, 0.09, 0.14, { s: [1, 1.1, 0.9] });
+      add(g, new THREE.ConeGeometry(0.04, 0.07, 10), M.cloth, 0.2, 0.21, 0.14);
+      add(g, new THREE.TorusGeometry(0.03, 0.008, 6, 12), MX.redcloth, 0.2, 0.18, 0.14, { r: [Math.PI / 2, 0, 0] });
       return g;
     },
-    meadery() {
-      const g = new THREE.Group();
-      add(g, lathe([[0, 0.04], [0.12, 0.04], [0.22, 0.12], [0.25, 0.24], [0.24, 0.32], [0.22, 0.32], [0.21, 0.25], [0, 0.25]], 28), M.copper);
-      add(g, new THREE.CircleGeometry(0.215, 28), M.honey, 0, 0.29, 0, { r: [-Math.PI / 2, 0, 0], shadow: false });
-      [-1, 1].forEach(s => add(g, new THREE.TorusGeometry(0.05, 0.012, 6, 14), M.iron, s * 0.25, 0.28, 0, { r: [0, Math.PI / 2, 0] }));
-      for (let i = 0; i < 3; i++) add(g, new THREE.CylinderGeometry(0.018, 0.024, 0.1, 6), M.iron, Math.cos(i * 2.1) * 0.14, 0.03, Math.sin(i * 2.1) * 0.14);
-      add(g, new THREE.SphereGeometry(0.03, 8, 6), M.honey, 0.05, 0.29, 0.03, { name: 'bubble' });
-      add(g, new THREE.SphereGeometry(0.022, 8, 6), M.honey, -0.07, 0.29, -0.05, { name: 'bubble' });
-      add(g, new THREE.CylinderGeometry(0.01, 0.01, 0.4, 6), M.wood, 0.08, 0.38, -0.02, { r: [0.3, 0, -0.5] });
-      g.userData.steam = 0.36;
+    meadery() { // медный котёл на костре
+      extraMats(); const g = new THREE.Group();
+      for (let i = 0; i < 4; i++) add(g, new THREE.CylinderGeometry(0.03, 0.035, 0.32, 8), MX.log, 0, 0.04, 0, { r: [Math.PI / 2, i * Math.PI / 4, 0.18] });
+      add(g, new THREE.SphereGeometry(0.07, 10, 8), MX.ember, 0, 0.04, 0, { s: [1.4, 0.4, 1.4], shadow: false });
+      add(g, new THREE.ConeGeometry(0.06, 0.16, 10), M.flame, 0, 0.13, 0, { shadow: false, name: 'flame' });
+      add(g, new THREE.ConeGeometry(0.04, 0.11, 10), M.flame, 0.07, 0.11, 0.03, { shadow: false, name: 'flame' });
+      add(g, new THREE.ConeGeometry(0.04, 0.1, 10), M.flame, -0.06, 0.11, -0.04, { shadow: false, name: 'flame' });
+      for (let i = 0; i < 3; i++) { const a = i * 2.1 + 0.3; add(g, new THREE.CylinderGeometry(0.012, 0.012, 0.34, 6), M.iron, Math.cos(a) * 0.2, 0.17, Math.sin(a) * 0.2, { r: [Math.sin(a) * 0.25, 0, -Math.cos(a) * 0.25] }); }
+      add(g, lathe([[0, 0.17], [0.1, 0.17], [0.19, 0.22], [0.225, 0.32], [0.22, 0.41], [0.205, 0.41], [0.205, 0.33], [0, 0.33]], 26), M.copper);
+      add(g, new THREE.TorusGeometry(0.215, 0.016, 8, 28), M.copper, 0, 0.41, 0, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.CircleGeometry(0.205, 26), M.honey, 0, 0.395, 0, { r: [-Math.PI / 2, 0, 0], shadow: false });
+      add(g, new THREE.SphereGeometry(0.03, 8, 6), M.honey, 0.05, 0.4, 0.03, { name: 'bubble' });
+      add(g, new THREE.SphereGeometry(0.022, 8, 6), M.honey, -0.08, 0.4, -0.05, { name: 'bubble' });
+      add(g, new THREE.CylinderGeometry(0.01, 0.01, 0.36, 6), M.wood, 0.1, 0.5, -0.02, { r: [0.3, 0, -0.6] });
+      g.userData.steam = 0.48;
       return g;
     },
-    wax_shop() {
-      const g = new THREE.Group();
-      add(g, new THREE.CylinderGeometry(0.25, 0.27, 0.05, 6), M.waxLight, 0, 0.025, 0);
-      [[-0.09, 0.03, 0.3], [0.08, -0.05, 0.42], [0.04, 0.12, 0.22]].forEach(([x, z, h], i) => {
-        const c = add(g, new THREE.CylinderGeometry(0.045, 0.05, h, 14), M.cream, x, 0.05 + h / 2, z);
-        add(g, new THREE.SphereGeometry(0.05, 10, 6), M.cream, x + 0.01, 0.05 + h - 0.01, z, { s: [1, 0.4, 1] });
-        add(g, new THREE.CylinderGeometry(0.004, 0.004, 0.03, 4), M.dark, x, 0.05 + h + 0.015, z, { shadow: false });
-        const f = add(g, new THREE.ConeGeometry(0.022, 0.07, 10), M.flame, x, 0.05 + h + 0.06, z, { shadow: false, name: 'flame' });
-        add(f, new THREE.SphereGeometry(0.01, 6, 4), M.flameCore, 0, -0.02, 0, { shadow: false });
+    wax_shop() { // кирпичная печь с огнём, тигель с воском, свечи
+      extraMats(); const g = new THREE.Group();
+      add(g, rbox(0.3, 0.2, 0.26, 0.02), MX.brick, -0.04, 0.1, -0.02);
+      for (let r = 0; r < 3; r++) add(g, new THREE.BoxGeometry(0.305, 0.006, 0.265), MX.mortar, -0.04, 0.05 + r * 0.06, -0.02, { shadow: false });
+      add(g, new THREE.CircleGeometry(0.06, 14, 0, Math.PI), M.dark, -0.04, 0.03, 0.111, { shadow: false });
+      add(g, new THREE.ConeGeometry(0.03, 0.07, 8), M.flame, -0.04, 0.06, 0.09, { shadow: false, name: 'flame' });
+      add(g, lathe([[0, 0], [0.08, 0], [0.11, 0.05], [0.115, 0.11], [0.105, 0.11], [0, 0.1]], 20), M.iron, -0.04, 0.2, -0.02);
+      add(g, new THREE.CircleGeometry(0.105, 20), M.cream, -0.04, 0.3, -0.02, { r: [-Math.PI / 2, 0, 0], shadow: false });
+      add(g, new THREE.CylinderGeometry(0.03, 0.03, 0.08, 8), MX.mortar, 0.06, 0.24, -0.1);
+      [[0.18, 0.1, 0.26], [0.22, -0.04, 0.18], [0.15, -0.14, 0.12]].forEach(([x, z, h]) => {
+        add(g, new THREE.CylinderGeometry(0.03, 0.034, h, 12), M.cream, x, h / 2, z);
+        add(g, new THREE.SphereGeometry(0.034, 10, 6), M.cream, x + 0.01, h - 0.005, z, { s: [1, 0.5, 1] });
+        add(g, new THREE.CylinderGeometry(0.004, 0.004, 0.02, 4), M.dark, x, h + 0.01, z, { shadow: false });
+        const f = add(g, new THREE.ConeGeometry(0.016, 0.05, 8), M.flame, x, h + 0.045, z, { shadow: false, name: 'flame' });
+        add(f, new THREE.SphereGeometry(0.007, 6, 4), M.flameCore, 0, -0.015, 0, { shadow: false });
       });
       return g;
     },
-    incubator() {
-      const g = new THREE.Group();
-      add(g, lathe([[0, 0.02], [0.18, 0.02], [0.25, 0.08], [0.27, 0.14], [0.255, 0.14], [0.235, 0.09], [0, 0.07]], 28), M.wood);
-      add(g, new THREE.TorusGeometry(0.26, 0.022, 8, 28), M.woodDark, 0, 0.14, 0, { r: [Math.PI / 2, 0, 0] });
-      [[0, 0.03], [0.11, -0.06], [-0.1, -0.06], [0.02, 0.12]].forEach(([x, z], i) => add(g, new THREE.SphereGeometry(0.065, 16, 12), M.egg, x, 0.14, z, { s: [1, 1.3, 1], name: i === 0 ? 'egg' : '', r: [0.2 * x, 0, 0.3 * x] }));
+    incubator() { // плетёное гнездо с яйцами и тёплой лампой
+      extraMats(); const g = new THREE.Group();
+      for (let i = 0; i < 4; i++) add(g, new THREE.TorusGeometry(0.2 + i * 0.012, 0.032, 8, 26), i % 2 ? MX.straw : MX.strawDark, 0, 0.04 + i * 0.03, 0, { r: [Math.PI / 2, 0, i * 0.4] });
+      add(g, new THREE.CylinderGeometry(0.19, 0.16, 0.06, 20), MX.strawDark, 0, 0.03, 0);
+      [[0, 0.03], [0.09, -0.06], [-0.09, -0.05], [0.02, 0.1], [-0.07, 0.07]].forEach(([x, z], i) => add(g, new THREE.SphereGeometry(0.055, 14, 10), M.egg, x, 0.12, z, { s: [1, 1.3, 1], name: i === 0 ? 'egg' : '', r: [0.2 * x, 0, 0.3 * x] }));
+      const arm = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.24, 0, -0.14), new THREE.Vector3(-0.25, 0.4, -0.12), new THREE.Vector3(-0.1, 0.5, -0.05), new THREE.Vector3(0, 0.44, 0)]);
+      add(g, new THREE.TubeGeometry(arm, 16, 0.012, 6), M.iron);
+      add(g, new THREE.ConeGeometry(0.07, 0.07, 14, 1, true), M.copper, 0, 0.42, 0);
+      add(g, new THREE.SphereGeometry(0.035, 12, 8), MX.bulb, 0, 0.39, 0, { shadow: false, name: 'lamp' });
       return g;
     },
-    housing() {
-      const g = new THREE.Group();
-      const dome = add(g, new THREE.SphereGeometry(0.27, 28, 14, 0, Math.PI * 2, 0, Math.PI / 2), M.wax, 0, 0, 0, { s: [1, 1.15, 1] });
-      for (let i = 1; i <= 3; i++) add(g, new THREE.TorusGeometry(0.27 * Math.cos(i * 0.36), 0.012, 6, 32), M.cellFloor, 0, 0.31 * Math.sin(i * 0.36), 0, { r: [Math.PI / 2, 0, 0] });
-      const door = add(g, new THREE.CircleGeometry(0.075, 20), M.dark, 0, 0.08, 0.262, { shadow: false });
-      add(g, new THREE.TorusGeometry(0.078, 0.012, 6, 20, Math.PI), M.woodDark, 0, 0.08, 0.265);
-      add(g, new THREE.CircleGeometry(0.035, 14), M.window, 0.15, 0.2, 0.18, { r: [0, 0.7, 0], shadow: false });
-      add(g, new THREE.CircleGeometry(0.035, 14), M.window, -0.15, 0.2, 0.18, { r: [0, -0.7, 0], shadow: false });
-      add(g, new THREE.CylinderGeometry(0.02, 0.025, 0.1, 8), M.stone, 0.1, 0.32, -0.08);
+    housing() { // соломенный улей-домик с окошками и цветами
+      extraMats(); const g = new THREE.Group();
+      skep(g, 0.26, 0.36);
+      add(g, new THREE.CircleGeometry(0.065, 18), M.dark, 0, 0.08, 0.245, { shadow: false });
+      add(g, new THREE.TorusGeometry(0.07, 0.014, 6, 18, Math.PI), M.woodDark, 0, 0.08, 0.247);
+      add(g, rbox(0.16, 0.02, 0.06, 0.006), M.wood, 0, 0.012, 0.28);
+      [-1, 1].forEach(sx => {
+        const a = sx * 0.85, x = Math.sin(a) * 0.235, z = Math.cos(a) * 0.235;
+        add(g, new THREE.CircleGeometry(0.035, 14), M.window, x, 0.2, z, { r: [0, a, 0], shadow: false });
+        add(g, new THREE.TorusGeometry(0.037, 0.008, 6, 14), M.woodDark, x, 0.2, z, { r: [0, a, 0] });
+        add(g, rbox(0.09, 0.03, 0.04, 0.006), M.wood, x * 1.06, 0.15, z * 1.06, { r: [0, a, 0] });
+        [-0.025, 0, 0.025].forEach((o, k) => add(g, new THREE.SphereGeometry(0.014, 8, 6), k === 1 ? MX.pink : M.red, x * 1.08 + Math.cos(a) * o, 0.175, z * 1.08 - Math.sin(a) * o, { shadow: false }));
+      });
+      add(g, new THREE.CylinderGeometry(0.022, 0.028, 0.1, 8), M.stone, 0.1, 0.36, -0.06);
       return g;
     },
-    scout_nest() {
-      const g = new THREE.Group();
+    scout_nest() { // вышка с лестницей, фонарём, подзорной трубой и флагом
+      extraMats(); const g = new THREE.Group();
       for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4; add(g, new THREE.CylinderGeometry(0.014, 0.018, 0.62, 6), M.wood, Math.cos(a) * 0.12, 0.31, Math.sin(a) * 0.12, { r: [Math.sin(a) * 0.1, 0, -Math.cos(a) * 0.1] }); }
       [0.18, 0.38].forEach(y => add(g, new THREE.TorusGeometry(0.11 - y * 0.05, 0.01, 4, 4), M.wood, 0, y, 0, { r: [Math.PI / 2, 0, Math.PI / 4] }));
+      [-0.05, 0.05].forEach(x => add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.6, 5), M.woodDark, x, 0.3, 0.2, { r: [-0.3, 0, 0] }));
+      for (let k = 0; k < 6; k++) add(g, new THREE.CylinderGeometry(0.006, 0.006, 0.1, 4), M.woodDark, 0, 0.06 + k * 0.095, 0.22 - k * 0.028, { r: [0, 0, Math.PI / 2] });
       add(g, rbox(0.26, 0.04, 0.26, 0.012), M.woodDark, 0, 0.6, 0);
       add(g, new THREE.ConeGeometry(0.2, 0.16, 4), M.red, 0, 0.78, 0, { r: [0, Math.PI / 4, 0] });
       add(g, new THREE.CylinderGeometry(0.006, 0.006, 0.22, 4), M.woodDark, 0, 0.94, 0);
-      const flag = add(g, new THREE.PlaneGeometry(0.14, 0.08, 6, 1), new THREE.MeshStandardMaterial({ color: '#FFB000', side: THREE.DoubleSide, roughness: 0.7 }), 0.07, 1.0, 0, { name: 'flag' });
+      add(g, new THREE.PlaneGeometry(0.14, 0.08, 6, 1), new THREE.MeshStandardMaterial({ color: '#FFB000', side: THREE.DoubleSide, roughness: 0.7 }), 0.07, 1.0, 0, { name: 'flag' });
       add(g, new THREE.CylinderGeometry(0.022, 0.03, 0.16, 10), M.copper, 0.1, 0.66, 0.08, { r: [1.2, 0.4, 0] });
       add(g, new THREE.CircleGeometry(0.02, 10), M.glass, 0.12, 0.69, 0.155, { shadow: false });
+      add(g, rbox(0.04, 0.05, 0.04, 0.008), M.iron, -0.12, 0.55, 0.12);
+      add(g, new THREE.SphereGeometry(0.016, 8, 6), MX.bulb, -0.12, 0.55, 0.12, { shadow: false, name: 'lamp' });
       return g;
     },
-    bee_school() {
-      const g = new THREE.Group();
-      const board = add(g, rbox(0.34, 0.22, 0.03, 0.01), M.board, 0, 0.33, -0.08);
-      add(g, rbox(0.37, 0.25, 0.025, 0.01), M.woodDark, 0, 0.33, -0.095);
-      [[-0.06, 0.37, 0.12], [0.02, 0.33, 0.18], [-0.03, 0.29, 0.1]].forEach(([x, y, w]) => add(g, new THREE.BoxGeometry(w, 0.008, 0.002), M.chalk, x, y, -0.064, { shadow: false }));
-      [-0.15, 0.15].forEach(x => add(g, new THREE.CylinderGeometry(0.01, 0.012, 0.3, 6), M.woodDark, x, 0.15, -0.09));
-      add(g, rbox(0.2, 0.025, 0.12, 0.008), M.wood, 0, 0.12, 0.1);
-      [-0.08, 0.08].forEach(x => add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.12, 6), M.woodDark, x, 0.06, 0.1));
-      add(g, rbox(0.08, 0.02, 0.06, 0.005), M.red, -0.03, 0.143, 0.1, { r: [0, 0.3, 0] });
-      add(g, rbox(0.075, 0.012, 0.055, 0.004), M.paper, -0.03, 0.158, 0.1, { r: [0, 0.3, 0] });
-      add(g, new THREE.ConeGeometry(0.06, 0.03, 4), M.dark, 0.1, 0.32, 0.12, { r: [0, Math.PI / 4, 0] });
+    bee_school() { // доска на мольберте, парта, книги и колокольчик
+      extraMats(); const g = new THREE.Group();
+      add(g, rbox(0.34, 0.22, 0.03, 0.01), M.board, 0, 0.36, -0.1, { r: [-0.12, 0, 0] });
+      add(g, rbox(0.37, 0.25, 0.025, 0.01), M.woodDark, 0, 0.36, -0.115, { r: [-0.12, 0, 0] });
+      [[-0.06, 0.4, 0.12], [0.02, 0.36, 0.18], [-0.03, 0.32, 0.1]].forEach(([x, y, w]) => add(g, new THREE.BoxGeometry(w, 0.008, 0.002), M.chalk, x, y, -0.08, { shadow: false, r: [-0.12, 0, 0] }));
+      add(g, new THREE.TorusGeometry(0.035, 0.004, 4, 12), M.chalk, 0.1, 0.4, -0.08, { shadow: false, r: [-0.12, 0, 0] });
+      [-0.15, 0.15].forEach(x => add(g, new THREE.CylinderGeometry(0.01, 0.012, 0.36, 6), M.woodDark, x, 0.18, -0.12, { r: [0.15, 0, 0] }));
+      add(g, new THREE.CylinderGeometry(0.01, 0.012, 0.38, 6), M.woodDark, 0, 0.18, -0.24, { r: [-0.35, 0, 0] });
+      add(g, rbox(0.22, 0.025, 0.13, 0.008), M.wood, 0.02, 0.13, 0.12);
+      [-0.07, 0.11].forEach(x => add(g, new THREE.CylinderGeometry(0.008, 0.008, 0.13, 6), M.woodDark, x, 0.06, 0.12));
+      [['#C9483E', 0.02], ['#5B8FD9', 0.042], ['#4E9A5A', 0.062]].forEach(([c, y], i) => add(g, rbox(0.08, 0.02, 0.06, 0.004), i === 0 ? MX.redcloth : i === 1 ? MX.blue : MX.green, -0.02, 0.135 + y, 0.12, { r: [0, 0.2 * i, 0] }));
+      add(g, new THREE.CylinderGeometry(0.006, 0.006, 0.3, 5), M.woodDark, 0.2, 0.15, 0.06);
+      add(g, lathe([[0, 0], [0.03, 0], [0.025, 0.02], [0.018, 0.05], [0, 0.055]], 12), M.gold, 0.2, 0.25, 0.06, { r: [Math.PI, 0, 0] });
       return g;
     },
     distillery() {
-      const g = new THREE.Group();
-      add(g, new THREE.SphereGeometry(0.2, 24, 16), M.copper, -0.05, 0.24, 0);
-      add(g, new THREE.CylinderGeometry(0.05, 0.08, 0.12, 14), M.copper, -0.05, 0.46, 0);
-      const pipe = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.05, 0.5, 0), new THREE.Vector3(0.1, 0.58, 0), new THREE.Vector3(0.22, 0.4, 0.02), new THREE.Vector3(0.22, 0.2, 0.05)]);
-      add(g, new THREE.TubeGeometry(pipe, 20, 0.018, 8), M.copper);
-      add(g, new THREE.CylinderGeometry(0.07, 0.07, 0.14, 16), M.glass, 0.22, 0.07, 0.05);
-      add(g, new THREE.CylinderGeometry(0.06, 0.06, 0.08, 16), M.honey, 0.22, 0.04, 0.05);
-      add(g, new THREE.CylinderGeometry(0.16, 0.18, 0.06, 18), M.stone, -0.05, 0.03, 0);
-      add(g, new THREE.ConeGeometry(0.06, 0.1, 10), M.flame, -0.05, 0.08, 0.15, { shadow: false, name: 'flame' });
-      g.userData.steam = 0.6;
+      extraMats(); const g = new THREE.Group();
+      add(g, new THREE.CylinderGeometry(0.16, 0.18, 0.08, 18), MX.brick, -0.05, 0.04, 0);
+      add(g, new THREE.ConeGeometry(0.05, 0.08, 10), M.flame, -0.05, 0.1, 0.13, { shadow: false, name: 'flame' });
+      add(g, new THREE.SphereGeometry(0.19, 22, 16), M.copper, -0.05, 0.26, 0);
+      add(g, new THREE.TorusGeometry(0.19, 0.012, 6, 24), M.iron, -0.05, 0.26, 0, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.CylinderGeometry(0.045, 0.08, 0.12, 14), M.copper, -0.05, 0.47, 0);
+      const pipe = new THREE.CatmullRomCurve3([new THREE.Vector3(-0.05, 0.52, 0), new THREE.Vector3(0.1, 0.6, 0), new THREE.Vector3(0.22, 0.45, 0.04), new THREE.Vector3(0.22, 0.2, 0.06)]);
+      add(g, new THREE.TubeGeometry(pipe, 20, 0.016, 8), M.copper);
+      for (let i = 0; i < 4; i++) add(g, new THREE.TorusGeometry(0.04, 0.009, 6, 14), M.copper, 0.22, 0.24 + i * 0.045, 0.06, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.CylinderGeometry(0.06, 0.06, 0.12, 16), M.glass, 0.22, 0.06, 0.06);
+      add(g, new THREE.CylinderGeometry(0.052, 0.052, 0.07, 16), M.honey, 0.22, 0.04, 0.06);
+      g.userData.steam = 0.62;
       return g;
     },
     wax_press() {
-      const g = new THREE.Group();
+      extraMats(); const g = new THREE.Group();
       add(g, rbox(0.42, 0.1, 0.3, 0.02), M.stone, 0, 0.05, 0);
-      [-0.17, 0.17].forEach(x => add(g, rbox(0.05, 0.5, 0.05, 0.01), M.woodDark, x, 0.3, 0));
-      add(g, rbox(0.42, 0.06, 0.08, 0.01), M.woodDark, 0, 0.56, 0);
-      add(g, new THREE.CylinderGeometry(0.02, 0.02, 0.2, 8), M.iron, 0, 0.45, 0);
-      add(g, rbox(0.22, 0.08, 0.16, 0.015), M.iron, 0, 0.32, 0, { name: 'press' });
+      [-0.17, 0.17].forEach(x => add(g, rbox(0.05, 0.52, 0.05, 0.01), M.woodDark, x, 0.3, 0));
+      add(g, rbox(0.44, 0.06, 0.08, 0.01), M.woodDark, 0, 0.57, 0);
+      add(g, new THREE.CylinderGeometry(0.02, 0.02, 0.22, 8), M.iron, 0, 0.47, 0);
+      add(g, new THREE.TorusGeometry(0.07, 0.01, 6, 18), M.iron, 0, 0.62, 0, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.CylinderGeometry(0.006, 0.006, 0.14, 5), M.iron, 0, 0.62, 0, { r: [0, 0, Math.PI / 2] });
+      add(g, rbox(0.22, 0.08, 0.16, 0.015), M.iron, 0, 0.33, 0, { name: 'press' });
       add(g, rbox(0.18, 0.08, 0.14, 0.02), M.cream, 0, 0.14, 0);
+      [-0.12, 0.13].forEach((x, i) => add(g, rbox(0.07, 0.03, 0.05, 0.008), M.cream, x, 0.115, 0.13 - i * 0.02, { r: [0, i, 0] }));
       return g;
     },
     royal_cell() {
-      const g = new THREE.Group();
-      add(g, lathe([[0, 0], [0.13, 0.02], [0.17, 0.15], [0.16, 0.3], [0.12, 0.42], [0.06, 0.48], [0, 0.49]], 28), M.lilac);
-      add(g, new THREE.TorusGeometry(0.1, 0.018, 8, 20), M.gold, 0, 0.47, 0, { r: [Math.PI / 2, 0, 0] });
-      for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; add(g, new THREE.ConeGeometry(0.02, 0.06, 6), M.gold, Math.cos(a) * 0.1, 0.51, Math.sin(a) * 0.1); }
-      add(g, new THREE.SphereGeometry(0.03, 10, 8), M.gem, 0, 0.53, 0, { name: 'gemspin' });
+      extraMats(); const g = new THREE.Group();
+      add(g, new THREE.CylinderGeometry(0.17, 0.2, 0.06, 6), M.gold, 0, 0.03, 0);
+      add(g, new THREE.CylinderGeometry(0.15, 0.15, 0.03, 20), MX.velvet, 0, 0.075, 0);
+      add(g, lathe([[0, 0], [0.11, 0.02], [0.14, 0.13], [0.135, 0.26], [0.1, 0.37], [0.05, 0.42], [0, 0.43]], 26), M.lilac, 0, 0.08, 0);
+      for (let i = 0; i < 3; i++) add(g, new THREE.TorusGeometry(0.135 - i * 0.012, 0.008, 6, 22), M.gold, 0, 0.18 + i * 0.09, 0, { r: [Math.PI / 2, 0, 0] });
+      add(g, new THREE.TorusGeometry(0.075, 0.016, 8, 20), M.gold, 0, 0.5, 0, { r: [Math.PI / 2, 0, 0] });
+      for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; add(g, new THREE.ConeGeometry(0.018, 0.06, 6), M.gold, Math.cos(a) * 0.075, 0.54, Math.sin(a) * 0.075); add(g, new THREE.SphereGeometry(0.01, 6, 4), M.red, Math.cos(a) * 0.075, 0.575, Math.sin(a) * 0.075, { shadow: false }); }
+      add(g, new THREE.OctahedronGeometry(0.035, 0), M.gem, 0, 0.6, 0, { name: 'gemspin' });
       return g;
     },
-    brood_hall() {
-      const g = MODELS.housing(); g.scale.setScalar(0.85); g.position.x = -0.08;
-      const w = new THREE.Group(); w.add(g);
-      const g2 = MODELS.housing(); g2.scale.setScalar(0.6); g2.position.set(0.2, 0, -0.14); w.add(g2);
-      return w;
+    brood_hall() { // два соломенных купола и мостик
+      extraMats(); const g = new THREE.Group();
+      const a = new THREE.Group(); skep(a, 0.2, 0.3); a.position.set(-0.12, 0, 0.04); g.add(a);
+      const b = new THREE.Group(); skep(b, 0.15, 0.22); b.position.set(0.17, 0, -0.1); g.add(b);
+      add(g, new THREE.CircleGeometry(0.05, 16), M.dark, -0.12, 0.07, 0.235, { shadow: false });
+      add(g, new THREE.CircleGeometry(0.04, 16), M.dark, 0.2, 0.06, 0.04, { shadow: false, r: [0, 0.6, 0] });
+      add(g, new THREE.TorusGeometry(0.13, 0.03, 8, 16, Math.PI), MX.straw, 0.02, 0.12, -0.03, { r: [0, -0.45, 0] });
+      [[0.14, 0.16], [0.24, 0.1], [-0.27, -0.12]].forEach(([x, z], i) => daisy(g, x, 0.04, z, 0.8));
+      return g;
     },
-    big_store() {
-      const g = new THREE.Group();
-      add(g, new THREE.SphereGeometry(0.3, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.stone, 0, 0, 0, { s: [1, 0.9, 1] });
-      add(g, new THREE.CircleGeometry(0.12, 20, 0, Math.PI), M.woodDark, 0, 0.0, 0.29, { shadow: false });
-      add(g, new THREE.TorusGeometry(0.125, 0.02, 6, 20, Math.PI), M.iron, 0, 0.0, 0.29);
-      [[-0.1, 0.25], [0.1, 0.26]].forEach(([x, y]) => add(g, new THREE.SphereGeometry(0.05, 10, 8), M.leaf, x, y, 0.12));
+    big_store() { // каменный погреб с дверью, мешками и бочкой
+      extraMats(); const g = new THREE.Group();
+      add(g, new THREE.SphereGeometry(0.28, 22, 12, 0, Math.PI * 2, 0, Math.PI / 2), M.stone, 0, 0, -0.05, { s: [1, 0.95, 1] });
+      for (let i = 0; i < 3; i++) add(g, new THREE.TorusGeometry(0.28 * Math.cos(0.35 + i * 0.35), 0.012, 6, 26), MX.mortar, 0, 0.27 * Math.sin(0.35 + i * 0.35), -0.05, { r: [Math.PI / 2, 0, 0] });
+      const door = new THREE.Shape(); door.moveTo(-0.09, 0); door.lineTo(-0.09, 0.1); door.absarc(0, 0.1, 0.09, Math.PI, 0, true); door.lineTo(0.09, 0); door.lineTo(-0.09, 0);
+      add(g, new THREE.ExtrudeGeometry(door, { depth: 0.03, bevelEnabled: false, curveSegments: 12 }), M.woodDark, 0, 0, 0.2);
+      add(g, new THREE.SphereGeometry(0.012, 8, 6), M.gold, 0.05, 0.09, 0.235);
+      add(g, new THREE.SphereGeometry(0.08, 12, 8), M.cloth, -0.2, 0.07, 0.17, { s: [1, 1.1, 0.9] });
+      add(g, new THREE.SphereGeometry(0.065, 12, 8), M.cloth, -0.27, 0.06, 0.06, { s: [1, 1.1, 0.9] });
+      add(g, lathe([[0, 0], [0.06, 0], [0.072, 0.07], [0.06, 0.14], [0, 0.14]], 14), M.wood, 0.21, 0, 0.17);
+      add(g, new THREE.TorusGeometry(0.072, 0.008, 6, 16), M.iron, 0.21, 0.07, 0.17, { r: [Math.PI / 2, 0, 0] });
       return g;
     },
     big_incubator() {
-      const g = MODELS.incubator(); g.scale.setScalar(1.25);
-      const w = new THREE.Group(); w.add(g); return w;
+      extraMats(); const g = new THREE.Group();
+      for (let i = 0; i < 4; i++) add(g, new THREE.TorusGeometry(0.26 + i * 0.012, 0.035, 8, 30), i % 2 ? MX.straw : MX.strawDark, 0, 0.04 + i * 0.032, 0, { r: [Math.PI / 2, 0, i * 0.4] });
+      add(g, new THREE.CylinderGeometry(0.25, 0.21, 0.06, 22), MX.strawDark, 0, 0.03, 0);
+      [[0, 0], [0.12, -0.06], [-0.12, -0.05], [0.04, 0.13], [-0.09, 0.1], [0.14, 0.08], [-0.03, -0.14]].forEach(([x, z], i) => add(g, new THREE.SphereGeometry(0.055, 14, 10), M.egg, x, 0.12, z, { s: [1, 1.3, 1], name: i === 0 ? 'egg' : '' }));
+      [-1, 1].forEach(s => {
+        const arm = new THREE.CatmullRomCurve3([new THREE.Vector3(s * 0.3, 0, -0.1), new THREE.Vector3(s * 0.3, 0.42, -0.08), new THREE.Vector3(s * 0.12, 0.48, -0.02)]);
+        add(g, new THREE.TubeGeometry(arm, 12, 0.012, 6), M.iron);
+        add(g, new THREE.ConeGeometry(0.06, 0.06, 12, 1, true), M.copper, s * 0.1, 0.45, 0);
+        add(g, new THREE.SphereGeometry(0.03, 10, 8), MX.bulb, s * 0.1, 0.43, 0, { shadow: false, name: 'lamp' });
+      });
+      return g;
     },
     army() {
       const g = new THREE.Group();
       add(g, new THREE.CylinderGeometry(0.02, 0.02, 0.5, 6), M.woodDark, 0, 0.25, -0.04);
-      const sh = add(g, lathe([[0, 0], [0.16, 0.02], [0.17, 0.12], [0.12, 0.24], [0, 0.3]], 20), M.stone, 0, 0.18, 0.02, { r: [Math.PI / 2, 0, 0], s: [1, 0.3, 1] });
+      add(g, lathe([[0, 0], [0.16, 0.02], [0.17, 0.12], [0.12, 0.24], [0, 0.3]], 20), M.stone, 0, 0.18, 0.02, { r: [Math.PI / 2, 0, 0], s: [1, 0.3, 1] });
       add(g, new THREE.TorusGeometry(0.11, 0.015, 6, 16), M.gold, 0, 0.32, 0.06);
       return g;
     }
@@ -6438,9 +6546,9 @@ function agoText(ts) {
 }
 function swarmsSheet() {
   openSheet({ kind: 'swarms', title: T('swarms_title'), nav: 'swarms', render: () => {
-    if (!SW) return '<p class="muted small">…</p>';
+    if (!SW) return swarmsSkeleton();
     const c = cfg();
-    let html = `<div class="sec">${T('leaderboard')}</div>` + SW.players.map((p, i) => `<div class="lb-row ${p.me ? 'me' : ''}"><span class="pl">${i + 1}</span><span class="c" style="background:${p.color}"></span>
+    let html = `<div class="sec sec-load">${T('leaderboard')}${swLoading ? `<span class="spin" aria-label="${L('Обновляем', 'Updating')}"></span>` : ''}</div>` + SW.players.map((p, i) => `<div class="lb-row ${p.me ? 'me' : ''}"><span class="pl">${i + 1}</span><span class="c" style="background:${p.color}"></span>
       <span class="grow" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}${p.me ? ` (${T('you')})` : ''}</span><span class="g">${resIcon('glory')}${fmt(p.glory)}</span>
       ${p.me ? '<span class="soc-sp"></span>' : `<button class="icon-btn soc" data-act="gift" data-id="${p.id}" ${SW.gift ? '' : 'disabled'} aria-label="${T('gift_btn')}">${ui('gift')}</button><button class="icon-btn soc" data-act="sting" data-id="${p.id}" ${SW.sting ? '' : 'disabled'} aria-label="${T('sting_btn')}">${ui('sting')}</button>`}</div>`).join('');
     html += `<p class="tiny muted" style="margin-top:8px">${T('social_hint', c.gift, c.sting)}${!SW.gift && !SW.sting ? ' ' + T('social_used') + '.' : ''}</p>`;
@@ -6452,7 +6560,17 @@ function swarmsSheet() {
     }).join('') : `<p class="muted small">${T('feed_empty')}</p>`;
     return html;
   } });
-  serverAction('swarms', {}, { silent: true }).then(r => { SW = r; if (sheet && sheet.kind === 'swarms') refreshSheet(); }).catch(() => {});
+  swLoading = true; refreshSheet();
+  serverAction('swarms', {}, { silent: true })
+    .then(r => { SW = r; }).catch(() => { if (!SW) toast(TE('NETWORK'), 'err'); })
+    .finally(() => { swLoading = false; if (sheet && sheet.kind === 'swarms') refreshSheet(); });
+}
+let swLoading = false;
+/** Заглушка, пока рейтинг и лента загружаются с сервера. */
+function swarmsSkeleton() {
+  const row = (w) => `<div class="sk-row"><span class="sk sk-c"></span><span class="sk" style="width:${w}%"></span><span class="sk sk-s"></span></div>`;
+  return `<div class="sk-load"><svg class="sk-bee" viewBox="0 0 64 64"><use href="#m-bee"/></svg><span>${L('Летим за новостями роёв…', 'Fetching swarm news…')}</span></div>
+    <div class="sec">${T('leaderboard')}</div>${[62, 48, 55, 40].map(row).join('')}<div class="sec">${T('feed')}</div>${[70, 58, 64].map(row).join('')}`;
 }
 function profileSheet() {
   openSheet({ kind: 'profile', title: T('profile'), render: () => {
