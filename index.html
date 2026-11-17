@@ -348,13 +348,15 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .confetti { position: absolute; width: 8px; height: 12px; border-radius: 2px; z-index: 9; pointer-events: none; }
 
 /* ---------- панель выбранной соты */
-.sel-bar { flex: 1; min-width: 0; background: var(--canvas); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 8px 8px 8px 10px; display: flex; align-items: center; gap: 10px; }
+.sel-bar { flex: 1; min-width: 0; background: var(--canvas); border-radius: var(--r-md); box-shadow: var(--shadow); padding: 10px; display: flex; flex-direction: column; gap: 10px; }
 .sel-bar.in { animation: selIn .32s var(--spring); }
 @keyframes selIn { from { opacity: 0; transform: translateY(14px) scale(.96); } }
+.sel-bar .sb-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .sel-bar .sb-ic .b-ic { width: 40px; height: 40px; display: block; }
+.sel-bar .sb-txt { flex: 1; min-width: 0; }
 .sel-bar b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sel-bar .sb-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); line-height: 1.3; }
-.sel-bar .btn { height: 44px; padding: 0 16px; }
+.sel-bar .sb-sub { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sel-bar .btn { height: 44px; }
 .seg3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .seg3 button { border: 1px solid var(--hairline); border-radius: var(--r-md); padding: 10px 6px; font-size: 13px; font-weight: 600; line-height: 1.25; }
 .seg3 button.on { border: 2px solid var(--ink); padding: 9px 5px; background: var(--surface-soft); }
@@ -399,6 +401,20 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .coach .finger { position: absolute; width: 44px; height: 44px; pointer-events: none; animation: tapf 1.2s ease-in-out infinite; filter: drop-shadow(0 3px 4px rgba(0,0,0,.3)); }
 @keyframes tapf { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-4px,-8px) scale(.92); } }
 .coach.pass .shade { pointer-events: none; }
+
+/* v0.4 */
+.goal .g-p { font-size: 12px; font-weight: 600; color: var(--muted); flex: none; }
+.goal.swap { animation: dropIn .45s var(--spring); }
+.lb-row .soc { width: 34px; height: 34px; flex: none; }
+.lb-row .soc:disabled { opacity: .35; }
+.lb-row .soc-sp { width: 74px; flex: none; }
+.feed-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hairline-soft); }
+.feed-row:last-child { border-bottom: 0; }
+.feed-row .c { width: 28px; height: 28px; border-radius: var(--r-full); flex: none; }
+.feed-row b { font-size: 14px; font-weight: 600; }
+.feed-row .fi { width: 28px; height: 28px; border-radius: var(--r-sm); background: var(--surface-soft); display: flex; align-items: center; justify-content: center; flex: none; }
+.feed-row .fi svg { width: 18px; height: 18px; }
+.feed-row.to-me { background: var(--primary-soft); margin: 0 -16px; padding: 10px 16px; }
 
 </style>
 <script type="importmap">
@@ -538,6 +554,7 @@ function apiUnlockTier(ctx, req) {
   if (!canAfford(ctx.pd.res, cost)) throw gameErr('NO_RES', { need: missing(ctx.pd.res, cost) });
   pay(ctx.pd.res, cost);
   hd.tiers = 2;
+  feedPush(ctx, 'tier2', {});
   startPlanItems(ctx, NOW());
   return {};
 }
@@ -694,6 +711,11 @@ function getActions() { return {
   dailyClaim: apiDailyClaim,
   dailyChest: apiDailyChest,
   loginClaim: apiLoginClaim,
+  collectDrop: apiCollectDrop,
+  goalClaim: apiGoalClaim,
+  gift: apiGift,
+  sting: apiSting,
+  swarms: apiSwarms,
   leaderboard: function () { return apiLeaderboard(); },
   setLang: function (ctx, req) { ctx.player.lang = req.lang === 'en' ? 'en' : 'ru'; return {}; },
   logout: function (ctx) { ctx.player.token = ''; return {}; }
@@ -719,7 +741,10 @@ function handle(req) {
     var now = NOW();
     ensureEventObjects(now);
     advance(ctx, now);
+    processInbox(ctx);
     refreshEnergy(ctx.pd, now);
+    dropsRefresh(ctx.pd, now);
+    ensureGoal(ctx, now);
     touchLogin(ctx, now);
     ensureDaily(ctx, now);
     revealVision(ctx);
@@ -819,7 +844,7 @@ function clientCfg() {
     maxBuildSec: c.maxBuildSec, gate: c.gate, tier2: c.tier2, beeCost: c.beeCost,
     retrainCost: c.retrainCost, retrainDay: true, danceCost: c.danceCost, danceDurationSec: c.danceDurationSec,
     energyMax: c.energyMax, energyRegenSec: c.energyRegenSec, carry: c.carry, speed: c.speed,
-    maxExpeditions: c.maxExpeditions, adjBonus: c.adjBonus, adjMax: c.adjMax,
+    maxExpeditions: c.maxExpeditions, noNestRange: c.noNestRange, drops: c.drops, gift: c.gift, sting: c.sting, adjBonus: c.adjBonus, adjMax: c.adjMax,
     noisyPenalty: c.noisyPenalty, housingTypes: HOUSING_TYPES, planSlotsPerBrigade: c.planSlotsPerBrigade,
     maxPropolisShare: c.maxPropolisShare, loginCalendar: c.loginCalendar, tutorial: c.tutorial,
     cocoonHours: c.cocoonHours, gatherNectar: c.gatherNectar, gatherPropolis: c.gatherPropolis
@@ -881,6 +906,8 @@ function stateView(ctx, now) {
     hives: hives,
     season: seasonForecast(now),
     tutorial: tutorialView(ctx),
+    goal: goalView(ctx),
+    drops: dropsView(pd, now),
     daily: dailyView(ctx),
     login: pd.login,
     exps: pd.exps.map(function (e) {
@@ -966,6 +993,7 @@ function apiRegister(req) {
     radius: cfg.gate[1].radius, data: JSON.stringify(newHiveData(now))
   };
   dbInsert('Hives', hive);
+  feedPush({ player: player }, 'join', {});
   return { token: token };
 }
 
@@ -1016,7 +1044,7 @@ function apiColors() {
  *   столбец B — значение в JSON (например `3.5` или `{"wax":8,"honey":4}`).
  */
 var CFG_BASE = {
-  version: '0.3.0',
+  version: '0.4.0',
   stage: 1,                       // этап разработки: 1 = MVP (армия/колонии закрыты)
   tz: 'Europe/Moscow',
   stepMinutes: 5,                 // шаг ленивого пересчёта
@@ -1024,7 +1052,9 @@ var CFG_BASE = {
 
   // старт
   startRes: { nectar: 200, honey: 250, wax: 200, propolis: 30, jelly: 0, amber: 0 },
-  startBees: { forager: 12, crafter: 6, nurse: 4, lookout: 0 },
+  startBees: { forager: 12, crafter: 6, nurse: 4, lookout: 2 },
+  baseLookoutCap: 2,      // дозорницы без Гнезда разведчиц
+  noNestRange: 4,         // без Гнезда — только ближние клетки
   prebuilt: [ // ярус 1: индекс соты -> тип
     { idx: 1, b: 'nectar_store' }, { idx: 2, b: 'meadery' },
     { idx: 3, b: 'honey_store' }, { idx: 5, b: 'incubator' }
@@ -1089,7 +1119,12 @@ var CFG_BASE = {
   objectLootCooldownH: 72,
 
   // экспедиции
-  speed: { lookout: 16, forager: 8 },
+  speed: { lookout: 28, forager: 14 },   // клеток в час
+
+  // капли мёда над сотами: собираются нажатием
+  drops: { everySec: 1200, max: 5, start: 2, minutes: 15, minHoney: 12, minWax: 6 },
+  gift: { honey: 60, wax: 30 },          // подарок соседу раз в день
+  sting: { penalty: 0.02, hours: 1 },     // «ужалить»: −2% к сбору на час
   maxTravelSec: 8 * 3600,
   expEventChance: 0.65,
   expChoiceTimeoutSec: 3600,
@@ -1114,12 +1149,12 @@ var CFG_BASE = {
     { id: 'build_wax',   need: { building: 'wax_shop', count: 1 },    rew: { wax: 40, honey: 40 } },
     { id: 'build_house', need: { building: 'housing', count: 1 },     rew: { wax: 40, honey: 40 } },
     { id: 'hatch5',      need: { stat: 'hatched', count: 5 },         rew: { wax: 40, honey: 40 } },
+    { id: 'expedition',  need: { stat: 'expeditions', count: 1 },     rew: { wax: 40, honey: 40, propolis: 20 } },
     { id: 'meadery2',    need: { building: 'meadery', count: 2 },     rew: { wax: 60, honey: 60 } },
     { id: 'plan2',       need: { stat: 'planned', count: 2 },         rew: { wax: 40, honey: 40, propolis: 20 } },
     { id: 'dance',       need: { stat: 'dances', count: 1 },          rew: { wax: 40, honey: 40 } },
     { id: 'upgrade',     need: { stat: 'upgraded', count: 1 },        rew: { wax: 60, honey: 60, propolis: 20 } },
     { id: 'scout',       need: { building: 'scout_nest', count: 1 },  rew: { wax: 40, honey: 40, propolis: 20 } },
-    { id: 'expedition',  need: { stat: 'expeditions', count: 1 },     rew: { wax: 40, honey: 40, propolis: 20 } },
     { id: 'gate2',       need: { gate: 2 },                           rew: { wax: 60, honey: 60, propolis: 40 } },
     { id: 'cells18',     need: { cellsT1: 18 },                       rew: { wax: 50, honey: 50, propolis: 20 } },
     { id: 'tier2',       need: { tiers: 2 },                          rew: { wax: 50, honey: 50, propolis: 20, jelly: 10 } }
@@ -1215,7 +1250,8 @@ var SHEETS = {
   Round: ['key', 'value'],
   Config: ['path', 'value', 'comment'],
   Events_Queue: ['id', 'type', 'startTs', 'endTs', 'fromId', 'toId', 'data', 'status'],
-  Hall_of_Fame: ['round', 'place', 'name', 'glory', 'title']
+  Hall_of_Fame: ['round', 'place', 'name', 'glory', 'title'],
+  Feed: ['id', 'ts', 'pid', 'name', 'color', 'type', 'to', 'data']
 };
 
 var _ss = null;
@@ -1343,7 +1379,8 @@ function newPlayerData(now) {
     lastTs: now,
     energy: cfg.energyMax, energyTs: now,
     buffs: [],
-    stats: { hatched: 0, built: 0, upgraded: 0, planned: 0, dances: 0, expeditions: 0, honeyMade: 0 },
+    stats: { hatched: 0, built: 0, upgraded: 0, planned: 0, dances: 0, expeditions: 0, honeyMade: 0, drops: 0 },
+    drops: { n: cfg.drops.start, t: now },
     tutorial: { step: 0 },
     daily: null,
     login: { lastDay: '', idx: -1, claimable: false },
@@ -1433,7 +1470,7 @@ function hiveProfile(hd) {
   var p = {
     capN: g.store, capH: g.store, capWP: g.store, house: g.house,
     craftSlots: 0, nurseSlots: 0, nhIn: 0, nhOut: 0, hwIn: 0, hwOut: 0,
-    jelly: 0, hatch: 0, lookoutCap: 0
+    jelly: 0, hatch: 0, lookoutCap: cfg.baseLookoutCap || 0
   };
   eachCell(hd, function (tier, idx, c) {
     var d = cfg.buildings[c.b];
@@ -1550,7 +1587,7 @@ function computeFlows(ctx, t) {
   var hungry = pd.res.honey <= 0;
   var eff = hungry ? cfg.hungerEff : 1;
   var boost = isCocoon(ctx, t) ? cfg.cocoonBoost : 1;
-  var gBuff = activeBuffMult(pd, 'gather', t);
+  var gBuff = activeBuffMult(pd, 'gather', t) * activeBuffMult(pd, 'sting', t);
   var caps = { nectar: 0, honey: 0, wp: 0 };
   var out = [];
   ctx.hives.forEach(function (h) {
@@ -1693,6 +1730,7 @@ function completeJobs(ctx, t) {
         ctx.pd.stats.upgraded++;
       } else if (j.kind === 'gate') {
         hd.gate = j.toLvl;
+        feedPush(ctx, 'gate', { l: hd.gate }, '', j.end);
         h.row.radius = getCfg().gate[hd.gate].radius;
         h.land = null; // пересчитать землю
       }
@@ -1815,6 +1853,7 @@ function apiExpeditionSend(ctx, req) {
   if (x < 0 || y < 0 || x >= cfg.mapSize || y >= cfg.mapSize) throw gameErr('BAD_TARGET');
   var dist = mapDist(Number(h.row.x), Number(h.row.y), x, y);
   if (dist < 1) throw gameErr('BAD_TARGET');
+  if (!countType(hd, 'scout_nest') && dist > cfg.noNestRange) throw gameErr('EXP_RANGE', { max: cfg.noNestRange });
   if (L < 1) throw gameErr('NEED_LOOKOUT');
   if (F < 0) throw gameErr('BAD_AMOUNT');
   var active = ctx.pd.exps.filter(function (e) { return e.status !== 'done'; }).length;
@@ -1968,6 +2007,7 @@ function expFinish(ctx, e) {
     hd.bees.forager = Math.max(0, hd.bees.forager - e.lost.forager) + (e.join || 0);
   }
   for (var k in e.loot) ctx.pd.res[k] = (ctx.pd.res[k] || 0) + e.loot[k];
+  if (e.loot.amber) feedPush(ctx, 'amber', { x: e.x, y: e.y }, '', e.back);
   ctx.pd.reports.unshift({
     type: 'expedition', ts: e.back, x: e.x, y: e.y, loot: e.loot, lost: e.lost, join: e.join || 0,
     found: e.found, event: e.event || null
@@ -2277,6 +2317,7 @@ function apiTutorialClaim(ctx) {
   if (!tutorialMet(ctx, q.need)) throw gameErr('NOT_DONE');
   grant(ctx, q.rew);
   ctx.pd.tutorial.step++;
+  ensureGoal(ctx, NOW());
   return { rew: q.rew };
 }
 
@@ -2492,6 +2533,208 @@ function ensureEventObjects(now) {
     placed++;
   }
   roundSet(key, true);
+}
+
+// ---- Social.gs
+/** Капли мёда (сбор руками), цепочка целей после обучения, лента роёв, подарки и «ужалить». */
+
+// ---------------------------------------------------------------- капли мёда
+/** Капли копятся: одна раз в drops.everySec, не больше drops.max. */
+function dropsRefresh(pd, now) {
+  var c = getCfg().drops;
+  var every = c.everySec * 1000;
+  var d = pd.drops || (pd.drops = { n: c.start, t: now });
+  if (d.n >= c.max) { d.t = now; return d; }
+  var add = Math.floor((now - d.t) / every);
+  if (add > 0) {
+    d.n = Math.min(c.max, d.n + add);
+    d.t = d.n >= c.max ? now : d.t + add * every;
+  }
+  return d;
+}
+
+/** Сколько даёт одна капля: drops.minutes работы котлов и воскотопок, но не меньше минимума. */
+function dropReward(ctx, now) {
+  var c = getCfg().drops;
+  var fl = computeFlows(ctx, now), honey = 0, wax = 0;
+  fl.hives.forEach(function (f) { honey += f.nhOut; wax += f.hwOut; });
+  var k = c.minutes / 60;
+  return { honey: Math.max(c.minHoney, Math.round(honey * k)), wax: Math.max(c.minWax, Math.round(wax * k)) };
+}
+
+function apiCollectDrop(ctx) {
+  var now = NOW(), c = getCfg().drops;
+  var d = dropsRefresh(ctx.pd, now);
+  if (d.n < 1) throw gameErr('NO_DROPS');
+  var rew = dropReward(ctx, now);
+  if (d.n >= c.max) d.t = now; // таймер следующей капли пошёл с этого момента
+  d.n--;
+  grant(ctx, rew);
+  ctx.pd.stats.drops = (ctx.pd.stats.drops || 0) + 1;
+  return { rew: rew };
+}
+
+function dropsView(pd, now) {
+  var c = getCfg().drops, d = dropsRefresh(pd, now);
+  return { n: d.n, max: c.max, next: d.n >= c.max ? null : d.t + c.everySec * 1000 };
+}
+
+// ---------------------------------------------------------------- цепочка целей после обучения
+var GOAL_KINDS = ['cells', 'bees', 'drops', 'upgrade', 'expedition', 'honey', 'cells', 'dance'];
+
+function goalValue(ctx, kind) {
+  var st = ctx.pd.stats, main = ctx.hives[0].hd;
+  if (kind === 'cells') { var n = 0; ctx.hives.forEach(function (h) { n += countCells(h.hd, 1) + countCells(h.hd, 2); }); return n; }
+  if (kind === 'bees') { var b = 0; for (var r in main.bees) b += main.bees[r]; return b; }
+  if (kind === 'drops') return st.drops || 0;
+  if (kind === 'upgrade') return st.upgraded || 0;
+  if (kind === 'expedition') return st.expeditions || 0;
+  if (kind === 'honey') return Math.floor(st.honeyMade || 0);
+  if (kind === 'dance') return st.dances || 0;
+  return 0;
+}
+
+/** Есть ли куда строить: свободные соты на открытых ярусах. */
+function freeCells(ctx) {
+  var hd = ctx.hives[0].hd, n = 0;
+  for (var t = 1; t <= hd.tiers; t++) n += 36 - countCells(hd, t) - hd.jobs.filter(function (j) { return j.tier === t && j.kind === 'new'; }).length;
+  return n;
+}
+
+/** Новая цель номер i. Цели идут по кругу, цифры растут вместе с ульем. */
+function makeGoal(ctx, i, now) {
+  var kind = null;
+  for (var k = 0; k < GOAL_KINDS.length; k++) {
+    var cand = GOAL_KINDS[(i + k) % GOAL_KINDS.length];
+    if (cand === 'cells' && freeCells(ctx) < 2) continue;
+    kind = cand; break;
+  }
+  var v = goalValue(ctx, kind), fl = computeFlows(ctx, now), honeyRate = 0, waxRate = 0;
+  fl.hives.forEach(function (f) { honeyRate += f.nhOut; waxRate += f.hwOut; });
+  var step = Math.floor(i / GOAL_KINDS.length); // каждый круг цели чуть больше
+  var add = {
+    cells: Math.min(2 + step, freeCells(ctx)), bees: 10 + step * 5, drops: 3, upgrade: 1 + Math.floor(step / 2),
+    expedition: 1, honey: Math.max(100, Math.round(honeyRate * (1 + step * 0.5) / 10) * 10), dance: 1
+  }[kind];
+  var rew = { honey: Math.max(40, Math.round(honeyRate * 0.5)), wax: Math.max(25, Math.round(waxRate * 0.5)) };
+  if ((i + 1) % 5 === 0) rew.amber = 1; // каждая пятая цель — янтарь
+  return { i: i, kind: kind, target: v + add, add: add, rew: rew };
+}
+
+function ensureGoal(ctx, now) {
+  var pd = ctx.pd;
+  if (pd.goal || pd.tutorial.step < getCfg().tutorial.length) return;
+  pd.goal = makeGoal(ctx, 0, now);
+}
+
+function goalView(ctx) {
+  var g = ctx.pd.goal;
+  if (!g) return null;
+  var v = goalValue(ctx, g.kind);
+  return { i: g.i, kind: g.kind, target: g.target, add: g.add, value: Math.min(v, g.target),
+           from: g.target - g.add, rew: g.rew, met: v >= g.target };
+}
+
+function apiGoalClaim(ctx) {
+  var now = NOW(), g = goalView(ctx);
+  if (!g) throw gameErr('NOT_FOUND');
+  if (!g.met) throw gameErr('NOT_DONE');
+  grant(ctx, g.rew);
+  ctx.pd.goal = makeGoal(ctx, g.i + 1, now);
+  if ((g.i + 1) % 10 === 0) feedPush(ctx, 'goals', { n: g.i + 1 });
+  return { rew: g.rew };
+}
+
+// ---------------------------------------------------------------- лента роёв
+var FEED_SHEET = 'Feed';
+
+/** Лист ленты создаётся сам: старые таблицы его не знают. */
+function feedSheet() {
+  var ss = getSS(), sh = ss.getSheetByName(FEED_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(FEED_SHEET);
+    sh.getRange(1, 1, sh.getMaxRows(), SHEETS.Feed.length).setNumberFormat('@');
+    sh.appendRow(SHEETS.Feed);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+function feedPush(ctx, type, data, toId, ts) {
+  var p = ctx.player;
+  feedSheet();
+  dbInsert(FEED_SHEET, { id: uid('f'), ts: ts || NOW(), pid: p.id, name: p.name, color: p.color, type: type, to: toId || '', data: JSON.stringify(data || {}) });
+}
+
+/** Подарки и уколы, которые прислали этому игроку, — доставляются при его следующем запросе. */
+function processInbox(ctx) {
+  var pd = ctx.pd, me = ctx.player.id, last = Number(pd.inboxTs) || (Number(ctx.player.createdAt) - 1) || 0, maxTs = last;
+  feedSheet();
+  dbTable(FEED_SHEET).forEach(function (r) {
+    var ts = Number(r.ts);
+    if (r.to !== me || ts <= last) return;
+    maxTs = Math.max(maxTs, ts);
+    var d = {}; try { d = JSON.parse(r.data || '{}'); } catch (e) {}
+    if (r.type === 'gift') {
+      grant(ctx, { honey: d.honey || 0, wax: d.wax || 0 });
+      pushNotice(ctx, 'gift', { name: r.name, honey: d.honey || 0, wax: d.wax || 0 });
+    } else if (r.type === 'sting') {
+      pd.buffs = (pd.buffs || []).filter(function (b) { return b.until > NOW(); });
+      pd.buffs.push({ type: 'sting', bonus: -getCfg().sting.penalty, from: NOW(), until: NOW() + getCfg().sting.hours * HOUR });
+      pushNotice(ctx, 'sting', { name: r.name });
+    }
+  });
+  pd.inboxTs = maxTs;
+}
+
+function socialDay(pd) {
+  var day = dayKey(NOW());
+  if (!pd.social || pd.social.day !== day) pd.social = { day: day, gift: false, sting: false };
+  return pd.social;
+}
+
+function findPlayer(id) {
+  return dbTable('Players').filter(function (p) { return p.id === id; })[0] || null;
+}
+
+function apiGift(ctx, req) {
+  var so = socialDay(ctx.pd);
+  if (so.gift) throw gameErr('ALREADY');
+  var to = findPlayer(String(req.to || ''));
+  if (!to || to.id === ctx.player.id) throw gameErr('NOT_FOUND');
+  var g = getCfg().gift;
+  so.gift = to.id;
+  feedPush(ctx, 'gift', { honey: g.honey, wax: g.wax, toName: to.name, toColor: to.color }, to.id);
+  return {};
+}
+
+function apiSting(ctx, req) {
+  var so = socialDay(ctx.pd);
+  if (so.sting) throw gameErr('ALREADY');
+  var to = findPlayer(String(req.to || ''));
+  if (!to || to.id === ctx.player.id) throw gameErr('NOT_FOUND');
+  so.sting = to.id;
+  feedPush(ctx, 'sting', { toName: to.name, toColor: to.color }, to.id);
+  return {};
+}
+
+/** Вкладка «Рои»: рейтинг, лента и что я сегодня ещё могу. */
+function apiSwarms(ctx) {
+  feedSheet();
+  var rows = dbTable(FEED_SHEET), feed = [];
+  for (var i = rows.length - 1; i >= 0 && feed.length < 40; i--) {
+    var r = rows[i], d = {};
+    try { d = JSON.parse(r.data || '{}'); } catch (e) {}
+    feed.push({ ts: Number(r.ts), name: r.name, color: r.color, type: r.type, data: d, me: r.pid === ctx.player.id, toMe: r.to === ctx.player.id });
+  }
+  var so = socialDay(ctx.pd);
+  return {
+    players: dbTable('Players').map(function (p) {
+      return { id: p.id, name: p.name, color: p.color, glory: Number(p.glory) || 0, me: p.id === ctx.player.id };
+    }).sort(function (a, b) { return b.glory - a.glory; }),
+    feed: feed,
+    gift: !so.gift, sting: !so.sting
+  };
 }
 
 // ---- Texts.gs
@@ -2728,6 +2971,10 @@ function refreshLand(ctx, h, t) { h.landSeason = calendarAt(t).season; }
 // исход экспедиций (случайные находки) решает только сервер
 function processExpeditions() {}
 function ensureEventObjects() {}
+// лента и почта — только на сервере
+function feedPush() {}
+function processInbox() {}
+function feedSheet() {}
 
 var __ctx = null;
 var Replica = {
@@ -2746,6 +2993,8 @@ var Replica = {
     var now = NOW();
     advance(__ctx, now);
     refreshEnergy(__ctx.pd, now);
+    dropsRefresh(__ctx.pd, now);
+    ensureGoal(__ctx, now);
     touchLogin(__ctx, now);
     ensureDaily(__ctx, now);
   },
@@ -2839,6 +3088,8 @@ return Replica;
 <symbol id="i-winter" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.6 12 7l2.5-2.4M9.5 19.4 12 17l2.5 2.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/></symbol>
 <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M7 4h11a2 2 0 0 1 2 2v1h-3M7 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7M7 4a2 2 0 0 1 2 2v0M9 10h6M9 13.5h6M9 17h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-swarms" viewBox="0 0 24 24"><circle cx="8" cy="9" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="10.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M2.8 19.5c.6-3.2 2.7-5 5.2-5s4.6 1.8 5.2 5M13.4 15.2c.9-.8 1.9-1.2 3.1-1.2 2.1 0 3.8 1.5 4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+<symbol id="i-sting" viewBox="0 0 24 24"><path d="M5 19 15.5 8.5M14 4.5l5.5 5.5-3 1-3.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><path d="M5 19l-1.5 1.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
 <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.5c0 3 1.5 4.5 3.7 4.6M16 6h3.5c0 3-1.5 4.5-3.7 4.6M12 13v4M8.5 20h7M9.5 17h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5v2.3M12 18.2v2.3M3.5 12h2.3M18.2 12h2.3M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.2" fill="currentColor"/></symbol>
@@ -2946,10 +3197,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 // ---------------------------------------------------------------- тексты RU / EN
 const I18N = {
   ru: {
@@ -3293,6 +3540,60 @@ Object.assign(I18N.en.err, {
   BAD_ACTION: 'Action unavailable.', BAD_BUILDING: 'Unknown building.', WRONG_TIER: 'This building belongs to another tier.'
 });
 
+// ---- v0.4: капли, цели, рои
+Object.assign(I18N.ru, {
+  tut_expedition: 'Отправьте дозорницу в экспедицию: откройте карту и выберите клетку рядом с ульем',
+  exp_need_lookout: 'Нужна свободная дозорница. Выведите её во вкладке «Пчёлы».',
+  exp_range: (n) => `Без Гнезда разведчиц дозорницы летают не дальше ${n} клеток от улья. Постройте Гнездо, чтобы летать дальше.`,
+  nav_swarms: 'Рои',
+  goal_cells: (n) => `Постройте ещё ${n} ${n === 1 ? 'соту' : n < 5 ? 'соты' : 'сот'}`,
+  goal_bees: (n) => `Выведите ещё ${n} пчёл`,
+  goal_drops: (n) => `Соберите ${n} капли мёда над сотами`,
+  goal_upgrade: (n) => n === 1 ? 'Улучшите любую постройку' : `Улучшите постройки: ${n}`,
+  goal_expedition: () => 'Отправьте экспедицию на карте',
+  goal_honey: (n) => `Сварите ${n} мёда`,
+  goal_dance: () => 'Станцуйте танец пчёл',
+  goal_done: 'Готово! Забрать награду',
+  drops_hint: 'Над сотами висят капли мёда — нажимайте на них, чтобы собрать',
+  swarms_title: 'Рои', feed: 'Лента', feed_empty: 'Пока тихо. Здесь появятся новости других роёв.',
+  gift_btn: 'Подарок', sting_btn: 'Ужалить', gift_done: 'Подарок отправлен', sting_done: 'Укол отправлен',
+  social_hint: (g, s) => `Раз в день можно сделать подарок (+${g.honey} мёда и +${g.wax} воска другу) и ужалить соседа (−${Math.round(s.penalty * 100)}% к его сбору на час).`,
+  social_used: 'Сегодня уже использовано',
+  fe_join: 'Новый рой на карте', fe_tier2: 'Открыт ярус 2', fe_gate: (d) => `Медовые врата: уровень ${d.l}`,
+  fe_amber: 'Найден янтарь в экспедиции', fe_gift: (d) => `Подарок игроку ${d.toName}`, fe_sting: (d) => `Укол игроку ${d.toName}`,
+  fe_goals: (d) => `Выполнено целей: ${d.n}`,
+  ago_now: 'только что', ago_m: (n) => `${n} мин назад`, ago_h: (n) => `${n} ч назад`, ago_d: (n) => `${n} д назад`,
+  notice_gift: (p) => `Подарок от игрока ${p.name}: +${p.honey} мёда, +${p.wax} воска`,
+  notice_sting: (p) => `Вас ужалил игрок ${p.name}. Сбор −2% на час`
+});
+Object.assign(I18N.ru.err, { NO_DROPS: 'Капель пока нет — новая появится через 20 минут.', EXP_RANGE: (p) => `Без Гнезда разведчиц можно лететь не дальше ${p.max} клеток.`, ALREADY: 'Сегодня уже сделано.' });
+Object.assign(I18N.en, {
+  tut_expedition: 'Send a lookout on an expedition: open the map and pick a cell near the hive',
+  exp_need_lookout: 'You need a free lookout. Hatch one in the Bees tab.',
+  exp_range: (n) => `Without a Scout Nest, lookouts fly at most ${n} cells from the hive. Build a Nest to fly further.`,
+  nav_swarms: 'Swarms',
+  goal_cells: (n) => `Build ${n} more comb${n === 1 ? '' : 's'}`,
+  goal_bees: (n) => `Hatch ${n} more bees`,
+  goal_drops: (n) => `Collect ${n} honey drops above the combs`,
+  goal_upgrade: (n) => n === 1 ? 'Upgrade any building' : `Upgrade buildings: ${n}`,
+  goal_expedition: () => 'Send an expedition on the map',
+  goal_honey: (n) => `Brew ${n} honey`,
+  goal_dance: () => 'Do the bee dance',
+  goal_done: 'Done! Claim reward',
+  drops_hint: 'Honey drops float above the combs — tap them to collect',
+  swarms_title: 'Swarms', feed: 'Feed', feed_empty: 'Quiet for now. News from other swarms will show up here.',
+  gift_btn: 'Gift', sting_btn: 'Sting', gift_done: 'Gift sent', sting_done: 'Sting sent',
+  social_hint: (g, s) => `Once a day you can send a gift (+${g.honey} honey and +${g.wax} wax to a friend) and sting a neighbour (−${Math.round(s.penalty * 100)}% to their gathering for an hour).`,
+  social_used: 'Already used today',
+  fe_join: 'New swarm on the map', fe_tier2: 'Tier 2 opened', fe_gate: (d) => `Honey Gate: level ${d.l}`,
+  fe_amber: 'Found amber on an expedition', fe_gift: (d) => `Gift to ${d.toName}`, fe_sting: (d) => `Stung ${d.toName}`,
+  fe_goals: (d) => `Goals completed: ${d.n}`,
+  ago_now: 'just now', ago_m: (n) => `${n} min ago`, ago_h: (n) => `${n} h ago`, ago_d: (n) => `${n} d ago`,
+  notice_gift: (p) => `Gift from ${p.name}: +${p.honey} honey, +${p.wax} wax`,
+  notice_sting: (p) => `${p.name} stung you. Gathering −2% for an hour`
+});
+Object.assign(I18N.en.err, { NO_DROPS: 'No drops yet — a new one appears in 20 minutes.', EXP_RANGE: (p) => `Without a Scout Nest you can fly at most ${p.max} cells.`, ALREADY: 'Already done today.' });
+
 // ---------------------------------------------------------------- иконки (SVG-спрайт)
 // Все иконки — символы одного спрайта; в разметке используются через <use>.
 const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -3341,6 +3642,8 @@ const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" style="position:abs
 <symbol id="i-winter" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.6 12 7l2.5-2.4M9.5 19.4 12 17l2.5 2.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/></symbol>
 <symbol id="i-scroll" viewBox="0 0 24 24"><path d="M7 4h11a2 2 0 0 1 2 2v1h-3M7 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2V7M7 4a2 2 0 0 1 2 2v0M9 10h6M9 13.5h6M9 17h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="i-swarms" viewBox="0 0 24 24"><circle cx="8" cy="9" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="16.5" cy="10.5" r="2.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M2.8 19.5c.6-3.2 2.7-5 5.2-5s4.6 1.8 5.2 5M13.4 15.2c.9-.8 1.9-1.2 3.1-1.2 2.1 0 3.8 1.5 4.3 4.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+<symbol id="i-sting" viewBox="0 0 24 24"><path d="M5 19 15.5 8.5M14 4.5l5.5 5.5-3 1-3.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/><path d="M5 19l-1.5 1.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
 <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H4.5c0 3 1.5 4.5 3.7 4.6M16 6h3.5c0 3-1.5 4.5-3.7 4.6M12 13v4M8.5 20h7M9.5 17h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3.5v2.3M12 18.2v2.3M3.5 12h2.3M18.2 12h2.3M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
 <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.2" fill="currentColor"/></symbol>
@@ -3417,13 +3720,14 @@ const Scene3D = (() => {
   const tierY = (t) => STUMP_TOP + (t - 1) * GAP;
 
   const QUAL = {
-    high: { dpr: 2, shadow: 2048, grass: 26000, shells: 6, bloom: true, flowers: 520, bees: 30 },
-    mid: { dpr: 1.5, shadow: 1024, grass: 12000, shells: 3, bloom: false, flowers: 300, bees: 22 },
-    low: { dpr: 1, shadow: 512, grass: 4000, shells: 0, bloom: false, flowers: 160, bees: 14 }
+    high: { dpr: 1.75, shadow: 2048, grass: 15000, shells: 2, flowers: 380, bees: 24, grassShadow: true },
+    mid: { dpr: 1.35, shadow: 1024, grass: 8500, shells: 1, flowers: 240, bees: 16, grassShadow: false },
+    low: { dpr: 1, shadow: 1024, grass: 3500, shells: 0, flowers: 120, bees: 10, grassShadow: false }
   };
   let Q = QUAL.high, qName = 'high';
-  let renderer, scene, camera, controls, composer = null, canvas, raycaster, pointer, sun, getNow = () => Date.now();
+  let renderer, scene, camera, controls, canvas, raycaster, pointer, sun, getNow = () => Date.now();
   let tierGroups = [], pickers = [], anims = [], halo, activeTier = 1, paused = false;
+  let grassMesh = null;
   let grassMat = null, prevCellKeys = null, jobsNow = [], hiveData = null, haloFill = null;
   const api = { onCellTap: null };
   const clock = { t: 0, last: performance.now() };
@@ -3532,10 +3836,11 @@ const Scene3D = (() => {
   async function init(cv, nowFn, quality) {
     canvas = cv; getNow = nowFn || getNow;
     qName = QUAL[quality] ? quality : 'high'; Q = QUAL[qName];
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: !Q.bloom, alpha: false, powerPreference: 'high-performance' });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: qName !== 'low', alpha: false, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(Q.dpr, window.devicePixelRatio || 1));
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = qName === 'low' ? THREE.PCFSoftShadowMap : THREE.VSMShadowMap;
+    renderer.shadowMap.type = qName === 'low' ? THREE.PCFShadowMap : THREE.VSMShadowMap;
+    renderer.shadowMap.autoUpdate = false; // тени статичны: перерисовываем карту теней только когда меняется улей
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.9;
@@ -3577,16 +3882,7 @@ const Scene3D = (() => {
     haloFill = new THREE.Mesh(new THREE.CircleGeometry(CELL_R * 0.84, 6), new THREE.MeshBasicMaterial({ color: '#FFF6C9', transparent: true, opacity: 0.2, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
     haloFill.position.z = -0.01; halo.add(haloFill);
     scene.add(halo);
-    Particles.init(); Bees.init(Q.bees, Q.shells); Butterflies.init(5); Pollen.init(160);
-    if (Q.bloom) {
-      try {
-        const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
-        composer = new EffectComposer(renderer, rt);
-        composer.addPass(new RenderPass(scene, camera));
-        composer.addPass(new UnrealBloomPass(new THREE.Vector2(256, 256), 0.22, 0.5, 0.96));
-        composer.addPass(new OutputPass());
-      } catch (e) { composer = null; }
-    }
+    Particles.init(); Bees.init(Q.bees, Q.shells); Butterflies.init(4); Pollen.init(110); Drops.init();
     raycaster = new THREE.Raycaster(); pointer = new THREE.Vector2();
     let down = null;
     canvas.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; idleAt = performance.now(); });
@@ -3601,6 +3897,7 @@ const Scene3D = (() => {
     canvas.addEventListener('webglcontextrestored', () => location.reload());
     window.addEventListener('resize', resize);
     resize();
+    shadowsDirty();
     renderer.setAnimationLoop(loop);
   }
 
@@ -3779,17 +4076,18 @@ const Scene3D = (() => {
         n++;
       }
     }
-    mesh.count = n; mesh.receiveShadow = true; mesh.frustumCulled = false;
+    mesh.count = n; mesh.receiveShadow = Q.grassShadow; mesh.frustumCulled = false;
+    grassMesh = mesh;
     scene.add(mesh);
   }
 
   function buildFlowers() {
     const N = Q.flowers;
-    const petal = new THREE.CircleGeometry(0.06, 10); petal.scale(1, 0.55, 1); petal.translate(0.065, 0, 0);
+    const petal = new THREE.CircleGeometry(0.06, 6); petal.scale(1, 0.55, 1); petal.translate(0.065, 0, 0);
     const parts = [];
     for (let i = 0; i < 6; i++) { const g = petal.clone(); g.rotateZ(i / 6 * Math.PI * 2); parts.push(g); }
     const head = mergeGeometries(parts); head.rotateX(-Math.PI / 2 + 0.25);
-    const center = new THREE.SphereGeometry(0.035, 8, 6); center.scale(1, 0.6, 1);
+    const center = new THREE.SphereGeometry(0.035, 6, 4); center.scale(1, 0.6, 1);
     const stem = new THREE.CylinderGeometry(0.008, 0.012, 1, 4); stem.translate(0, 0.5, 0);
     const mH = new THREE.InstancedMesh(head, new THREE.MeshStandardMaterial({ roughness: 0.6, side: THREE.DoubleSide }), N);
     const mC = new THREE.InstancedMesh(center, new THREE.MeshStandardMaterial({ color: '#F6B21A', roughness: 0.5 }), N);
@@ -3806,7 +4104,7 @@ const Scene3D = (() => {
       v.set(x, y + h, z); s.set(sc, sc, sc); mm.compose(v, q, s); mH.setMatrixAt(i, mm); mC.setMatrixAt(i, mm);
       mH.setColorAt(i, c.set(palette[cl % palette.length]));
     }
-    [mH, mC, mS].forEach(m => { m.castShadow = qName === 'high'; m.receiveShadow = true; m.frustumCulled = false; scene.add(m); });
+    [mH, mC, mS].forEach(m => { m.castShadow = false; m.receiveShadow = Q.grassShadow; m.frustumCulled = false; scene.add(m); });
   }
 
   function makeTree(seed, kind) {
@@ -3831,7 +4129,7 @@ const Scene3D = (() => {
     const canopy = [];
     const nb = 6 + Math.floor(rnd(seed + 1) * 4);
     for (let k = 0; k < nb; k++) {
-      const s = new THREE.IcosahedronGeometry(0.9 + rnd(seed + k) * 0.6, 3);
+      const s = new THREE.IcosahedronGeometry(0.9 + rnd(seed + k) * 0.6, 2);
       const p = s.attributes.position;
       for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i); const d = 1 + (fbm(x * 1.6 + seed, y * 1.6 + z, 3) - 0.5) * 0.35; p.setXYZ(i, x * d, y * d, z * d); }
       const a = k / nb * Math.PI * 2, r = k === 0 ? 0 : 0.8 + rnd(seed + k * 2) * 0.5;
@@ -4138,6 +4436,36 @@ const Scene3D = (() => {
     return g;
   }
 
+  // ================================================================ слияние статичных деталей
+  // Каждая постройка — 5–15 мелких деталей. Неподвижные детали яруса склеиваем в одну сетку на материал:
+  // вместо сотен вызовов отрисовки остаются десятки.
+  function mergeStatic(group) {
+    group.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(group.matrixWorld).invert(), rel = new THREE.Matrix4();
+    const buckets = new Map(), remove = [];
+    group.traverse(o => {
+      if (!o.isMesh || o.isInstancedMesh || Array.isArray(o.material)) return;
+      if (o.material.transparent || !o.material.visible) return;
+      for (let p = o; p && p !== group; p = p.parent) if (p.name || p.userData.keep) return; // анимированные детали остаются отдельно
+      let g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+      Object.keys(g.attributes).forEach(k => { if (k !== 'position' && k !== 'normal' && k !== 'uv') g.deleteAttribute(k); });
+      if (!g.attributes.normal) g.computeVertexNormals();
+      if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+      g.clearGroups();
+      g.applyMatrix4(rel.multiplyMatrices(inv, o.matrixWorld));
+      const key = o.material.uuid + (o.castShadow ? '+' : '-');
+      if (!buckets.has(key)) buckets.set(key, { mat: o.material, cast: o.castShadow, list: [] });
+      buckets.get(key).list.push(g); remove.push(o);
+    });
+    remove.forEach(o => o.parent.remove(o));
+    buckets.forEach(b => {
+      const merged = mergeGeometries(b.list, false); b.list.forEach(g => g.dispose());
+      if (!merged) return;
+      const m = new THREE.Mesh(merged, b.mat); m.castShadow = b.cast; m.receiveShadow = true; group.add(m);
+    });
+  }
+  const shadowsDirty = () => { if (renderer) renderer.shadowMap.needsUpdate = true; };
+
   // ================================================================ построение ярусов
   function clearGroup(g) { while (g.children.length) g.remove(g.children[0]); }
   function render(hive, cfg, tierToShow) {
@@ -4148,6 +4476,7 @@ const Scene3D = (() => {
     pickers = [];
     const nowMs = getNow();
     const keys = new Set();
+    const prevKeys = prevCellKeys;
     jobsNow = [];
     for (let t = 1; t <= 3; t++) {
       const g = tierGroups[t];
@@ -4180,12 +4509,13 @@ const Scene3D = (() => {
           addProgressRing(g, x, z, 0.62, job);
           jobsNow.push({ t, idx, job });
         } else if (pl) {
-          const pin = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), M.plan); pin.position.set(x, 0.55, z); g.add(pin);
+          const pin = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), M.plan); pin.position.set(x, 0.55, z); pin.userData.keep = true; g.add(pin);
           anims.push({ kind: 'bob', obj: pin, base: 0.55, ph: idx });
           const ring = new THREE.Mesh(new THREE.RingGeometry(CELL_R * 0.74, CELL_R * 0.84, 6), M.plan); ring.rotation.x = -Math.PI / 2; ring.rotation.z = Math.PI / 6; ring.position.set(x, 0.03, z); g.add(ring);
           anims.push({ kind: 'pulse', obj: ring, ph: idx });
         }
         if (obj) {
+          if (c && prevKeys && !prevKeys.has(`${t}:${idx}:${c.b}:${c.l}`)) obj.userData.keep = true; // только что достроена — будет «выпрыгивать»
           obj.position.set(x, c || idx === 0 ? 0.06 : 0.03, z);
           obj.rotation.y = idx === 0 ? 0 : [0, Math.PI / 3, -Math.PI / 3, Math.PI][idx % 4] + (idx % 3) * 0.2;
           g.add(obj);
@@ -4193,6 +4523,8 @@ const Scene3D = (() => {
         }
       }
     }
+    for (let t = 1; t <= 3; t++) if (t <= hive.tiers) mergeStatic(tierGroups[t]);
+    shadowsDirty();
     // анимация завершения построек
     if (prevCellKeys) {
       keys.forEach(k => { if (!prevCellKeys.has(k)) { const [t, idx] = k.split(':').map(Number); setTimeout(() => celebrate(t, idx, 'complete'), 60); } });
@@ -4236,6 +4568,8 @@ const Scene3D = (() => {
     activeTier = t;
     for (let k = 1; k <= 3; k++) tierGroups[k].visible = k <= t;
     focusY = tierY(t) + 0.3;
+    shadowsDirty();
+    if (Drops.ready()) Drops.retier();
     if (!animate) { controls.target.y = focusY; }
     haloOn = false;
   }
@@ -4262,6 +4596,13 @@ const Scene3D = (() => {
     pointer.x = ((e.clientX - r.left) / r.width) * 2 - 1;
     pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
     raycaster.setFromCamera(pointer, camera);
+    const di = Drops.hit(raycaster.ray);
+    if (di >= 0) {
+      const sp = Drops.screenPos(di);
+      Drops.collect(di);
+      if (api.onDropTap) api.onDropTap(sp);
+      return;
+    }
     if (Bees.tap(raycaster.ray)) return;
     const idx = cellAtRay(raycaster.ray, activeTier);
     if (idx >= 0) { if (api.onCellTap) api.onCellTap(activeTier, idx); }
@@ -4363,7 +4704,7 @@ const Scene3D = (() => {
         const g = new THREE.Group(), m = new THREE.MeshStandardMaterial({ color: cols[i % cols.length], side: THREE.DoubleSide, roughness: 0.6 });
         const l = new THREE.Mesh(wingG, m), r = new THREE.Mesh(wingG, m); r.scale.x = -1;
         const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.012, 0.1, 4, 6), M.dark); body.rotation.z = Math.PI / 2;
-        g.add(l, r, body); l.castShadow = r.castShadow = true;
+        g.add(l, r, body);
         scene.add(g);
         list.push({ g, l, r, a: Math.random() * 7, rr: 5 + Math.random() * 9, sp: 0.08 + Math.random() * 0.08, h: 0.6 + Math.random(), ph: Math.random() * 7 });
       }
@@ -4412,7 +4753,7 @@ const Scene3D = (() => {
     }
     function part(geo, mat, local, opts = {}) {
       const m = new THREE.InstancedMesh(geo, mat, MAX);
-      m.count = 0; m.frustumCulled = false; m.castShadow = opts.shadow !== false; m.receiveShadow = false;
+      m.count = 0; m.frustumCulled = false; m.castShadow = false; m.receiveShadow = false;
       m.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
       scene.add(m);
       const p = { m, local, kind: opts.kind || 'body' };
@@ -4420,8 +4761,8 @@ const Scene3D = (() => {
     }
     function init(n, shells) {
       const stripes = stripeTex(), fur = furTex(); fur.repeat.set(6, 6);
-      const abdG = new THREE.SphereGeometry(0.12, 28, 20); abdG.rotateX(Math.PI / 2);
-      const thoG = new THREE.SphereGeometry(0.085, 20, 14);
+      const abdG = new THREE.SphereGeometry(0.12, 18, 12); abdG.rotateX(Math.PI / 2);
+      const thoG = new THREE.SphereGeometry(0.085, 14, 10);
       const L = (x, y, z, sx = 1, sy = 1, sz = 1, rx = 0, ry = 0, rz = 0) => new THREE.Matrix4().compose(new THREE.Vector3(x, y, z), new THREE.Quaternion().setFromEuler(new THREE.Euler(rx, ry, rz)), new THREE.Vector3(sx, sy, sz));
       const abdMat = new THREE.MeshStandardMaterial({ map: stripes, roughness: 0.8 });
       const thoMat = new THREE.MeshStandardMaterial({ color: '#4A2E14', roughness: 0.9 });
@@ -4437,10 +4778,10 @@ const Scene3D = (() => {
       }
       part(new THREE.SphereGeometry(0.072, 20, 14), new THREE.MeshStandardMaterial({ color: '#24160C', roughness: 0.55 }), L(0, 0.02, 0.12, 1, 0.95, 0.9));
       // большие глаза
-      const eyeG = new THREE.SphereGeometry(0.062, 24, 18), eyeM = new THREE.MeshPhysicalMaterial({ color: '#FFFFFF', roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05 });
+      const eyeG = new THREE.SphereGeometry(0.062, 16, 12), eyeM = new THREE.MeshStandardMaterial({ color: '#FFFFFF', roughness: 0.15 });
       part(eyeG, eyeM, L(-0.05, 0.065, 0.165), { kind: 'eyeL' });
       part(eyeG, eyeM, L(0.05, 0.065, 0.165), { kind: 'eyeR' });
-      const pupG = new THREE.SphereGeometry(0.03, 16, 12), pupM = new THREE.MeshPhysicalMaterial({ color: '#0E0906', roughness: 0.15, clearcoat: 1 });
+      const pupG = new THREE.SphereGeometry(0.03, 10, 8), pupM = new THREE.MeshStandardMaterial({ color: '#0E0906', roughness: 0.15 });
       part(pupG, pupM, L(-0.05, 0.065, 0.165), { kind: 'pupL', shadow: false });
       part(pupG, pupM, L(0.05, 0.065, 0.165), { kind: 'pupR', shadow: false });
       // усики
@@ -4458,7 +4799,7 @@ const Scene3D = (() => {
       part(new THREE.SphereGeometry(0.03, 10, 8), new THREE.MeshStandardMaterial({ color: '#FFC21F', roughness: 0.9 }), L(0, -0.11, -0.03, 2.6, 1, 1), { kind: 'pollen', shadow: false });
       // крылья
       const wingG = new THREE.PlaneGeometry(0.2, 0.1); wingG.translate(0.1, 0, 0); wingG.rotateX(-Math.PI / 2);
-      const wingM = new THREE.MeshPhysicalMaterial({ map: wingTex(), transparent: true, roughness: 0.1, iridescence: 1, iridescenceIOR: 1.3, side: THREE.DoubleSide, depthWrite: false });
+      const wingM = new THREE.MeshStandardMaterial({ map: wingTex(), transparent: true, roughness: 0.2, side: THREE.DoubleSide, depthWrite: false });
       part(wingG, wingM, L(0.03, 0.1, 0.02, 1, 1, 1, 0, -0.5, 0), { kind: 'wingR', shadow: false });
       part(wingG, wingM, L(-0.03, 0.1, 0.02, -1, 1, 1, 0, 0.5, 0), { kind: 'wingL', shadow: false });
       part(wingG, wingM, L(0.03, 0.095, -0.03, 0.65, 1, 0.7, 0, -0.85, 0), { kind: 'wingR2', shadow: false });
@@ -4588,7 +4929,79 @@ const Scene3D = (() => {
     }
     function cheer() { for (let n = 0; n < count; n++) setTimeout(() => { const b = bees[n]; b.loop = 1.1; b.ang = Math.atan2(b.p.z, b.p.x); }, n * 40); }
     function gather(target) { for (let n = 0; n < Math.min(count, 6); n++) { const b = bees[n]; if (b.state !== 'build') { b.state = 'visit'; b.target.copy(target).add(new THREE.Vector3((Math.random() - .5) * 0.8, 0.8 + Math.random() * 0.4, (Math.random() - .5) * 0.8)); b.timer = 5; } } }
-    return { init, update, setCount, setSites, tap, cheer, gather };
+    return { init, update, setCount, setSites, tap, cheer, gather, count: () => count };
+  })();
+
+  // ================================================================ капли мёда над сотами
+  const Drops = (() => {
+    let geo, mat, glowMat, list = [], flying = [], target = 0, seq = 0, ok = false, hidden = false;
+    function setHidden(h) { hidden = h; list.forEach(d => { d.g.visible = !h; }); }
+    function init() {
+      geo = new THREE.LatheGeometry([[0, 0], [0.07, 0.012], [0.105, 0.055], [0.11, 0.1], [0.09, 0.155], [0.05, 0.215], [0.012, 0.27], [0, 0.285]].map(([x, y]) => new THREE.Vector2(x, y)), 20);
+      geo.translate(0, -0.12, 0); geo.scale(2.1, 2.1, 2.1);
+      mat = new THREE.MeshStandardMaterial({ color: '#FFB300', emissive: '#FF9A00', emissiveIntensity: 0.8, roughness: 0.1, metalness: 0.05 });
+      const tex = canvasTex(64, 64, (g) => { const gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,214,90,0.9)'); gr.addColorStop(0.4, 'rgba(255,180,40,0.35)'); gr.addColorStop(1, 'rgba(255,180,40,0)'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); });
+      glowMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false });
+      ok = true;
+    }
+    function slots() {
+      const cells = hiveData ? hiveData.cells.filter(c => c.tier === activeTier).map(c => c.idx) : [];
+      const base = cells.length >= 3 ? cells : [1, 2, 3, 4, 5, 6];
+      return base;
+    }
+    function spawn() {
+      const sl = slots(), used = new Set(list.map(d => d.slot));
+      let slot = sl[(seq * 5 + 2) % sl.length];
+      for (let k = 0; k < sl.length && used.has(slot); k++) slot = sl[(seq * 5 + 2 + k) % sl.length];
+      seq++;
+      const [x, z] = pos(slot), g = new THREE.Group();
+      const m = new THREE.Mesh(geo, mat); g.add(m);
+      const sp = new THREE.Sprite(glowMat.clone()); sp.scale.setScalar(1.5); g.add(sp);
+      g.position.set(x, tierY(activeTier) + 1.25, z); g.scale.setScalar(0.01);
+      scene.add(g);
+      g.visible = !hidden;
+      list.push({ g, slot, born: clock.t, ph: Math.random() * 6 });
+    }
+    function sync(n) {
+      target = n;
+      while (list.length > n) { const d = list.pop(); scene.remove(d.g); }
+      while (list.length < n) spawn();
+    }
+    function retier() { const n = target; list.forEach(d => scene.remove(d.g)); list = []; sync(n); }
+    function update(dt, t) {
+      list.forEach(d => {
+        const k = Math.min(1, (t - d.born) / 0.6), s = k < 1 ? Math.sin(k * Math.PI * 0.5) * (1 + Math.sin(k * Math.PI) * 0.35) : 1;
+        d.g.scale.setScalar(s);
+        d.g.position.y = tierY(activeTier) + 1.25 + Math.sin(t * 2 + d.ph) * 0.09;
+        if (Math.random() < dt * 2.5) Particles.emit(d.g.position.clone().add(new THREE.Vector3((Math.random() - .5) * .3, (Math.random() - .5) * .3, (Math.random() - .5) * .3)), new THREE.Vector3(0, 0.25, 0), '#FFE08A', 0.07, 0.9, 0.1, 0.95);
+        d.g.children[0].rotation.y = t * 1.2 + d.ph;
+        d.g.children[1].material.opacity = 0.8 + Math.sin(t * 3 + d.ph) * 0.2;
+      });
+      flying = flying.filter(d => {
+        const k = (t - d.t0) / 0.45;
+        d.g.position.y += dt * 3.5; d.g.scale.setScalar(Math.max(0.01, 1 + k * 0.6 - k * k * 1.4));
+        if (k >= 1) { scene.remove(d.g); return false; }
+        return true;
+      });
+    }
+    function hit(ray) {
+      if (hidden) return -1;
+      let best = -1, bd = 0.4;
+      list.forEach((d, i) => { const dd = ray.distanceToPoint(d.g.position); if (dd < bd) { bd = dd; best = i; } });
+      return best;
+    }
+    function collect(i) {
+      const d = list.splice(i, 1)[0]; if (!d) return;
+      target = Math.max(0, target - 1);
+      d.t0 = clock.t; flying.push(d);
+      Particles.burst(d.g.position.clone(), { n: 18, color: ['#FFD15C', '#FFB000', '#FFF3C4'], speed: 1.4, size: 0.1, life: 0.7, up: true });
+    }
+    function screenPos(i) {
+      const d = list[i]; if (!d) return null;
+      const v = d.g.position.clone().project(camera), r = canvas.getBoundingClientRect();
+      return { x: r.left + (v.x * 0.5 + 0.5) * r.width, y: r.top + (-v.y * 0.5 + 0.5) * r.height };
+    }
+    return { init, sync, retier, update, hit, collect, screenPos, setHidden, ready: () => ok, count: () => list.length };
   })();
 
   function celebrate(t, idx, kind) {
@@ -4628,7 +5041,6 @@ const Scene3D = (() => {
     const portrait = w < h;
     if (!sized) { sized = true; camera.position.set(0, portrait ? 12.2 : 9.5, portrait ? 8.6 : 10.5); }
     renderer.setSize(w, h, false);
-    if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
     camera.fov = portrait ? 50 : 40;
     camera.updateProjectionMatrix();
@@ -4636,6 +5048,7 @@ const Scene3D = (() => {
   const tmpT = new THREE.Vector3();
   function loop() {
     const nowT = performance.now();
+    if (nowT - clock.last < 15.5) return; // экраны 90–120 Гц: рисуем не чаще 60 раз в секунду
     const dt = Math.min(0.05, (nowT - clock.last) / 1000); clock.last = nowT; clock.t += dt;
     const t = clock.t;
     // фокус камеры: ярус и выбранная сота
@@ -4681,7 +5094,7 @@ const Scene3D = (() => {
           break;
         }
         case 'cloud': a.obj.userData.a += a.obj.userData.spin * dt; a.obj.position.x = Math.cos(a.obj.userData.a) * a.obj.userData.d; a.obj.position.z = Math.sin(a.obj.userData.a) * a.obj.userData.d; break;
-        case 'pop': { const k = Math.min(1, (t - a.t0) / 0.55); const s = k < 1 ? 1 + Math.sin(k * Math.PI) * 0.35 * (1 - k) + (k - 1) * 0 : 1; a.obj.scale.setScalar(Math.max(0.01, k < 0.4 ? k / 0.4 * 1.2 : 1.2 - (k - 0.4) / 0.6 * 0.2)); if (k >= 1) { a.obj.scale.setScalar(1); a.done = true; } break; }
+        case 'pop': { const k = Math.min(1, (t - a.t0) / 0.55); const s = k < 1 ? 1 + Math.sin(k * Math.PI) * 0.35 * (1 - k) + (k - 1) * 0 : 1; a.obj.scale.setScalar(Math.max(0.01, k < 0.4 ? k / 0.4 * 1.2 : 1.2 - (k - 0.4) / 0.6 * 0.2)); shadowsDirty(); if (k >= 1) { a.obj.scale.setScalar(1); a.done = true; } break; }
         case 'shock': { const k = (t - a.t0) / 0.7; a.obj.scale.setScalar(1 + k * 2.4); a.obj.material.opacity = Math.max(0, 0.9 * (1 - k)); if (k >= 1) { scene.remove(a.obj); a.obj.geometry.dispose(); a.done = true; } break; }
       }
     }
@@ -4698,35 +5111,36 @@ const Scene3D = (() => {
       haloFill.material.opacity = haloK * (0.16 + Math.sin(t * 2.4) * 0.05 + pk * 0.3);
     }
     Bees.update(dt, t);
+    Drops.update(dt, t);
     Particles.update(dt);
     Pollen.update(t);
     Butterflies.update(t);
-    if (composer) composer.render(); else renderer.render(scene, camera);
+    renderer.render(scene, camera);
     adapt(dt);
   }
-  // Следим за частотой кадров и сами снижаем нагрузку: чёткость → свечение → тени через кадр.
-  let fAcc = 0, fN = 0, curDpr = 0, slowTicks = 0, shadowSkip = 1, frameNo = 0;
+  // Следим за частотой кадров и сами снижаем нагрузку: чёткость → густота травы → пчёлы.
+  let fAcc = 0, fN = 0, curDpr = 0, slowTicks = 0;
   function adapt(dt) {
-    frameNo++;
-    if (shadowSkip > 1) { renderer.shadowMap.needsUpdate = frameNo % shadowSkip === 0; }
     fAcc += dt; fN++;
     if (fAcc < 2) return;
     const fps = fN / fAcc; fAcc = 0; fN = 0;
-    if (clock.t < 4) return; // первые секунды идёт прогрев
+    if (clock.t < 5 || document.hidden) return; // первые секунды идёт прогрев
     if (!curDpr) curDpr = renderer.getPixelRatio();
-    if (fps < 40) slowTicks++; else { slowTicks = 0; return; }
+    if (fps < 45) slowTicks++; else { slowTicks = 0; return; }
     if (slowTicks < 2) return;
     slowTicks = 0;
-    if (curDpr > 1) { curDpr = Math.max(1, curDpr - 0.25); renderer.setPixelRatio(curDpr); if (composer) composer.setPixelRatio(curDpr); }
-    else if (composer) { composer = null; }
-    else if (shadowSkip === 1) { shadowSkip = 3; renderer.shadowMap.autoUpdate = false; }
+    if (curDpr > 1) { curDpr = Math.max(1, +(curDpr - 0.2).toFixed(2)); renderer.setPixelRatio(curDpr); }
+    else if (grassMesh && grassMesh.count > 3000) grassMesh.count = Math.floor(grassMesh.count * 0.6);
+    else Bees.setCount(Math.max(6, Math.floor(Bees.count() * 0.7)));
   }
 
   function pause(p) { paused = p; renderer && renderer.setAnimationLoop(p ? null : loop); if (!p) clock.last = performance.now(); }
   function setQuality(q) { localStorage.setItem('mh_quality', q); location.reload(); }
 
+  const gpuInfo = () => { renderer.info.autoReset = false; renderer.info.reset(); const t0 = performance.now(); renderer.render(scene, camera); const cpu = performance.now() - t0; const r = renderer.info.render; const out = { calls: r.calls, tris: r.triangles, cpuMs: +cpu.toFixed(1), dpr: renderer.getPixelRatio(), programs: renderer.info.programs.length }; renderer.info.autoReset = true; return out; };
   const camInfo = () => ({ dist: +camera.position.distanceTo(controls.target).toFixed(2), pos: camera.position.toArray().map(v => +v.toFixed(2)) });
-  return Object.assign(api, { init, render, setTier, select, resize, pause, celebrate, cellScreenPos, setQuality, camInfo, HEXQ });
+  return Object.assign(api, { init, render, setTier, select, resize, pause, celebrate, cellScreenPos, setQuality, camInfo, gpuInfo, HEXQ,
+    setDrops: (n) => Drops.ready() && Drops.sync(n), dropScreenPos: (i) => Drops.screenPos(i), dropCount: () => Drops.count(), hideDrops: (h) => Drops.ready() && Drops.setHidden(h) });
 })();
 
 // ---------------------------------------------------------------- карта мира: рисованная, 50×50
@@ -4998,10 +5412,13 @@ const MapView = (() => {
   }
 
   // ---------------------------------------------------------------- кадр
-  function frame() {
+  let lastFrame = 0;
+  function frame(ts) {
     raf = null;
     if (!visible) return;
     raf = requestAnimationFrame(frame);
+    if (ts - lastFrame < 31 && !drag && !pinch0 && !zoomAnim) return; // спокойная карта — 30 кадров в секунду
+    lastFrame = ts;
     if (!ctx || !data || !terrainLayer) return;
     const t = performance.now() / 1000;
     if (zoomAnim) {
@@ -5020,6 +5437,13 @@ const MapView = (() => {
       const x0 = ox + (hv.x - hv.radius) * s, y0 = oy + (hv.y - hv.radius) * s, sz = (hv.radius * 2 + 1) * s;
       ctx.fillStyle = 'rgba(255,190,40,0.12)'; ctx.strokeStyle = 'rgba(255,176,0,0.9)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.lineDashOffset = -t * 12;
       ctx.beginPath(); ctx.roundRect(x0, y0, sz, sz, s * 0.6); ctx.fill(); ctx.stroke(); ctx.setLineDash([]);
+      // без Гнезда разведчиц дозорницы летают только на ближние клетки
+      const me = st && st.hives[0];
+      if (me && !me.cells.some(c => c.b === 'scout_nest')) {
+        const rr = (st.cfg && st.cfg.noNestRange) || 4, rx = ox + (hv.x - rr) * s, ry = oy + (hv.y - rr) * s, rs = (rr * 2 + 1) * s;
+        ctx.strokeStyle = 'rgba(255,255,255,0.85)'; ctx.lineWidth = 2; ctx.setLineDash([3, 7]); ctx.lineDashOffset = t * 8;
+        ctx.beginPath(); ctx.roundRect(rx, ry, rs, rs, s); ctx.stroke(); ctx.setLineDash([]);
+      }
     });
     // сетка при сильном приближении
     if (s >= 34) {
@@ -5135,13 +5559,17 @@ const Coach = (() => {
       if (localStorage.getItem(KEY)) return;
       if (S.tutorial.step > 0 || S.tutorial.done || hive().cells.length > 5) { localStorage.setItem(KEY, 'done'); return; }
     }
-    single = false; steps = INTRO(); i = -1; next();
+    single = false; steps = INTRO(); i = -1; Scene3D.hideDrops(true); next();
   }
   /** Подсказка к текущей задаче обучения: одна подсветка. */
   function hintFor(id) {
     if (Coach.active()) return;
     if (view !== 'hive') setView('hive');
+    const dropT = () => { const p = Scene3D.dropScreenPos(0); return p ? { x: p.x - 30, y: p.y - 30, w: 60, h: 60, round: true } : null; };
     const target = {
+      goal_cells: () => cellRect(1, coachCell), goal_bees: () => rectOf(navBtn('bees'), 2), goal_drops: dropT,
+      goal_upgrade: () => cellRect(1, builtCell()), goal_expedition: () => rectOf(navBtn('map'), 2), goal_dance: () => rectOf($('danceBtn'), 4),
+      goal_honey: () => rectOf($('resbar'), 4),
       build_wax: () => cellRect(1, coachCell), build_house: () => cellRect(1, coachCell), meadery2: () => cellRect(1, coachCell),
       scout: () => cellRect(1, coachCell), cells18: () => cellRect(1, coachCell), hatch5: () => rectOf(navBtn('bees'), 2),
       plan2: () => rectOf($('buildCard'), 4), dance: () => rectOf($('danceBtn'), 4), upgrade: () => cellRect(1, builtCell()),
@@ -5149,7 +5577,8 @@ const Coach = (() => {
     }[id];
     coachCell = emptyCell();
     single = true;
-    steps = [{ text: T('tut_' + id), target, btn: T('got_it'), pass: true, top: ['hatch5', 'expedition', 'dance'].includes(id) }];
+    const txt = id.startsWith('goal_') ? (id === 'goal_drops' ? T('drops_hint') : T(id, S.goal ? S.goal.add : 1)) : T('tut_' + id);
+    steps = [{ text: txt, target, btn: T('got_it'), pass: true, top: ['hatch5', 'expedition', 'dance', 'goal_bees', 'goal_expedition', 'goal_dance'].includes(id) }];
     i = -1; next();
   }
   function next() {
@@ -5163,7 +5592,7 @@ const Coach = (() => {
   }
   function finish() {
     if (!single) localStorage.setItem(KEY, 'done');
-    steps = []; i = -1;
+    steps = []; i = -1; Scene3D.hideDrops(false);
     const c = el(); c.classList.add('hidden'); c.innerHTML = '';
     cancelAnimationFrame(raf); raf = null;
     document.querySelectorAll('.coach-target').forEach(n => n.classList.remove('coach-target'));
@@ -5202,7 +5631,7 @@ const Coach = (() => {
     const s = steps[i]; if (!s) return;
     const key = payload !== undefined && payload !== '' ? `${name}:${payload}` : name;
     if (s.wait && (s.wait === key || s.wait === name)) setTimeout(next, s.wait === 'planNew' ? 400 : 250);
-    else if (single && (name === 'sheet' || name === 'nav' || name === 'dance' || name === 'view' || name === 'select')) finish();
+    else if (single && (name === 'sheet' || name === 'nav' || name === 'dance' || name === 'view' || name === 'select' || name === 'drop')) finish();
   }
   function onState() { if (steps[i]) draw(false); }
   return { start, hintFor, onEvent, onState, active: () => i >= 0 && !!steps[i] };
@@ -5434,10 +5863,14 @@ function refreshView(light) {
   const h = hive();
   const sig = JSON.stringify([h.cells, h.jobs.map(j => [j.id, j.end]), h.plan.map(p => p.id), h.tiers, h.gate, Math.round(Object.values(h.bees).reduce((a, b) => a + b, 0) / 10)]);
   if (sig !== sceneSig) { sceneSig = sig; Scene3D.render(h, S.cfg, activeTier); }
+  if (S.drops) Scene3D.setDrops(S.drops.n);
   renderHUD(); renderTiers(); renderBuildCard(); renderDance(); renderNavDots(); renderGoal(); renderSelBar();
   if (view === 'map') MapView.setState(S);
   if (sheet && !light) refreshSheet();
-  (S.notices || []).forEach(n => toast(T('notice_' + n.code)));
+  (S.notices || []).forEach(n => {
+    toast(T('notice_' + n.code, n.params || {}), n.code === 'sting' ? 'err' : 'good');
+    if (n.code === 'gift') { flyRewards({ left: innerWidth / 2 - 20, top: innerHeight / 2, width: 40, height: 40 }, { honey: n.params.honey, wax: n.params.wax }); confetti(innerWidth / 2, innerHeight / 2); }
+  });
   const choice = S.exps.find(e => e.status === 'choice' && !shownChoices.has(e.id));
   if (choice && !document.querySelector('.modal-wrap') && !Coach.active()) { shownChoices.add(choice.id); openChoice(choice); }
   Coach.onState();
@@ -5480,13 +5913,25 @@ function renderHUD() {
 }
 const capOf = (k) => k === 'nectar' ? S.caps.nectar : k === 'honey' ? S.caps.honey : (k === 'wax' || k === 'propolis') ? S.caps.wp : Infinity;
 
+/** Текущая цель: шаг обучения, а после него — бесконечная цепочка коротких целей. */
+function currentGoal() {
+  const tut = S.tutorial;
+  if (tut && !tut.done) return { src: 'tut', id: tut.id, text: T('tut_' + tut.id), met: tut.met, rew: tut.rew };
+  const g = S.goal;
+  if (!g) return null;
+  return { src: 'goal', id: 'goal_' + g.kind, text: T('goal_' + g.kind, g.add), met: g.met, rew: g.rew, prog: [g.value - g.from, g.add] };
+}
 function renderGoal() {
-  const g = $('goal'), tut = S.tutorial;
-  if (!tut || tut.done || view !== 'hive' || Coach.active() || !localStorage.getItem('mh_coach') || selCell) { g.classList.add('hidden'); return; }
+  const g = $('goal'), cg = currentGoal();
+  if (!cg || view !== 'hive' || Coach.active() || !localStorage.getItem('mh_coach') || selCell) { g.classList.add('hidden'); return; }
   g.classList.remove('hidden');
-  g.classList.toggle('ready', !!tut.met);
-  const html = `<span class="g-ic">${tut.met ? ui('gift') : useIcon('m-bee', '')}</span><span class="grow"><span class="g-d">${tut.met ? L('Задание выполнено — заберите награду', 'Task done — claim your reward') : T('tut_' + tut.id)}</span></span>${tut.met ? costHtml(tut.rew, null) : ui('chev')}`;
-  if (g.dataset.h !== html) { g.dataset.h = html; g.innerHTML = html; }
+  g.classList.toggle('ready', !!cg.met);
+  const prog = cg.prog && !cg.met && cg.prog[1] > 1 ? `<span class="g-p num">${cg.prog[0]}/${cg.prog[1]}</span>` : '';
+  const html = `<span class="g-ic">${cg.met ? ui('gift') : useIcon('m-bee', '')}</span><span class="grow"><span class="g-d">${cg.met ? T('goal_done') : cg.text}</span></span>${prog}${cg.met ? costHtml(cg.rew, null) : ui('chev')}`;
+  if (g.dataset.h !== html) {
+    const was = g.dataset.id; g.dataset.h = html; g.dataset.id = cg.id; g.innerHTML = html;
+    if (was && was !== cg.id) { g.classList.remove('swap'); void g.offsetWidth; g.classList.add('swap'); }
+  }
 }
 
 function renderTiers() {
@@ -5543,7 +5988,7 @@ function renderDance() {
   btn.classList.toggle('ready', !buff && e >= c.danceCost);
 }
 
-const NAV = ['hive', 'bees', 'map', 'quests'];
+const NAV = ['hive', 'bees', 'map', 'quests', 'swarms'];
 function buildNav() {
   $('nav').innerHTML = NAV.map(k => `<button data-nav="${k}">${navIcon(k)}<span>${T('nav_' + k)}</span><i class="dot hidden" id="dot_${k}"></i></button>`).join('');
   renderNavDots();
@@ -5626,9 +6071,10 @@ function renderSelBar() {
   if (i === 0) { icon = buildingIcon(t === 1 ? 'gate' : 'hub'); title = cellTitle(t, i); subt = t === 1 ? L(`Уровень ${h.gate} из 3`, `Level ${h.gate} of 3`) : ''; btn = L('Открыть', 'Open'); }
   else if (c) { icon = buildingIcon(c.b); title = bName(c.b); subt = `${dotsHtml(c.l)} ${T('level_of', c.l)}`; btn = L('Открыть', 'Open'); }
   else if (pend) { icon = buildingIcon(pend.b); title = bName(pend.b); subt = h.jobs.includes(pend) ? T('building_now') : T('in_plan'); btn = L('Открыть', 'Open'); }
-  else { icon = useIcon('b-empty', 'b-ic'); title = L('Пустая сота', 'Empty comb'); subt = L('Здесь можно построить здание', 'You can build here'); btn = T('build_btn'); }
-  const html = `<span class="sb-ic">${icon}</span><span class="grow"><b>${esc(title)}</b><span class="sb-sub">${subt}</span></span>
-    <button class="btn primary" id="selOpen">${btn}</button><button class="icon-btn" id="selClose" aria-label="${T('close')}">${ui('close')}</button>`;
+  else { icon = useIcon('b-empty', 'b-ic'); title = L('Пустая сота', 'Empty comb'); subt = L('Можно построить здание', 'You can build here'); btn = T('build_btn'); }
+  const html = `<div class="sb-top"><span class="sb-ic">${icon}</span><span class="sb-txt"><b>${esc(title)}</b><span class="sb-sub">${subt}</span></span>
+    <button class="icon-btn" id="selClose" aria-label="${T('close')}">${ui('close')}</button></div>
+    <button class="btn primary wide" id="selOpen">${btn}</button>`;
   const key = kind + '|' + html;
   if (el.dataset.k !== key) {
     const fresh = !el.dataset.k;
@@ -5875,6 +6321,8 @@ function mapCellBody(x, y) {
   if (hv && hv.own) return html;
   const free = { l: h.bees.lookout - h.away.lookout, f: h.bees.forager - h.away.forager };
   if (free.l < 1) return html + `<div class="card soft" style="margin-top:12px"><div class="small">${T('exp_need_lookout')}</div></div>`;
+  const hasNest = h.cells.some(c => c.b === 'scout_nest'), rng = cfg().noNestRange;
+  if (!hasNest && dist > rng) return html + `<div class="card soft" style="margin-top:12px"><div class="small">${T('exp_range', rng)}</div></div>`;
   let eta = null;
   try { const p = Replica.act('expPreview', { x, y }); eta = expF > 0 ? p.foragerMs : p.lookoutMs; } catch (e) {}
   html += `<div class="sec">${T('exp_send')}</div>
@@ -5940,6 +6388,13 @@ function questsSheet() {
         <button class="btn ${tut.met ? 'primary' : ''} small" data-act="tutorialClaim" ${tut.met ? '' : 'disabled'}>${T('claim')}</button></div>
         <div class="bar green"><i style="width:${tut.step / tut.total * 100}%"></i></div>`;
     }
+    if (tut.done && S.goal) {
+      const g = S.goal;
+      html += `<div class="sec">${L('Текущая цель', 'Current goal')}</div><div class="quest ${g.met ? 'done' : ''}"><span class="qi">${g.met ? ui('check') : ui('hive')}</span>
+        <div class="grow"><div class="qt">${T('goal_' + g.kind, g.add)}</div><div class="bar"><i style="width:${Math.min(100, (g.value - g.from) / g.add * 100)}%"></i></div>
+        <div class="row" style="margin-top:6px"><span class="tiny muted grow">${g.value - g.from} / ${g.add}</span>${costHtml(g.rew, null)}</div></div>
+        <button class="btn small ${g.met ? 'primary' : ''}" data-act="goalClaim" ${g.met ? '' : 'disabled'}>${T('claim')}</button></div>`;
+    }
     if (d) {
       html += `<div class="sec">${T('daily')}</div>` + d.quests.map(q => `<div class="quest ${q.done ? 'done' : ''}"><span class="qi">${q.done ? ui('check') : ui('quests')}</span>
         <div class="grow"><div class="qt">${T('dq_' + q.type, q.target)}</div><div class="bar"><i style="width:${Math.min(100, q.progress / q.target * 100)}%"></i></div>
@@ -5960,13 +6415,34 @@ function questsSheet() {
 }
 
 // ---------- профиль
-let LB = null;
+let SW = null;
+function agoText(ts) {
+  const m = Math.floor((now() - ts) / 60000);
+  if (m < 1) return T('ago_now'); if (m < 60) return T('ago_m', m);
+  const h = Math.floor(m / 60); if (h < 24) return T('ago_h', h); return T('ago_d', Math.floor(h / 24));
+}
+function swarmsSheet() {
+  openSheet({ kind: 'swarms', title: T('swarms_title'), nav: 'swarms', render: () => {
+    if (!SW) return '<p class="muted small">…</p>';
+    const c = cfg();
+    let html = `<div class="sec">${T('leaderboard')}</div>` + SW.players.map((p, i) => `<div class="lb-row ${p.me ? 'me' : ''}"><span class="pl">${i + 1}</span><span class="c" style="background:${p.color}"></span>
+      <span class="grow" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(p.name)}${p.me ? ` (${T('you')})` : ''}</span><span class="g">${resIcon('glory')}${fmt(p.glory)}</span>
+      ${p.me ? '<span class="soc-sp"></span>' : `<button class="icon-btn soc" data-act="gift" data-id="${p.id}" ${SW.gift ? '' : 'disabled'} aria-label="${T('gift_btn')}">${ui('gift')}</button><button class="icon-btn soc" data-act="sting" data-id="${p.id}" ${SW.sting ? '' : 'disabled'} aria-label="${T('sting_btn')}">${ui('sting')}</button>`}</div>`).join('');
+    html += `<p class="tiny muted" style="margin-top:8px">${T('social_hint', c.gift, c.sting)}${!SW.gift && !SW.sting ? ' ' + T('social_used') + '.' : ''}</p>`;
+    html += `<div class="sec">${T('feed')}</div>`;
+    html += SW.feed.length ? SW.feed.map(f => {
+      const txt = T('fe_' + f.type, f.data || {});
+      const ic = { gift: ui('gift'), sting: ui('sting'), amber: resIcon('amber'), tier2: ui('layers'), gate: buildingIcon('gate', 'ui-ic'), join: ui('hive'), goals: ui('check') }[f.type] || ui('info');
+      return `<div class="feed-row ${f.toMe ? 'to-me' : ''}"><span class="c" style="background:${f.color}"></span><div class="grow"><b>${esc(f.name)}</b><div class="small">${esc(txt)}</div></div><span class="fi">${ic}</span><span class="tiny muted">${agoText(f.ts)}</span></div>`;
+    }).join('') : `<p class="muted small">${T('feed_empty')}</p>`;
+    return html;
+  } });
+  serverAction('swarms', {}, { silent: true }).then(r => { SW = r; if (sheet && sheet.kind === 'swarms') refreshSheet(); }).catch(() => {});
+}
 function profileSheet() {
   openSheet({ kind: 'profile', title: T('profile'), render: () => {
     let html = `<div class="row" style="margin-bottom:8px"><span class="avatar" style="background:${S.player.color};width:56px;height:56px;font-size:22px">${esc(S.player.name.charAt(0).toUpperCase())}</span>
       <div class="grow"><b style="font-size:20px;font-weight:600">${esc(S.player.name)}</b><div class="small muted" style="display:flex;align-items:center;gap:4px">${resIcon('glory')}${T('glory_n', fmt(S.glory))}</div></div></div>`;
-    html += `<div class="sec">${T('leaderboard')}</div>` + (LB ? LB.map((p, i) => `<div class="lb-row ${p.name === S.player.name ? 'me' : ''}"><span class="pl">${i + 1}</span><span class="c" style="background:${p.color}"></span>
-      <span>${esc(p.name)}${p.name === S.player.name ? ` (${T('you')})` : ''}</span><span class="g">${resIcon('glory')}${fmt(p.glory)}</span></div>`).join('') : '<p class="muted small">…</p>');
     html += `<div class="sec">${T('season_forecast')}</div>` + forecastHtml();
     html += `<div class="sec">${T('settings')}</div>
       <button class="link-row" data-act="expeditions">${ui('scroll')}<span>${T('reports')}</span>${ui('chev')}</button>
@@ -5977,7 +6453,6 @@ function profileSheet() {
       <p class="tiny muted" style="margin-top:12px">${T('version')} ${esc(cfg().version)}</p>`;
     return html;
   } });
-  serverAction('leaderboard', {}, { silent: true }).then(r => { LB = r.players; if (sheet) refreshSheet(); }).catch(() => {});
 }
 function forecastHtml() {
   const se = S.season;
@@ -6041,6 +6516,18 @@ async function act(el) {
     case 'expSend': if (doAction('expSend', { x: mapSel.x, y: mapSel.y, lookouts: expL, foragers: expF })) { toast(T('exp_sent'), 'good'); closeSheet(); MapView.clearSel(); } break;
     case 'openChoice': { const e = S.exps.find(x => x.id === d.id); if (e) openChoice(e); break; }
     case 'tutorialClaim': claimWith(el, () => doAction('tutorialClaim'), S.tutorial.rew); break;
+    case 'goalClaim': claimWith(el, () => doAction('goalClaim'), S.goal.rew); break;
+    case 'gift': case 'sting': {
+      el.disabled = true;
+      try {
+        await serverAction(a, { to: d.id });
+        SW = await serverAction('swarms', {}, { silent: true });
+        toast(T(a === 'gift' ? 'gift_done' : 'sting_done'), 'good'); haptic('big');
+        if (a === 'gift') confetti(el);
+        refreshSheet();
+      } catch (e) { el.disabled = false; }
+      break;
+    }
     case 'dailyClaim': claimWith(el, () => doAction('dailyClaim', { i: +d.i }), (S.daily.quests.find(q => q.i === +d.i) || {}).rew); break;
     case 'loginClaim': { const lg = S.login; claimWith(el, () => doAction('loginClaim'), cfg().loginCalendar[lg.idx]); break; }
     case 'dailyChest': {
@@ -6218,7 +6705,7 @@ function onNav(k) {
   if (k === 'map') { if (view !== 'map') setView('map'); else closeSheet(); return; }
   if (view === 'map') setView('hive').then(() => openNavSheet(k)); else openNavSheet(k);
 }
-function openNavSheet(k) { if (k === 'bees') beesSheet(); if (k === 'quests') questsSheet(); Coach.onEvent('nav', k); }
+function openNavSheet(k) { if (k === 'bees') beesSheet(); if (k === 'quests') questsSheet(); if (k === 'swarms') swarmsSheet(); Coach.onEvent('nav', k); }
 
 const weakDevice = (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 let QUALITY = localStorage.getItem('mh_quality') || (weakDevice ? 'mid' : 'high');
@@ -6274,6 +6761,13 @@ async function startGame() {
   if (!sceneReady) {
     await Scene3D.init($('scene'), now, QUALITY);
     Scene3D.onCellTap = selectCell;
+    Scene3D.onDropTap = (sp) => {
+      const r = doAction('collectDrop');
+      if (!r) { Scene3D.setDrops(S.drops.n); return; }
+      flyRewards({ left: sp.x - 20, top: sp.y - 20, width: 40, height: 40 }, r.rew);
+      floater(sp.x, sp.y - 10, `+${fmt(r.rew.honey)}`, '#B86E00');
+      Coach.onEvent('drop');
+    };
     Scene3D.onEmptyTap = clearSel;
     MapView.init($('mapCanvas'), now);
     MapView.onCellTap = (x, y) => { haptic(); mapCellSheet(x, y); };
@@ -6325,8 +6819,9 @@ function bindGlobal() {
   $('avatar').addEventListener('click', () => { haptic(); profileSheet(); });
   $('goal').addEventListener('click', e => {
     haptic();
-    if (S.tutorial.met) claimWith($('goal'), () => doAction('tutorialClaim'), S.tutorial.rew);
-    else Coach.hintFor(S.tutorial.id);
+    const cg = currentGoal(); if (!cg) return;
+    if (cg.met) claimWith($('goal'), () => doAction(cg.src === 'tut' ? 'tutorialClaim' : 'goalClaim'), cg.rew);
+    else Coach.hintFor(cg.id);
   });
   $('resbar').addEventListener('click', e => { const b = e.target.closest('[data-res]'); if (b) { haptic(); resourceSheet(b.dataset.res); } });
   $('infobar').addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) act(b); });
@@ -6370,7 +6865,7 @@ async function boot() {
   if (TOKEN) { startGame(); return; }
   showAuth();
 }
-window.__dbg = { Scene3D };
+window.__dbg = { Scene3D, get S() { return S; } };
 boot();
 
 </script>
