@@ -449,6 +449,15 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .cmp-a { color: var(--muted-soft); display: flex; justify-content: center; }
 .cmp-a .ui-ic { width: 14px; height: 14px; }
 
+/* сезон + особый день в одной плашке */
+.chip.season.two { height: auto; min-height: 32px; padding: 4px 12px; }
+.chip .ch-t { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }
+.chip .ch-t small { font-size: 11px; font-weight: 500; color: var(--muted); }
+.chip.warn .ch-t small { color: #9A5A00; font-weight: 600; }
+/* щит новичка на аватаре */
+.av-shield { position: absolute; left: -4px; bottom: -4px; width: 20px; height: 20px; border-radius: 50%; background: var(--canvas); color: #1F7A3A; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow); }
+.av-shield .ui-ic { width: 13px; height: 13px; }
+
 </style>
 <script type="importmap">
 { "imports": {
@@ -6029,7 +6038,9 @@ const shownChoices = new Set();
 function renderHUD() {
   const av = $('avatar');
   av.style.background = S.player.color;
-  av.textContent = (S.player.name || '?').charAt(0).toUpperCase();
+  const cocoonLeft = S.cocoonUntil - now();
+  const avHtml = esc((S.player.name || '?').charAt(0).toUpperCase()) + (cocoonLeft > 0 ? `<span class="av-shield">${ui('shield')}</span>` : '');
+  if (av.dataset.h !== avHtml) { av.dataset.h = avHtml; av.innerHTML = avHtml; }
   const keys = MAIN_RES.concat(['jelly', 'amber'].filter(k => (S.res[k] || 0) >= 1));
   const bar = $('resbar');
   if (bar.dataset.keys !== keys.join()) {
@@ -6056,11 +6067,9 @@ function renderHUD() {
   prevRes = Object.assign({}, S.res);
   const se = S.season, chips = [];
   const sIcon = ['spring', 'sun', 'autumn', 'winter'][se.season];
-  chips.push(`<button class="chip" data-act="forecast">${ui(sIcon)}${T('season_' + se.season)} ${se.dow + 1}/7</button>`);
-  if (se.event) chips.push(`<button class="chip warn" data-act="forecast">${T('ev_' + se.event)}</button>`);
-  else if (se.tomorrowEvent && se.dow < 6) chips.push(`<button class="chip" data-act="forecast">${T('tomorrow')}: ${T('ev_' + se.tomorrowEvent)}</button>`);
-  const cl = S.cocoonUntil - now();
-  if (cl > 0) chips.push(`<button class="chip" data-act="cocoon">${ui('shield')}${fmtTime(cl)}</button>`);
+  // сезон и особый день — одной плашкой: событие сегодня мелкой строкой на медовом фоне, завтрашнее — серым
+  const sub2 = se.event ? T('ev_' + se.event) : (se.tomorrowEvent && se.dow < 6 ? `${T('tomorrow')}: ${T('ev_' + se.tomorrowEvent)}` : '');
+  chips.push(`<button class="chip season ${se.event ? 'warn' : ''} ${sub2 ? 'two' : ''}" data-act="forecast">${ui(sIcon)}<span class="ch-t"><span>${T('season_' + se.season)} ${se.dow + 1}/7</span>${sub2 ? `<small>${sub2}</small>` : ''}</span></button>`);
   if (S.hungry) chips.push(`<span class="chip alert">${T('hungry')}</span>`);
   const html = chips.join('');
   if ($('infobar').dataset.h !== html) { $('infobar').dataset.h = html; $('infobar').innerHTML = html; }
@@ -6619,6 +6628,8 @@ function profileSheet() {
   openSheet({ kind: 'profile', title: T('profile'), render: () => {
     let html = `<div class="row" style="margin-bottom:8px"><span class="avatar" style="background:${S.player.color};width:56px;height:56px;font-size:22px">${esc(S.player.name.charAt(0).toUpperCase())}</span>
       <div class="grow"><b style="font-size:20px;font-weight:600">${esc(S.player.name)}</b><div class="small muted" style="display:flex;align-items:center;gap:4px">${resIcon('glory')}${T('glory_n', fmt(S.glory))}</div></div></div>`;
+    const cl = S.cocoonUntil - now();
+    if (cl > 0) html += `<div class="card soft row" style="margin-top:12px">${ui('shield')}<div class="grow"><b style="font-weight:600">${L('Защита новичка', 'Newcomer shield')}: <span data-end="${S.cocoonUntil}">${fmtTime(cl)}</span></b><div class="tiny muted">${T('cocoon_d')}</div></div></div>`;
     html += `<div class="sec">${T('season_forecast')}</div>` + forecastHtml();
     html += `<div class="sec">${T('settings')}</div>
       <button class="link-row" data-act="expeditions">${ui('scroll')}<span>${T('reports')}</span>${ui('chev')}</button>
