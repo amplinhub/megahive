@@ -428,6 +428,27 @@ input[type=range] { width: 100%; accent-color: #E88A00; height: 28px; }
 .sec-load { display: flex; align-items: center; gap: 10px; }
 .spin { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--hairline); border-top-color: #E88A00; animation: spin .8s linear infinite; }
 
+/* прирост в полосе ресурсов */
+.res .rv { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.05; min-width: 0; }
+.res .r { font-size: 10px; font-weight: 600; color: var(--good); letter-spacing: -.1px; }
+.res .r:empty { display: none; }
+.res .r.neg { color: var(--error); }
+.resbar { height: 48px; }
+/* сравнение «сейчас → станет» */
+.cmp { margin: 12px 0 4px; border-radius: var(--r-sm); background: var(--surface-soft); padding: 4px 12px; }
+.cmp-h, .cmp-r { display: grid; grid-template-columns: 1fr auto 20px auto; align-items: center; gap: 8px; }
+.cmp-h { font-size: 11px; font-weight: 600; color: var(--muted); padding: 6px 0 2px; }
+.cmp-h span:nth-child(2), .cmp-h span:nth-child(4) { text-align: right; }
+.cmp-r { padding: 8px 0; border-top: 1px solid var(--hairline-soft); font-size: 14px; }
+.cmp-r:first-of-type { border-top: 0; }
+.cmp-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cmp-l .ic, .cmp-l .ui-ic { width: 20px; height: 20px; flex: none; }
+.cmp-r > .num { text-align: right; color: var(--muted); }
+.cmp-r .cmp-n { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.cmp-r .cmp-n small { font-size: 11px; font-weight: 600; }
+.cmp-a { color: var(--muted-soft); display: flex; justify-content: center; }
+.cmp-a .ui-ic { width: 14px; height: 14px; }
+
 </style>
 <script type="importmap">
 { "imports": {
@@ -1056,7 +1077,7 @@ function apiColors() {
  *   столбец B — значение в JSON (например `3.5` или `{"wax":8,"honey":4}`).
  */
 var CFG_BASE = {
-  version: '0.4.0',
+  version: '0.5.0',
   stage: 1,                       // этап разработки: 1 = MVP (армия/колонии закрыты)
   tz: 'Europe/Moscow',
   stepMinutes: 5,                 // шаг ленивого пересчёта
@@ -1195,7 +1216,7 @@ var BUILDINGS_BASE = {
   pantry:        { tier: 1, cost: { wax: 5, honey: 3 }, capWP: [250, 600, 1200] },
   meadery:       { tier: 1, cost: { wax: 7, honey: 4 }, crafters: [4, 8, 12], input: 'nectar', inRate: [40, 80, 130], output: 'honey', outRate: [20, 42, 72], feeds: ['nectar_store', 'big_store'] },
   wax_shop:      { tier: 1, cost: { wax: 6, honey: 6 }, crafters: [4, 8, 12], input: 'honey', inRate: [12, 24, 38], output: 'wax', outRate: [6, 13, 21], feeds: ['honey_store', 'big_store'] },
-  incubator:     { tier: 1, cost: { wax: 7, honey: 5 }, nurses: [3, 6, 9], hatch: [3, 7, 12] },
+  incubator:     { tier: 1, cost: { wax: 7, honey: 5 }, nurses: [3, 6, 9], hatch: [10, 22, 36] },   // пчёл в час (втрое быстрее v0.4)
   housing:       { tier: 1, cost: { wax: 6, honey: 3 }, house: [20, 45, 75] },
   scout_nest:    { tier: 1, cost: { wax: 6, honey: 3 }, vision: [1, 2, 3], lookoutCap: [10, 25, 45] },
   bee_school:    { tier: 1, cost: { wax: 8, honey: 6 }, retrainDay: [10, 25, 50] },
@@ -1210,7 +1231,7 @@ var BUILDINGS_BASE = {
   royal_cell:    { tier: 2, cost: { wax: 120, honey: 120, propolis: 30 }, nurses: [4, 6, 8], jelly: [0.15, 0.25, 0.35] },
   brood_hall:    { tier: 2, cost: { wax: 90, honey: 60, propolis: 20 }, house: [50, 100, 160] },
   big_store:     { tier: 2, cost: { wax: 80, honey: 40, propolis: 20 }, capNectar: [800, 1800, 3200], capHoney: [800, 1800, 3200], capWP: [600, 1400, 2500] },
-  big_incubator: { tier: 2, cost: { wax: 110, honey: 90, propolis: 20 }, nurses: [6, 10, 14], hatch: [10, 18, 28] },
+  big_incubator: { tier: 2, cost: { wax: 110, honey: 90, propolis: 20 }, nurses: [6, 10, 14], hatch: [30, 54, 84] },
   lab:           { tier: 2, cost: { wax: 120, honey: 100, propolis: 30 }, lockedUntilStage: 3 },
   trade_post:    { tier: 2, cost: { wax: 100, honey: 100, propolis: 20 }, lockedUntilStage: 2 }
 };
@@ -3611,6 +3632,9 @@ Object.assign(I18N.en, {
 });
 Object.assign(I18N.en.err, { NO_DROPS: 'No drops yet — a new one appears in 20 minutes.', EXP_RANGE: (p) => `Without a Scout Nest you can fly at most ${p.max} cells.`, ALREADY: 'Already done today.' });
 
+Object.assign(I18N.ru, { cmp_capN: 'Склад нектара', cmp_capH: 'Склад мёда', cmp_capWP: 'Склад воска', cmp_out: 'Выработка в час', cmp_cr: 'Мастериц', cmp_hatch: 'Пчёл в час', cmp_nu: 'Нянек', cmp_house: 'Мест для пчёл', cmp_vis: 'Дозорниц', cmp_jelly: 'Молочко в час', cmp_school: 'Учеников в день', cmp_r: 'Радиус сбора', cmp_b: 'Бригад', cmp_s: 'Склад' });
+Object.assign(I18N.en, { cmp_capN: 'Nectar storage', cmp_capH: 'Honey storage', cmp_capWP: 'Wax storage', cmp_out: 'Output per hour', cmp_cr: 'Crafters', cmp_hatch: 'Bees per hour', cmp_nu: 'Nannies', cmp_house: 'Bee slots', cmp_vis: 'Lookouts', cmp_jelly: 'Jelly per hour', cmp_school: 'Students per day', cmp_r: 'Gathering radius', cmp_b: 'Crews', cmp_s: 'Storage' });
+
 // ---------------------------------------------------------------- иконки (SVG-спрайт)
 // Все иконки — символы одного спрайта; в разметке используются через <use>.
 const ICON_SPRITE = `<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
@@ -3853,7 +3877,8 @@ const Scene3D = (() => {
   async function init(cv, nowFn, quality) {
     canvas = cv; getNow = nowFn || getNow;
     qName = QUAL[quality] ? quality : 'high'; Q = QUAL[qName];
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: qName !== 'low', alpha: false, powerPreference: 'high-performance' });
+    // preserveDrawingBuffer: на части Android-телефонов без него кадр мигает, когда браузер перекомпоновывает страницу
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: qName !== 'low', alpha: false, powerPreference: 'default', preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(Q.dpr, window.devicePixelRatio || 1));
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = qName === 'low' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap; // VSM занимал много видеопамяти
@@ -6009,12 +6034,18 @@ function renderHUD() {
   const bar = $('resbar');
   if (bar.dataset.keys !== keys.join()) {
     bar.dataset.keys = keys.join();
-    bar.innerHTML = keys.map(k => `<button class="res" data-res="${k}" aria-label="${T('res_' + k)}">${resIcon(k)}<span class="v num" id="rv_${k}">0</span></button>`).join('');
+    bar.innerHTML = keys.map(k => `<button class="res" data-res="${k}" aria-label="${T('res_' + k)}">${resIcon(k)}<span class="rv"><span class="v num" id="rv_${k}">0</span><span class="r num" id="rr_${k}"></span></span></button>`).join('');
   }
   const recent = performance.now() - lastActionAt < 400;
   keys.forEach(k => {
     const v = S.res[k] || 0, el = $('rv_' + k);
     el.textContent = fmt(v);
+    const rr = $('rr_' + k), rate = S.rates[k];
+    if (rr) {
+      const txt = rate === undefined || Math.abs(rate) < 0.5 ? '' : `${rate > 0 ? '+' : '−'}${fmt(Math.abs(rate))}${T('per_h_short')}`;
+      if (rr.textContent !== txt) rr.textContent = txt;
+      rr.classList.toggle('neg', rate < 0);
+    }
     const cap = capOf(k);
     el.parentElement.classList.toggle('full', cap !== Infinity && v >= cap * 0.99);
     if (prevRes && recent) {
@@ -6256,10 +6287,22 @@ function planLine(p, i, arr) {
     <div style="margin-top:4px">${p.cost ? costHtml(p.cost) : ''}</div></div>${arrows}
     <button class="icon-btn" data-act="planCancel" data-id="${p.id}" aria-label="${T('cancel')}">${ui('close')}</button></div>`;
 }
-function upgradeBlock(nextL, cost, sec, act, attrs) {
+/** «Было → станет» для улучшения: короткое название, текущее значение, новое и прибавка. */
+function compareRows(cur, nxt) {
+  const rows = nxt.map(n => { const c = cur.find(x => x.k === n.k); return { n, c }; }).filter(r => r.c && r.c.v !== r.n.v);
+  if (!rows.length) return '';
+  return `<div class="cmp"><div class="cmp-h"><span></span><span>${L('Сейчас', 'Now')}</span><span></span><span>${L('Станет', 'After')}</span></div>${rows.map(({ n, c }) => {
+    const d = n.v - c.v;
+    return `<div class="cmp-r"><span class="cmp-l">${n.ic}<span>${CMP_LABEL[n.k] ? T(CMP_LABEL[n.k]) : n.t}</span></span><span class="num">${fmt1(c.v)}</span><span class="cmp-a">${ui('chev')}</span><span class="num cmp-n">${fmt1(n.v)} <small class="good">${d > 0 ? '+' : ''}${fmt1(d)}</small></span></div>`;
+  }).join('')}</div>`;
+}
+const fmt1 = (v) => Math.abs(v) >= 100 ? fmt(v) : String(Math.round(v * 10) / 10);
+const CMP_LABEL = { capN: 'cmp_capN', capH: 'cmp_capH', capWP: 'cmp_capWP', out: 'cmp_out', cr: 'cmp_cr', hatch: 'cmp_hatch', nu: 'cmp_nu', house: 'cmp_house', vis: 'cmp_vis', jelly: 'cmp_jelly', school: 'cmp_school', r: 'cmp_r', b: 'cmp_b', h: 'cmp_house', s: 'cmp_s' };
+function upgradeBlock(nextL, cost, sec, act, attrs, cmp = '') {
   const ok = canPay(cost);
   return `<div class="upg"><div class="upg-head"><b>${T('upgrade_to', nextL)}</b>${dotsHtml(nextL)}</div>
-    <div class="meta">${costHtml(cost)}<span class="tm">${ui('clock')}${fmtTime(sec * 1000)}</span></div>
+    ${cmp}
+    <div class="meta"><span class="tiny muted">${L('Цена', 'Cost')}</span>${costHtml(cost)}<span class="tm">${ui('clock')}${fmtTime(sec * 1000)}</span></div>
     <button class="btn primary wide" data-act="${act}" ${attrs}>${ok ? T('upgrade') : T('add_to_plan')}</button>
     ${ok ? '' : `<div class="tiny muted" style="margin-top:8px;text-align:center">${T('no_res_short')} — ${T('will_start').toLowerCase()}</div>`}</div>`;
 }
@@ -6275,14 +6318,14 @@ function cellBody(tier, idx) {
       { k: 'h', ic: roleIcon('forager', 'ic'), v: G.house, t: L(`Мест для пчёл: ${G.house}`, `Bee slots: ${G.house}`) },
       { k: 's', ic: resIcon('honey'), v: G.store, t: L(`Склад каждого ресурса: ${G.store}`, `Storage per resource: ${G.store}`) }]; };
     let html = heroHtml(buildingIcon('gate'), 'honey_store', h.gate, T('gate_desc'));
-    html += `<div class="sec">${T('what_it_does')}</div>` + amenRows(rows(h.gate), ng ? rows(h.gate + 1) : null);
+    html += `<div class="sec">${T('what_it_does')}</div>` + amenRows(rows(h.gate));
     if (pend) html += `<div class="sec">${T('upgrading')}</div>` + jobLine(pend);
     else if (pplan) html += `<div class="sec">${T('queued_upgrade')}</div>` + planLine(pplan);
     else if (ng) {
       const okCells = (h.count[1] || 0) >= ng.needCells;
       if (!okCells) html += `<div class="upg"><div class="upg-head"><b>${T('upgrade_to', h.gate + 1)}</b>${dotsHtml(h.gate + 1)}</div><p class="small muted" style="margin:6px 0 0">${T('gate_need', ng.needCells)} (${h.count[1] || 0}/${ng.needCells})</p>
         <div class="bar" style="margin-top:10px"><i style="width:${(h.count[1] || 0) / ng.needCells * 100}%"></i></div></div>`;
-      else html += upgradeBlock(h.gate + 1, scaleCost(ng.cost, S.seasonCostMult), ng.sec, 'planGate', '');
+      else html += upgradeBlock(h.gate + 1, scaleCost(ng.cost, S.seasonCostMult), ng.sec, 'planGate', '', compareRows(rows(h.gate), rows(h.gate + 1)));
     }
     if (h.tiers < 2) html += tier2Card();
     return html;
@@ -6296,7 +6339,7 @@ function cellBody(tier, idx) {
     let html = heroHtml(buildingIcon(c.b), c.b, c.l, T('bd_' + c.b));
     const pendingUp = (job && job.kind === 'upg' ? 1 : 0) + pl.filter(p => p.kind === 'upg').length;
     const nextL = c.l + pendingUp + 1;
-    html += `<div class="sec">${T('what_it_does')}</div>` + amenRows(effectRows(c.b, c.l, c.adj), nextL <= 3 ? effectRows(c.b, Math.min(3, c.l + 1), c.adj) : null);
+    html += `<div class="sec">${T('what_it_does')}</div>` + amenRows(effectRows(c.b, c.l, c.adj));
     if (d.input || d.hatch) {
       const pct = Math.round((c.adj - 1) * 100);
       html += `<div class="amen"><span class="ai">${ui('layers')}</span><span class="at">${T('neighbors_bonus')}: <b class="${pct >= 0 ? 'good' : 'bad'}">${pct >= 0 ? '+' : ''}${pct}%</b><small>${d.input ? T('adj_hint_proc') : T('adj_hint_hatch')}</small></span></div>`;
@@ -6306,7 +6349,7 @@ function cellBody(tier, idx) {
     if (d.vision) html += `<button class="btn wide" style="margin-top:12px" data-act="goMap">${ui('map')}${T('go_map')}</button>`;
     if (job && job.kind === 'upg') html += `<div class="sec">${T('upgrading')}</div>` + jobLine(job);
     pl.filter(p => p.kind === 'upg').forEach(p => { html += `<div class="sec">${T('queued_upgrade')}</div>` + planLine(p); });
-    if (nextL <= 3) html += upgradeBlock(nextL, costUpg(c.b, nextL), timeUpg(tier, nextL), 'planUpgrade', `data-tier="${tier}" data-idx="${idx}"`);
+    if (nextL <= 3) html += upgradeBlock(nextL, costUpg(c.b, nextL), timeUpg(tier, nextL), 'planUpgrade', `data-tier="${tier}" data-idx="${idx}"`, compareRows(effectRows(c.b, nextL - 1, c.adj), effectRows(c.b, nextL, c.adj)));
     else if (!pendingUp) html += `<div class="upg"><div class="upg-head"><b>${T('max_level')}</b>${dotsHtml(3)}</div></div>`;
     return html;
   }
@@ -7006,7 +7049,7 @@ async function boot() {
   if (TOKEN) { startGame(); return; }
   showAuth();
 }
-window.__dbg = { Scene3D, get S() { return S; } };
+window.__dbg = { Scene3D, get S() { return S; }, cellSheet: (t, i) => cellSheet(t, i) };
 boot();
 
 </script>
